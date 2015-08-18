@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,8 +17,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OQ2-Xy-TSW">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <gestureRecognizers/>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ree-on-8Pj">
-                                <rect key="frame" x="534" y="538" width="50" height="50"/>
+                                <rect key="frame" x="540" y="540" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="BKb-x6-qbg"/>
+                                    <constraint firstAttribute="height" constant="50" id="ily-RQ-HCd"/>
+                                </constraints>
                                 <state key="normal" image="Facebook">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -26,7 +35,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oyp-hP-ITf">
-                                <rect key="frame" x="476" y="538" width="50" height="50"/>
+                                <rect key="frame" x="482" y="540" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="KK1-pN-GNa"/>
                                     <constraint firstAttribute="height" constant="50" id="cCr-5l-nEL"/>
@@ -38,21 +47,17 @@
                                     <action selector="ShareWithTwitter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BDK-vi-XRi"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OQ2-Xy-TSW">
-                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
-                                <gestureRecognizers/>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="8cH-to-a84"/>
                             <constraint firstAttribute="centerX" secondItem="OQ2-Xy-TSW" secondAttribute="centerX" id="HIx-fI-Y21"/>
-                            <constraint firstItem="ree-on-8Pj" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" constant="-62" id="K0I-NQ-RQa"/>
+                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="bottom" secondItem="ree-on-8Pj" secondAttribute="bottom" constant="10" id="K0I-NQ-RQa"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" id="MAB-o1-pwX"/>
-                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="SoB-x5-heZ"/>
-                            <constraint firstItem="ree-on-8Pj" firstAttribute="leading" secondItem="OQ2-Xy-TSW" secondAttribute="trailing" constant="-66" id="Yqx-kb-KDi"/>
+                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="trailing" secondItem="ree-on-8Pj" secondAttribute="trailing" constant="10" id="Yqx-kb-KDi"/>
                             <constraint firstItem="ree-on-8Pj" firstAttribute="leading" secondItem="Oyp-hP-ITf" secondAttribute="trailing" constant="8" id="a6O-sv-vna"/>
                             <constraint firstItem="OQ2-Xy-TSW" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="dOD-ys-i8F"/>
-                            <constraint firstItem="Oyp-hP-ITf" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" constant="-62" id="osr-Oe-hjL"/>
+                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="bottom" secondItem="Oyp-hP-ITf" secondAttribute="bottom" constant="10" id="osr-Oe-hjL"/>
                         </constraints>
                     </view>
                     <connections>
