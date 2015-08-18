@@ -95,7 +95,7 @@ class PhotoManager {
                     }
                 })
                 
-                var dateToCheck : NSDate?  = NSUserDefaults.standardUserDefaults().objectForKey(newestUpdateKey) as? NSDate
+                var dateToCheck : NSDate?  = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(newestUpdateKey) as? NSDate
                 
                 if dateToCheck == nil {
                     dateToCheck = NSDate.distantPast()
@@ -115,7 +115,7 @@ class PhotoManager {
                     }) } else {
                     
                     print("done loading images")
-                    NSUserDefaults.standardUserDefaults().setObject(NSDate(), forKey: newestUpdateKey)
+                    NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.setObject(NSDate(), forKey: newestUpdateKey)
                     completionHandler(result: index)
                 }
             })

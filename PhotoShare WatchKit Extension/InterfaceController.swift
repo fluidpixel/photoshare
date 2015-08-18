@@ -35,15 +35,15 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
-        let defaults = NSUserDefaults.standardUserDefaults()
+        let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
         
-        var dateLastModified : NSDate? = defaults.objectForKey(lastUpdateKey) as? NSDate
+        var dateLastModified : NSDate? = defaults?.objectForKey(lastUpdateKey) as? NSDate
         
         if dateLastModified == nil {
             dateLastModified = NSDate.distantPast()
         }
         
-        if let tempStoredIDs = NSUserDefaults.standardUserDefaults().dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
+        if let tempStoredIDs = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
             
             storedIDs = tempStoredIDs
             
@@ -53,7 +53,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         //load in currently stored pictures
         
-        let pictureCounter = NSUserDefaults.standardUserDefaults().integerForKey(pictureCountKey)
+        let pictureCounter = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey)
         
         var wasImageSet = false
         
@@ -123,9 +123,11 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 
                 var url : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
                 
-                let fileName = "PhotoGallery\(NSUserDefaults.standardUserDefaults().integerForKey(pictureCountKey)).jpg"
+                let userdefaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
                 
-                if let tempStoredIDs = NSUserDefaults.standardUserDefaults().dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
+                let fileName = "PhotoGallery\(userdefaults?.integerForKey(pictureCountKey)).jpg"
+                
+                if let tempStoredIDs = userdefaults?.dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
                     
                     storedIDs = tempStoredIDs
                     
@@ -146,7 +148,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 
                 pageNumber++
                 
-                let defaults = NSUserDefaults.standardUserDefaults()
+                if let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare") {
                 
                 if var arrayCurrent = defaults.arrayForKey(pictureArrayKey) {
                     
@@ -171,9 +173,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 let updatedDate = NSDate()
 
                 defaults.setObject(updatedDate, forKey: lastUpdateKey)
-                
-                NSUserDefaults.standardUserDefaults().setObject(storedIDs, forKey: IDsArrayKey)
-                
+                defaults.setObject(storedIDs, forKey: IDsArrayKey)
+                }
                 
                 WkButton.setBackgroundImage(storedImages[pageNumber] as? UIImage)
                 WkButton.setTitle("")
@@ -189,14 +190,14 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
     @IBAction func WkButtonPressed() {
         
-        if NSUserDefaults.standardUserDefaults().integerForKey(pictureCountKey) > 0 {
+        if NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey) > 0 {
         
-            pageNumber = (pageNumber + 1) % NSUserDefaults.standardUserDefaults().integerForKey(pictureCountKey) //fix crash here
+            pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
             
             WkButton.setBackgroundImage(images[pageNumber])
         } else {
             
-            var dateLastModified : NSDate? = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdateKey) as? NSDate
+            var dateLastModified : NSDate? = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(lastUpdateKey) as? NSDate
             
             if dateLastModified == nil {
                 dateLastModified = NSDate.distantPast()

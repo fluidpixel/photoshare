@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         
         let date = NSDateFormatter().dateFromString(stringDate)
         
-        let lastKnownUpdate : NSDate = NSUserDefaults.standardUserDefaults().objectForKey(newestUpdateKey) as! NSDate
+        let lastKnownUpdate : NSDate = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(newestUpdateKey) as! NSDate
         
         if lastKnownUpdate.earlierDate(date!) == date! {
             
