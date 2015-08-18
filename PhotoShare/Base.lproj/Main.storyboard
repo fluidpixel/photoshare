@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,12 +16,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OQ2-Xy-TSW">
-                                <rect key="frame" x="0.0" y="28" width="600" height="564"/>
-                                <gestureRecognizers/>
-                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ree-on-8Pj">
-                                <rect key="frame" x="534" y="530" width="50" height="50"/>
+                                <rect key="frame" x="534" y="538" width="50" height="50"/>
                                 <state key="normal" image="Facebook">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -30,7 +26,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oyp-hP-ITf">
-                                <rect key="frame" x="476" y="530" width="50" height="50"/>
+                                <rect key="frame" x="476" y="538" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="KK1-pN-GNa"/>
                                     <constraint firstAttribute="height" constant="50" id="cCr-5l-nEL"/>
@@ -42,24 +38,22 @@
                                     <action selector="ShareWithTwitter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BDK-vi-XRi"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OQ2-Xy-TSW">
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
+                                <gestureRecognizers/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="OQ2-Xy-TSW" secondAttribute="centerX" id="HIx-fI-Y21"/>
                             <constraint firstItem="ree-on-8Pj" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" constant="-62" id="K0I-NQ-RQa"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" constant="8" symbolic="YES" id="MAB-o1-pwX"/>
-                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="SoB-x5-heZ"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" id="MAB-o1-pwX"/>
+                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="SoB-x5-heZ"/>
                             <constraint firstItem="ree-on-8Pj" firstAttribute="leading" secondItem="OQ2-Xy-TSW" secondAttribute="trailing" constant="-66" id="Yqx-kb-KDi"/>
                             <constraint firstItem="ree-on-8Pj" firstAttribute="leading" secondItem="Oyp-hP-ITf" secondAttribute="trailing" constant="8" id="a6O-sv-vna"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" id="c5z-am-Tmu"/>
                             <constraint firstItem="OQ2-Xy-TSW" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="dOD-ys-i8F"/>
                             <constraint firstItem="Oyp-hP-ITf" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" constant="-62" id="osr-Oe-hjL"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="c5z-am-Tmu"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
                         <outlet property="myImage" destination="OQ2-Xy-TSW" id="aiN-IZ-jDN"/>
