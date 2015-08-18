@@ -57,68 +57,79 @@ class PhotoManager {
         if fetchResult.count > 0 {
             
             let size = CGSizeMake(320, 640)
-            imgManager.requestImageForAsset((fetchResult.objectAtIndex(index) as! PHAsset), targetSize: size, contentMode: PHImageContentMode.AspectFill, options: requestOptions, resultHandler: { (image: UIImage?, result : [NSObject : AnyObject]?)  in
+            
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), { () -> Void in
                 
-                _ = fetchResult.objectAtIndex(index).requestContentEditingInputWithOptions(nil, completionHandler: { (contentEditingInput, dict: [NSObject : AnyObject]) -> Void in
-                    if contentEditingInput != nil {
-                        url = contentEditingInput!.fullSizeImageURL!
-                        
-                        let arrayURL = "\(url)".characters.split{$0 == "/"}.map{String($0)}
-                        
-                        let fileName = "\(arrayURL.last!)"
-                        
-                        //get display size image and save that for loading
-                        let displayImage = contentEditingInput?.displaySizeImage
-                        
-                        //save that image in the documents
-                        
-                        var url2 : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
-                        
-                        url2 = url2.stringByAppendingPathComponent(fileName)
-                        
-                        UIImageJPEGRepresentation(displayImage!, 0.5)?.writeToFile(url2 as String, atomically: true)
-                        
-                        let urlStringConversion = NSURL(fileURLWithPath: url2 as String)
-                        
-                        creationDate = contentEditingInput?.creationDate
-                        
-                        if creationDate == nil {
-                            creationDate = NSDate()
+                imgManager.requestImageForAsset((fetchResult.objectAtIndex(index) as! PHAsset), targetSize: size, contentMode: PHImageContentMode.AspectFill, options: requestOptions, resultHandler: { (image: UIImage?, result : [NSObject : AnyObject]?)  in
+                    
+                    let editingOptions = PHContentEditingInputRequestOptions()
+                    
+                    editingOptions.networkAccessAllowed = true
+                    
+                    _ = fetchResult.objectAtIndex(index).requestContentEditingInputWithOptions(editingOptions, completionHandler: { (contentEditingInput, dict: [NSObject : AnyObject]) -> Void in
+                        if contentEditingInput != nil {
+                            url = contentEditingInput!.fullSizeImageURL!
+                            
+                            let arrayURL = "\(url)".characters.split{$0 == "/"}.map{String($0)}
+                            
+                            let fileName = "\(arrayURL.last!)"
+                            
+                            //get display size image and save that for loading
+                            let displayImage = contentEditingInput?.displaySizeImage
+                            
+                            //save that image in the documents
+                            
+                            var url2 : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
+                            
+                            url2 = url2.stringByAppendingPathComponent(fileName)
+                            
+                            UIImageJPEGRepresentation(displayImage!, 0.5)?.writeToFile(url2 as String, atomically: true)
+                            
+                            let urlStringConversion = NSURL(fileURLWithPath: url2 as String)
+                            
+                            creationDate = contentEditingInput?.creationDate
+                            
+                            if creationDate == nil {
+                                creationDate = NSDate()
+                            }
+                            
+                            if self.urlArray[creationDate!] == nil {
+                                self.urlArray[creationDate!] = urlStringConversion
+                                self.fullSizeArray[creationDate!] = url
+                            }
+                            
+                            print(url)
                         }
+                    })
+                    
+                    var dateToCheck : NSDate?  = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(newestUpdateKey) as? NSDate
+                    
+                    if dateToCheck == nil {
+                        dateToCheck = NSDate.distantPast()
+                    }
+                    
+                    // if dateToCheck!.earlierDate(creationDate!) == dateToCheck {
+                    if let fetchedImage = image {
+                        self.images.addObject(fetchedImage)
+                        //}
+                    }
+                    
+                    if index + 1 < fetchResult.count {
+                        self.fetchPhotoFromGallery(index + 1, completionHandler: { (result) -> () in
+                            if result > 0 {
+                                completionHandler(result: result)
+                            }
+                        }) } else {
                         
-                        if self.urlArray[creationDate!] == nil {
-                            self.urlArray[creationDate!] = urlStringConversion
-                            self.fullSizeArray[creationDate!] = url
-                        }
-                        
-                        print(url)
+                        print("done loading images")
+                        NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.setObject(NSDate(), forKey: newestUpdateKey)
+                        completionHandler(result: index)
                     }
                 })
                 
-                var dateToCheck : NSDate?  = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(newestUpdateKey) as? NSDate
-                
-                if dateToCheck == nil {
-                    dateToCheck = NSDate.distantPast()
-                }
-                
-                // if dateToCheck!.earlierDate(creationDate!) == dateToCheck {
-                if let fetchedImage = image {
-                    self.images.addObject(fetchedImage)
-                    //}
-                }
-                
-                if index + 1 < fetchResult.count {
-                    self.fetchPhotoFromGallery(index + 1, completionHandler: { (result) -> () in
-                        if result > 0 {
-                            completionHandler(result: result)
-                        }
-                    }) } else {
-                    
-                    print("done loading images")
-                    NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.setObject(NSDate(), forKey: newestUpdateKey)
-                    completionHandler(result: index)
-                }
             })
+            
+            
         }
     }
 }
