@@ -28,7 +28,7 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>WKCompanionAppBundleIdentifier</key>
-	<string>FluidPixel.PhotoShare</string>
+	<string>com.fpstudios.PhotoShare</string>
 	<key>WKWatchKitApp</key>
 	<true/>
 </dict>
