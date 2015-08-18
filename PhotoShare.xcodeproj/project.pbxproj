@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		54FDFC451B834F2D0001BB5F /* Photos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC441B834F2D0001BB5F /* Photos.swift */; };
 		B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93EC68E1B6FC10E007A2596 /* Sharing.swift */; };
 		B94F67C31B6284F5002B7ABA /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B94F67C21B6284F5002B7ABA /* Social.framework */; };
 		B9506D021B5FB08700B31FEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9506D011B5FB08700B31FEF /* AppDelegate.swift */; };
@@ -75,6 +76,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		54FDFC441B834F2D0001BB5F /* Photos.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photos.swift; sourceTree = "<group>"; };
 		B93EC68E1B6FC10E007A2596 /* Sharing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sharing.swift; sourceTree = "<group>"; };
 		B94F67C21B6284F5002B7ABA /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		B9506CFC1B5FB08700B31FEF /* PhotoShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +168,7 @@
 				B9506D011B5FB08700B31FEF /* AppDelegate.swift */,
 				B9506D031B5FB08700B31FEF /* ViewController.swift */,
 				B93EC68E1B6FC10E007A2596 /* Sharing.swift */,
+				54FDFC441B834F2D0001BB5F /* Photos.swift */,
 				B9506D051B5FB08800B31FEF /* Main.storyboard */,
 				B9506D081B5FB08800B31FEF /* Images.xcassets */,
 				B9506D0A1B5FB08800B31FEF /* LaunchScreen.xib */,
@@ -420,6 +423,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54FDFC451B834F2D0001BB5F /* Photos.swift in Sources */,
 				B9506D041B5FB08700B31FEF /* ViewController.swift in Sources */,
 				B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */,
 				B9506D021B5FB08700B31FEF /* AppDelegate.swift in Sources */,
@@ -533,6 +537,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRIP_BITCODE_FROM_COPIED_FILES = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -571,6 +576,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				STRIP_BITCODE_FROM_COPIED_FILES = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -585,7 +591,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/laurenbrown/Documents/FacebookSDK,
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = PhotoShare/Info.plist;
@@ -605,7 +610,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/laurenbrown/Documents/FacebookSDK,
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = PhotoShare/Info.plist;

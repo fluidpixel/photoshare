@@ -10,6 +10,8 @@ import Foundation
 import Social
 import Accounts
 
+ let newestUpdateKey = "lastUpdateRecorded"
+
 class Sharing {
     
     var accountFB: ACAccount?

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-//import FBSDKCoreKit
+import WatchConnectivity
 
 
 struct Classes {
@@ -15,40 +15,91 @@ struct Classes {
 }
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
 
     var window: UIWindow?
-
+    var session = WCSession.defaultSession()
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         print("LAUNCH")
+        
+        session.delegate = self
+        session.activateSession()
+        
         return true
     }
 
 
-    func applicationWillResignActive(application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    @available(iOS 9.0, *) func session(session: WCSession, didReceiveMessageData messageData: NSData, replyHandler: (NSData) -> Void) {
+        
+        print("Message received from watch \(messageData)")
+        
+        let stringDate : String = NSString(data: messageData, encoding: NSUTF8StringEncoding)! as String
+        
+        let date = NSDateFormatter().dateFromString(stringDate)
+        
+        let lastKnownUpdate : NSDate = NSUserDefaults.standardUserDefaults().objectForKey(newestUpdateKey) as! NSDate
+        
+        if lastKnownUpdate.earlierDate(date!) == date! {
+            
+            //transfer all files that are later than that date
+            for (key, _) in PhotoManager.sharedInstance.urlArray {
+                
+                if key.laterDate(date!) == key {
+                    
+                    let metadata = ["creationDate" : key]
+                    
+                    _ = session.transferFile(PhotoManager.sharedInstance.urlArray[key]!, metadata: metadata)
+                }
+                
+                
+            }
+        } else { //this should not trigger really
+            
+            print("this has triggered, why?")
+//            PhotoManager.sharedInstance.loadPhotos()
+        }
+        
+        
     }
-
-    func applicationDidEnterBackground(application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
+    func session(session: WCSession, didFinishFileTransfer fileTransfer: WCSessionFileTransfer, error: NSError?) {
+        
+        print(error?.localizedDescription)
+        
     }
-
-    func applicationWillEnterForeground(application: UIApplication) {
-        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    
+    @available(iOS 9.0, *) func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
+        
+        //do your handle stuff here
+        print("Received message to share data via X")
+        
+        var sentImage : UIImage?
+        
+        for (date, url) in PhotoManager.sharedInstance.fullSizeArray {
+            
+            if date == userInfo["ID"] as! NSDate {
+                if let data = NSData(contentsOfURL: url) {
+                    sentImage = UIImage(data: data)
+                }
+                
+            }
+        }
+        
+        switch(userInfo["Media"] as! String) {
+        case "Facebook":
+            Classes.shareClass.SendToFB(sentImage)
+            break
+        case "Twitter":
+            Classes.shareClass.SendTweet(sentImage)
+            break
+        default:
+            print("media is not twitter or facebook")
+            break
+        }
+        
     }
-
-    func applicationDidBecomeActive(application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
-    func applicationWillTerminate(application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-
 
 }
 
