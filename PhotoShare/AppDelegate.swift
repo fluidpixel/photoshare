@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import FBSDKCoreKit
+//import FBSDKCoreKit
 
 
 struct Classes {

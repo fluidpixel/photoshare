@@ -12,9 +12,6 @@ import Accounts
 import Social
 import WatchConnectivity
 
-import FBSDKCoreKit
-import FBSDKLoginKit
-
 @available(iOS 9.0, *)
 class ViewController: UIViewController, UINavigationControllerDelegate, WCSessionDelegate {
     
@@ -275,8 +272,10 @@ class ViewController: UIViewController, UINavigationControllerDelegate, WCSessio
         
         let requestOptions = PHImageRequestOptions()
         requestOptions.synchronous = true
+        requestOptions.networkAccessAllowed = true
         
         let fetchOptions = PHFetchOptions()
+        fetchOptions.fetchLimit = 25
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         
         let fetchResult = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
@@ -285,8 +284,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, WCSessio
         
         var creationDate: NSDate?
  
-        
-            
             if fetchResult.count > 0 {
                 imgManager.requestImageForAsset((fetchResult.objectAtIndex(index) as! PHAsset), targetSize: self.myImage.frame.size, contentMode: PHImageContentMode.AspectFill, options: requestOptions, resultHandler: { (image: UIImage?, result : [NSObject : AnyObject]?)  in
 

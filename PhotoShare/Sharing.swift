@@ -8,10 +8,7 @@
 
 import Foundation
 import Social
-
-import FBSDKCoreKit
-import FBSDKShareKit
-import FBSDKLoginKit
+import Accounts
 
 class Sharing {
     
