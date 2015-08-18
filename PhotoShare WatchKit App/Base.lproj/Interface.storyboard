@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8173.3" systemVersion="14E46" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="8089"/>
@@ -19,12 +19,12 @@
                     </items>
                     <menu key="menu" id="YDH-UW-T81">
                         <items>
-                            <menuItem title="Tweet" image="Twitter" id="dKy-C3-qdr">
+                            <menuItem title="Tweet" image="Twitter" id="dKy-C3-qdr" userLabel="Twitter">
                                 <connections>
                                     <action selector="SendTweet" destination="AgC-eL-Hgc" id="48n-Ig-71B"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Share" image="Facebook" id="ls9-4g-Rg9">
+                            <menuItem title="Share" image="Facebook" id="ls9-4g-Rg9" userLabel="Facebook">
                                 <connections>
                                     <action selector="ShareOnFB" destination="AgC-eL-Hgc" id="v3J-pt-wIr"/>
                                 </connections>
@@ -34,7 +34,7 @@
                                     <action selector="SendText" destination="AgC-eL-Hgc" id="Jjz-hb-tfo"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Menu Item" image="Facebook" id="Otp-te-zvH">
+                            <menuItem title="Email" icon="share" id="Otp-te-zvH" userLabel="Email">
                                 <connections>
                                     <action selector="SendEmail" destination="AgC-eL-Hgc" id="nJN-41-woz"/>
                                 </connections>

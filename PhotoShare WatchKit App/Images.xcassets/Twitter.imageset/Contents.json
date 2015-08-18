@@ -1,19 +1,19 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "TwitterLogo_#55acee.png"
+      "idiom" : "watch",
+      "filename" : "TwitterLogo_#55acee.png",
+      "scale" : "2x"
     },
     {
-      "idiom" : "universal",
+      "idiom" : "watch",
       "scale" : "2x",
-      "filename" : "TwitterLogo_#55acee-1.png"
+      "screen-width" : "<=145"
     },
     {
-      "idiom" : "universal",
-      "scale" : "3x",
-      "filename" : "TwitterLogo_#55acee-2.png"
+      "idiom" : "watch",
+      "scale" : "2x",
+      "screen-width" : ">145"
     }
   ],
   "info" : {
