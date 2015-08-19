@@ -57,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
             }
         } else { //this should not trigger really
             
-            print("this has triggered, why?")
+            print("The last update date for the watch is sooner than the phone, something has gone really wrong here")
 //            PhotoManager.sharedInstance.loadPhotos()
         }
         
@@ -73,7 +73,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
     @available(iOS 9.0, *) func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
         
         //do your handle stuff here
-        print("Received message to share data via X")
+        let media = userInfo["Media"] as! String
+        
+        print("Received message to share data via \(media)")
         
         var sentImage : UIImage?
         
@@ -87,12 +89,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
             }
         }
         
-        switch(userInfo["Media"] as! String) {
+        switch(media) {
         case "Facebook":
-            Classes.shareClass.SendToFB(sentImage)
+            Classes.shareClass.SendToFB(sentImage) { result in
+                
+                if result == true {
+                    
+                    print("Success! Sent from watch")
+                    _ = session.transferUserInfo(["Result": "Success"])
+                } else if result == false {
+                    print("User not logged in")
+                    _ = session.transferUserInfo(["Result": "Fail"])
+                }
+                
+            }
             break
         case "Twitter":
-            Classes.shareClass.SendTweet(sentImage)
+            Classes.shareClass.SendTweet(sentImage) { result in
+            
+                if result == true {
+                    
+                    print("Success! Sent from watch")
+                    _ = session.transferUserInfo(["Result": "Success"])
+                } else if result == false {
+                    print("User not logged in")
+                    _ = session.transferUserInfo(["Result": "Fail"])
+                }
+            }
             break
         default:
             print("media is not twitter or facebook")

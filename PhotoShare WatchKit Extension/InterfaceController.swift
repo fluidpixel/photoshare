@@ -90,13 +90,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session.delegate = self
             session.activateSession()
             
-          //  let action = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default, handler: { () -> Void in
-         //       self.dismissController()
-           // })
-            
-           // presentAlertControllerWithTitle("Waiting for images", message: "We are loading images from your phone, this may take a few seconds", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
-            
-            
             let requestData = NSDateFormatter().stringFromDate(dateLastModified!).dataUsingEncoding(NSUTF8StringEncoding)
             session.sendMessageData(requestData!, replyHandler: { (response: NSData) -> Void in
                 
@@ -189,8 +182,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 defaults.setObject(storedIDs, forKey: IDsArrayKey)
                 }
                 
-//                WkButton.setBackgroundImage(storedImages[pageNumber] as? UIImage)
-//                WkButton.setTitle("")
                 WkButton.setHidden(true)
                 loadTableData()
             }
@@ -199,6 +190,16 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
+        
+        print("Recevied reply from phone - result : \(userInfo.values.first)")
+        
+        let alert = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+            
+        }
+        
+        let title = (userInfo.values.first as! String == "Success") ? "Message Sent!" : "Message Failed to Send!"
+        
+        presentAlertControllerWithTitle(title, message: nil, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
         
     }
     

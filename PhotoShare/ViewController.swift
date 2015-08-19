@@ -95,20 +95,59 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
     }
     
-    
+    func showLoginAlert(identifier : String){
+        
+        print("User is trying to share via \(identifier) when they are not logged in")
+        
+        let alert = UIAlertController(title: "Login Error", message: "You are trying to share with \(identifier) without logging in. Would you like to login?", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler: { ( _ : UIAlertAction) -> Void in
+            
+            UIApplication.sharedApplication().openURL(NSURL(string: UIApplicationOpenSettingsURLString)!)
+            
+            alert.dismissViewControllerAnimated(true, completion: { () -> Void in
+                
+            })
+        }))
+        
+        alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: { (UIAlertAction) -> Void in
+            alert.dismissViewControllerAnimated(true, completion: { () -> Void in
+                print("User chose not to login")
+            })
+        }))
+        
+        self.showViewController(alert, sender: self)
+    }
     
     
     
     @IBAction func ShareWithFB(sender: UIButton) {
         
-        Classes.shareClass.SendToFB(myImage.image!)
+        Classes.shareClass.SendToFB(myImage.image!) { (result) -> () in
+            if result == true {
+                
+                print("INFO: Photo shared - Facebook")
+                
+            } else if result == false {
+                self.showLoginAlert("Facebook")
+            }
+        } 
         
     }
     
     
     @IBAction func ShareWithTwitter(sender: UIButton) {
         
-       Classes.shareClass.SendTweet(myImage.image!)
+        Classes.shareClass.SendTweet(myImage.image!) { result in
+            
+            if result == true {
+                
+                 print("INFO: Photo shared - Twitter")
+            } else if result == false {
+                
+                self.showLoginAlert("Twitter")
+            }
+        }
     }
     
     

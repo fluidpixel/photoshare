@@ -1,3 +1,7 @@
 UserInterfaceState.xcuserstate
 stuartvarrall.xcuserdatad
 Breakpoints_v2.xcbkptlist
+
+*.xcbkptlist
+
+*.xcuserstate

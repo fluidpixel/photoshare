@@ -27,7 +27,7 @@ class Sharing {
 
   //class for adding share and send functionality
     
-    func SendToFB(image : UIImage?) {
+    func SendToFB(image : UIImage?, completionHandler: (result: Bool) -> ()) {
         
         if image != nil {
             
@@ -51,6 +51,7 @@ class Sharing {
                 
                 if error == nil {
                     print("Facebook response : \(response.statusCode)")
+                    completionHandler(result: true)
                 } else {
                     print("ERROR: \(error)")
                 }
@@ -58,7 +59,9 @@ class Sharing {
             
 
             } else {
+                
                 print("ERROR: Account not set up")
+                completionHandler(result: false)
             }
         
         } else {
@@ -67,7 +70,7 @@ class Sharing {
         
     }
     
-    func SendTweet(image : UIImage?) {
+    func SendTweet(image : UIImage?, completionHandler : (result: Bool) -> ()) {
         
         if image != nil {
             
@@ -85,14 +88,21 @@ class Sharing {
                 
                 postrequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
                     
-                    print("Twitter response : \(response.statusCode)")
+                    if error == nil {
+                        print("Twitter response : \(response.statusCode)")
+                        completionHandler(result: true)
+                    }
+                    
+                    
                     
                     print("ERROR: \(error)")
                 })
                 
             }
             else {
-                print("ERROR: Twitter not supported")
+                print("ERROR: Twitter not setup")
+                
+                completionHandler(result: false)
             }
         } else {
             print("ERROR: image does not exist")
