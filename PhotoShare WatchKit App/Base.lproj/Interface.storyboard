@@ -10,6 +10,21 @@
             <objects>
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="PhotoShare_WatchKit_App" customModuleProvider="target">
                     <items>
+                        <table alignment="center" verticalAlignment="center" spacing="0.0" id="Wq5-bf-nWo">
+                            <items>
+                                <tableRow identifier="image row" selectable="NO" id="v5r-RG-foi" customClass="ImageTableRowController" customModule="PhotoShare_WatchKit_Extension">
+                                    <group key="rootItem" width="1" height="1" alignment="left" spacing="0.0" id="kwq-Fv-ZKW">
+                                        <items>
+                                            <imageView width="1" height="1" alignment="center" verticalAlignment="center" contentMode="scaleAspectFill" id="xid-85-ESz"/>
+                                        </items>
+                                        <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                                    </group>
+                                    <connections>
+                                        <outlet property="photo" destination="xid-85-ESz" id="0Mp-w3-JKo"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
                         <button width="1" height="1" alignment="center" verticalAlignment="center" id="U1o-aD-1zD">
                             <accessibilityTraits key="accessibilityTraits" button="YES" image="YES"/>
                             <connections>
@@ -43,6 +58,7 @@
                     </menu>
                     <connections>
                         <outlet property="WkButton" destination="U1o-aD-1zD" id="ebs-EJ-W2H"/>
+                        <outlet property="imageTable" destination="Wq5-bf-nWo" id="X3q-Y7-KBH"/>
                     </connections>
                 </controller>
             </objects>

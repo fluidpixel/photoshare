@@ -13,6 +13,7 @@ import ImageIO
 
 class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
+    @IBOutlet var imageTable: WKInterfaceTable!
     @IBOutlet weak var watchImage: WKInterfaceImage!
     @IBOutlet var WkButton: WKInterfaceButton!
     
@@ -67,17 +68,20 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
             if image != nil {
                 if i == 0 {
-                    WkButton.setBackgroundImage(image)
                     wasImageSet = true
                 }
-                
                 images.append(image!)
             }
             
         }
         
+        
         if !wasImageSet {
+            WkButton.setHidden(false)
             WkButton.setTitle("No images found, tap to load them")
+        } else {
+            WkButton.setHidden(true)
+            loadTableData()
         }
         
         if (WCSession.isSupported()) {
@@ -108,6 +112,15 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
     }
     
+    func loadTableData() {
+        imageTable.setNumberOfRows(images.count, withRowType: "image row")
+        for (index, image) in images.enumerate() {
+            if let row = imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
+                row.photo.setImage(image)
+            }
+        }
+    }
+    
     func session(session: WCSession, didReceiveFile file: WCSessionFile) {
         
         print("received a file at : \(file.fileURL.relativePath!)")
@@ -125,7 +138,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 
                 let userdefaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
                 
-                let fileName = "PhotoGallery\(userdefaults?.integerForKey(pictureCountKey)).jpg"
+                let fileName = "PhotoGallery\(userdefaults!.integerForKey(pictureCountKey)).jpg"
                 
                 if let tempStoredIDs = userdefaults?.dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
                     
@@ -176,8 +189,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 defaults.setObject(storedIDs, forKey: IDsArrayKey)
                 }
                 
-                WkButton.setBackgroundImage(storedImages[pageNumber] as? UIImage)
-                WkButton.setTitle("")
+//                WkButton.setBackgroundImage(storedImages[pageNumber] as? UIImage)
+//                WkButton.setTitle("")
+                WkButton.setHidden(true)
+                loadTableData()
             }
         }
 
@@ -192,9 +207,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         if NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey) > 0 {
         
-            pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
-            
-            WkButton.setBackgroundImage(images[pageNumber])
+            if images.count > 0 {
+                pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
+                
+                WkButton.setHidden(true)
+                loadTableData()
+            }
         } else {
             
             var dateLastModified : NSDate? = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(lastUpdateKey) as? NSDate
@@ -218,18 +236,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
     }
 
-    override func willActivate() {
-        // This method is called when watch view controller is about to be visible to user
-        super.willActivate()
-    }
-
-    override func didDeactivate() {
-        // This method is called when watch view controller is no longer visible
-        super.didDeactivate()
-    }
-    
-    
-    
     @IBAction func SendTweet() {
 
         SendData("Twitter")
