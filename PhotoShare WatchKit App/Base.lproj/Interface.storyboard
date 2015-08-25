@@ -12,15 +12,19 @@
                     <items>
                         <table alignment="center" verticalAlignment="center" spacing="0.0" id="Wq5-bf-nWo">
                             <items>
-                                <tableRow identifier="image row" selectable="NO" id="v5r-RG-foi" customClass="ImageTableRowController" customModule="PhotoShare_WatchKit_Extension">
+                                <tableRow identifier="image row" id="v5r-RG-foi" customClass="ImageTableRowController" customModule="PhotoShare_WatchKit_Extension">
                                     <group key="rootItem" width="1" height="1" alignment="left" spacing="0.0" id="kwq-Fv-ZKW">
                                         <items>
+                                            <imageView width="1" height="1" alignment="center" verticalAlignment="center" hidden="YES" alpha="0.5" image="Selected" contentMode="scaleAspectFill" id="Nxw-pb-bz6">
+                                                <color key="tintColor" red="0.30291172525653087" green="1" blue="0.22721084046235418" alpha="1" colorSpace="calibratedRGB"/>
+                                            </imageView>
                                             <imageView width="1" height="1" alignment="center" verticalAlignment="center" contentMode="scaleAspectFill" id="xid-85-ESz"/>
                                         </items>
                                         <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
                                     </group>
                                     <connections>
                                         <outlet property="photo" destination="xid-85-ESz" id="0Mp-w3-JKo"/>
+                                        <outlet property="selected" destination="Nxw-pb-bz6" id="8ie-6G-oHK"/>
                                     </connections>
                                 </tableRow>
                             </items>
@@ -46,12 +50,12 @@
                             </menuItem>
                             <menuItem title="Message" icon="add" id="cq9-4J-u7L">
                                 <connections>
-                                    <action selector="SendText" destination="AgC-eL-Hgc" id="Jjz-hb-tfo"/>
+                                    <action selector="SendText" destination="AgC-eL-Hgc" id="omK-hG-8a2"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Email" icon="share" id="Otp-te-zvH" userLabel="Email">
                                 <connections>
-                                    <action selector="SendEmail" destination="AgC-eL-Hgc" id="nJN-41-woz"/>
+                                    <action selector="SendEmail" destination="AgC-eL-Hgc" id="3KL-Co-FNc"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -62,7 +66,7 @@
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="55" y="485"/>
+            <point key="canvasLocation" x="-203" y="532"/>
         </scene>
     </scenes>
 </document>

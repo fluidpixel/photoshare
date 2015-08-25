@@ -43,8 +43,10 @@ class PhotoManager {
         let requestOptions = PHImageRequestOptions()
         requestOptions.synchronous = true
         requestOptions.networkAccessAllowed = true
+        requestOptions.deliveryMode = PHImageRequestOptionsDeliveryMode.FastFormat
         
         let fetchOptions = PHFetchOptions()
+        
         fetchOptions.fetchLimit = 25
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         

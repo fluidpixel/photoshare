@@ -10,6 +10,7 @@ import WatchKit
 import Foundation
 import WatchConnectivity
 import ImageIO
+import Contacts
 
 class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
@@ -24,13 +25,15 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     var storedIDs : [String : NSDate]?
     var images = [UIImage]()
     var session : WCSession!
+    var selectedImage : [Int] = [0]
     
     
-    let maxPictureCount = 250
+    let maxPictureCount = 25
     let pictureCountKey = "pictureCount"
     let lastUpdateKey = "DateLastModified"
     let pictureArrayKey = "photoAddresses"
     let IDsArrayKey = "StoredIDs"
+    let latestImageKey = "NewestImage"
 
     
     override func awakeWithContext(context: AnyObject?) {
@@ -107,13 +110,41 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     func loadTableData() {
         imageTable.setNumberOfRows(images.count, withRowType: "image row")
+        
         for (index, image) in images.enumerate() {
             if let row = imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
                 row.photo.setImage(image)
+                row.selected.setImage(UIImage(named: "Selected"))
+                row.selected.setHidden(true)
+                row.selected.setAlpha(0.5)
             }
         }
     }
     
+    override func table(table: WKInterfaceTable, didSelectRowAtIndex rowIndex: Int) {
+        
+        print("Selected image at row \(rowIndex)")
+        
+        //image filtering
+        let row = table.rowControllerAtIndex(rowIndex) as! ImageTableRowController
+        
+        if selectedImage.contains(rowIndex) {
+            let index = selectedImage.indexOf(rowIndex)
+            
+            selectedImage.removeAtIndex(index!)
+            row.selected.setHidden(true)
+            
+        } else {
+            
+            row.selected.setHidden(false)
+            selectedImage.append(rowIndex)
+        }
+        
+        
+    }
+    
+    
+    // SESSIONS
     func session(session: WCSession, didReceiveFile file: WCSessionFile) {
         
         print("received a file at : \(file.fileURL.relativePath!)")
@@ -125,11 +156,31 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         if let data = NSData(contentsOfURL: file.fileURL) {
             if let image = UIImage(data: data) {
                 
-                images.append(image)
+                let userdefaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
+                
+                if images.count >= maxPictureCount {
+                    //push out oldest image from array
+                    
+                    let newestImageIndex  = userdefaults?.integerForKey(pictureCountKey)
+                    
+                    let oldestImageIndex = (newestImageIndex! + 1) % maxPictureCount
+                    
+                    userdefaults?.setValue(oldestImageIndex, forKey: pictureCountKey)
+                    
+                    
+                } else {
+                    //update newest image and carry on
+                    userdefaults?.setValue((images.count), forKey: pictureCountKey)
+                    
+                    images.append(image)
+
+                }
+                
+                
                 
                 var url : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
                 
-                let userdefaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
+                
                 
                 let fileName = "PhotoGallery\(userdefaults!.integerForKey(pictureCountKey)).jpg"
                 
@@ -170,11 +221,11 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     defaults.setObject(newArray, forKey: pictureArrayKey)
                 }
                 
-                var pictureCount = defaults.integerForKey(pictureCountKey)
-                
-                pictureCount++
-                
-                defaults.setValue(pictureCount, forKey: pictureCountKey)
+//                var pictureCount = defaults.integerForKey(pictureCountKey)
+//                
+//                pictureCount++
+//                
+//                defaults.setValue(pictureCount, forKey: pictureCountKey)
                 
                 let updatedDate = NSDate()
 
@@ -202,7 +253,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         presentAlertControllerWithTitle(title, message: nil, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
         
     }
-    
+    //END SESSIONS
 
     @IBAction func WkButtonPressed() {
         
@@ -250,6 +301,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     @IBAction func SendText() {
         
+        GrabContacts()
         SendData("Text")
     }
     
@@ -258,11 +310,28 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         SendData("Email")
     }
     
+    func GrabContacts() {
+        let store = CNContactStore()
+        
+        do {
+            try store.enumerateContactsWithFetchRequest(CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey]), usingBlock: { (contact, status) -> Void in
+                
+                print("Contacts found: \(contact)")
+                
+                print("Status - \(status)")
+                
+            })
+        } catch {
+            print("Could not grab contacts, do they have any?")
+        }
+        
+    }
+    
     func SendData(identifier: String) {
 
         //dictionary - facebook id + imageno
         
-        let metaData : [String : AnyObject] = ["ID" : storedIDs!["\(pageNumber)"] as! AnyObject,
+        let metaData : [String : AnyObject] = ["ID" : storedIDs!["\(selectedImage)"] as! AnyObject,
                                                 "Media" : identifier]
         
         

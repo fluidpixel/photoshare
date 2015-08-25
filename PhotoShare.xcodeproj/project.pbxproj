@@ -21,6 +21,7 @@
 		B9506D2C1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D2B1B5FF3FF00B31FEF /* Images.xcassets */; };
 		B9506D381B5FF3FF00B31FEF /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9506D361B5FF3FF00B31FEF /* Interface.storyboard */; };
 		B9506D3A1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D391B5FF3FF00B31FEF /* Images.xcassets */; };
+		B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B98BDCC11B8CA182001DFF9C /* Contacts.framework */; };
 		B9C11CD11B72627E00F239AD /* PhotoShare WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B9506D251B5FF3FE00B31FEF /* PhotoShare WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B9C11CD41B72627E00F239AD /* PhotoShare WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B9506D2F1B5FF3FF00B31FEF /* PhotoShare WatchKit App.app */; };
 		B9C11D3B1B726CBD00F239AD /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */; };
@@ -102,6 +103,7 @@
 		B95CFAE81B6A6D5800FFA636 /* PhotoShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PhotoShare.entitlements; sourceTree = "<group>"; };
 		B95CFAE91B6A6DE200FFA636 /* PhotoShare WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit Extension.entitlements"; sourceTree = "<group>"; };
 		B978B16A1B7511E700B97C5D /* PhotoShare WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit App.entitlements"; sourceTree = "<group>"; };
+		B98BDCC11B8CA182001DFF9C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
 		B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 		B9C11D3C1B726F2900F239AD /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -111,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */,
 				B94F67C31B6284F5002B7ABA /* Social.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,6 +138,7 @@
 		545F7B3C1B833208006F5321 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B98BDCC11B8CA182001DFF9C /* Contacts.framework */,
 				B94F67C21B6284F5002B7ABA /* Social.framework */,
 			);
 			name = Frameworks;
@@ -593,6 +597,7 @@
 				CODE_SIGN_ENTITLEMENTS = PhotoShare/PhotoShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -612,6 +617,7 @@
 				CODE_SIGN_ENTITLEMENTS = PhotoShare/PhotoShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -716,6 +722,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -739,6 +746,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = "PhotoShare WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fpstudios.PhotoShare.watchkitapp.watchkitextension;

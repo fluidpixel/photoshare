@@ -68,6 +68,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         
         print(error?.localizedDescription)
         
+        //need to handle this through an alert of some kind
+        
+        
+        
     }
     
     @available(iOS 9.0, *) func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
