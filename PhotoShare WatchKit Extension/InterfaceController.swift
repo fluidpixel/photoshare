@@ -18,6 +18,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBOutlet weak var watchImage: WKInterfaceImage!
     @IBOutlet var WkButton: WKInterfaceButton!
     
+    
     //stored variables
     var pageNumber = 0
     var arraySize = 0
@@ -26,7 +27,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     var images = [UIImage]()
     var session : WCSession!
     var selectedImage : [Int] = [0]
-    
+    var dictationResult = ""
+    var contactsFromPhone = [String : String]()
     
     let maxPictureCount = 25
     let pictureCountKey = "pictureCount"
@@ -113,10 +115,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         for (index, image) in images.enumerate() {
             if let row = imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
-                row.photo.setImage(image)
-                row.selected.setImage(UIImage(named: "Selected"))
-                row.selected.setHidden(true)
-                row.selected.setAlpha(0.5)
+                row.WKGroup.setBackgroundImage(image)
+                //row.photo.setImage(image)
             }
         }
     }
@@ -132,11 +132,11 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             let index = selectedImage.indexOf(rowIndex)
             
             selectedImage.removeAtIndex(index!)
-            row.selected.setHidden(true)
+            row.photo.setHidden(true)
             
         } else {
-            
-            row.selected.setHidden(false)
+    
+            row.photo.setHidden(false)
             selectedImage.append(rowIndex)
         }
         
@@ -302,7 +302,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBAction func SendText() {
         
         GrabContacts()
-        SendData("Text")
+        //SendData("Text")
     }
     
     @IBAction func SendEmail() {
@@ -311,27 +311,72 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     func GrabContacts() {
+        
+        //do I actually /need/ this?
         let store = CNContactStore()
         
         do {
             try store.enumerateContactsWithFetchRequest(CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey]), usingBlock: { (contact, status) -> Void in
                 
-                print("Contacts found: \(contact)")
+                for numbers in contact.phoneNumbers {
+                    
+                    if numbers.label.rangeOfString("Mobile") != nil {
+                        
+                        let no  = numbers.value as? CNPhoneNumber
+                        
+                        print(no!.stringValue)
+                        
+                        self.contactsFromPhone[no!.stringValue] = "\(contact.givenName) \(contact.familyName)"
+                    }
+                }
+                
+                
+                print("name: \(contact.givenName) \(contact.familyName)")
                 
                 print("Status - \(status)")
+                
                 
             })
         } catch {
             print("Could not grab contacts, do they have any?")
         }
         
+        
+        
+        if contactsFromPhone.count > 0 {
+            
+            //display the list of available contacts to pick
+            pushControllerWithName("ContactsTableController", context: ["segue" : "hierarchical", "data" : contactsFromPhone])
+            
+        }
+        
+        
+    }
+    
+    func AddMessage() {
+        
+        presentTextInputControllerWithSuggestions(nil, allowedInputMode: WKTextInputMode.Plain, completion: { (result : [AnyObject]?) -> Void in
+            
+            print(result)
+            
+            if result != nil {
+                
+                for all in result! {
+                    
+                    self.dictationResult = self.dictationResult + (all as! String)
+                }
+                
+                print(self.dictationResult)
+            }
+        })
+        
     }
     
     func SendData(identifier: String) {
 
-        //dictionary - facebook id + imageno
+        //dictionary - imagenumbers
         
-        let metaData : [String : AnyObject] = ["ID" : storedIDs!["\(selectedImage)"] as! AnyObject,
+        let metaData : [String : AnyObject] = ["ID" : storedIDs!["\(selectedImage[0])"] as! AnyObject,
                                                 "Media" : identifier]
         
         

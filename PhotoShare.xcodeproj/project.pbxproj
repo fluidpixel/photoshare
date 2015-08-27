@@ -21,7 +21,9 @@
 		B9506D2C1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D2B1B5FF3FF00B31FEF /* Images.xcassets */; };
 		B9506D381B5FF3FF00B31FEF /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9506D361B5FF3FF00B31FEF /* Interface.storyboard */; };
 		B9506D3A1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D391B5FF3FF00B31FEF /* Images.xcassets */; };
+		B97FF0C91B8E2105008F461E /* ContactsTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97FF0C81B8E2105008F461E /* ContactsTableController.swift */; };
 		B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B98BDCC11B8CA182001DFF9C /* Contacts.framework */; };
+		B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */; };
 		B9C11CD11B72627E00F239AD /* PhotoShare WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B9506D251B5FF3FE00B31FEF /* PhotoShare WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B9C11CD41B72627E00F239AD /* PhotoShare WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B9506D2F1B5FF3FF00B31FEF /* PhotoShare WatchKit App.app */; };
 		B9C11D3B1B726CBD00F239AD /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */; };
@@ -103,7 +105,9 @@
 		B95CFAE81B6A6D5800FFA636 /* PhotoShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PhotoShare.entitlements; sourceTree = "<group>"; };
 		B95CFAE91B6A6DE200FFA636 /* PhotoShare WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit Extension.entitlements"; sourceTree = "<group>"; };
 		B978B16A1B7511E700B97C5D /* PhotoShare WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit App.entitlements"; sourceTree = "<group>"; };
+		B97FF0C81B8E2105008F461E /* ContactsTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsTableController.swift; sourceTree = "<group>"; };
 		B98BDCC11B8CA182001DFF9C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
+		B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictationController.swift; sourceTree = "<group>"; };
 		B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 		B9C11D3C1B726F2900F239AD /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -215,6 +219,8 @@
 				B9506D291B5FF3FF00B31FEF /* InterfaceController.swift */,
 				B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */,
 				B9C11D3C1B726F2900F239AD /* NotificationController.swift */,
+				B97FF0C81B8E2105008F461E /* ContactsTableController.swift */,
+				B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */,
 				B9506D2B1B5FF3FF00B31FEF /* Images.xcassets */,
 				B9506D271B5FF3FE00B31FEF /* Supporting Files */,
 			);
@@ -452,7 +458,9 @@
 				B9C11D3D1B726F2900F239AD /* NotificationController.swift in Sources */,
 				B9C11D3B1B726CBD00F239AD /* ExtensionDelegate.swift in Sources */,
 				B9506D2A1B5FF3FF00B31FEF /* InterfaceController.swift in Sources */,
+				B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */,
 				54FDFC481B84A0EA0001BB5F /* ImageTableRowController.swift in Sources */,
+				B97FF0C91B8E2105008F461E /* ContactsTableController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

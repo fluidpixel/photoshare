@@ -9,7 +9,8 @@
 import WatchKit
 
 class ImageTableRowController: NSObject {
-
+    
+    @IBOutlet var WKGroup: WKInterfaceGroup!
     @IBOutlet var photo: WKInterfaceImage!
-    @IBOutlet var selected: WKInterfaceImage!
+
 }

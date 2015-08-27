@@ -13,18 +13,17 @@
                         <table alignment="center" verticalAlignment="center" spacing="0.0" id="Wq5-bf-nWo">
                             <items>
                                 <tableRow identifier="image row" id="v5r-RG-foi" customClass="ImageTableRowController" customModule="PhotoShare_WatchKit_Extension">
-                                    <group key="rootItem" width="1" height="1" alignment="left" spacing="0.0" id="kwq-Fv-ZKW">
+                                    <group key="rootItem" width="1" height="1" alignment="left" contentMode="scaleAspectFill" spacing="0.0" id="kwq-Fv-ZKW">
                                         <items>
-                                            <imageView width="1" height="1" alignment="center" verticalAlignment="center" hidden="YES" alpha="0.5" image="Selected" contentMode="scaleAspectFill" id="Nxw-pb-bz6">
-                                                <color key="tintColor" red="0.30291172525653087" green="1" blue="0.22721084046235418" alpha="1" colorSpace="calibratedRGB"/>
+                                            <imageView width="1" height="1" alignment="center" verticalAlignment="center" hidden="YES" alpha="0.5" image="Selected" contentMode="scaleAspectFit" id="xid-85-ESz">
+                                                <color key="tintColor" red="0.30291172529999999" green="1" blue="0.22721084050000001" alpha="1" colorSpace="calibratedRGB"/>
                                             </imageView>
-                                            <imageView width="1" height="1" alignment="center" verticalAlignment="center" contentMode="scaleAspectFill" id="xid-85-ESz"/>
                                         </items>
                                         <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
                                     </group>
                                     <connections>
+                                        <outlet property="WKGroup" destination="kwq-Fv-ZKW" id="NSg-2B-c0r"/>
                                         <outlet property="photo" destination="xid-85-ESz" id="0Mp-w3-JKo"/>
-                                        <outlet property="selected" destination="Nxw-pb-bz6" id="8ie-6G-oHK"/>
                                     </connections>
                                 </tableRow>
                             </items>
@@ -66,7 +65,71 @@
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="-203" y="532"/>
+            <point key="canvasLocation" x="-412" y="558"/>
+        </scene>
+        <!--ContactsTableController-->
+        <scene sceneID="5Ej-6w-fMq">
+            <objects>
+                <controller identifier="ContactsTableController" hidesWhenLoading="NO" id="nBL-lb-gKZ" customClass="ContactsTableController" customModule="PhotoShare_WatchKit_Extension">
+                    <items>
+                        <table alignment="left" id="0Du-Mu-Ys0">
+                            <items>
+                                <tableRow identifier="Contact Row" id="ZPQ-pc-P9Z" customClass="ContactsTableRow" customModule="PhotoShare_WatchKit_Extension">
+                                    <group key="rootItem" width="1" alignment="left" layout="vertical" id="QLN-gI-Z6Q">
+                                        <items>
+                                            <label width="1" alignment="left" verticalAlignment="center" text="Name" textAlignment="left" minimumScaleFactor="0.5" id="hID-SJ-48S">
+                                                <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
+                                            </label>
+                                            <label width="1" alignment="left" verticalAlignment="center" text="07799999999" textAlignment="left" minimumScaleFactor="0.5" id="fdM-eZ-abS">
+                                                <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
+                                            </label>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <outlet property="ContactName" destination="hID-SJ-48S" id="3Py-G2-i4L"/>
+                                        <outlet property="contactNumber" destination="fdM-eZ-abS" id="Pv4-Dg-miU"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                    <connections>
+                        <outlet property="ContactsTable" destination="0Du-Mu-Ys0" id="wAv-UG-0gC"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-237" y="473"/>
+        </scene>
+        <!--DictationController-->
+        <scene sceneID="fcr-XG-Ice">
+            <objects>
+                <controller identifier="DictationController" hidesWhenLoading="NO" id="p7b-6W-mYp" customClass="DictationController" customModule="PhotoShare_WatchKit_Extension">
+                    <items>
+                        <label alignment="left" id="j75-e4-SUx"/>
+                        <group width="1" alignment="left" verticalAlignment="bottom" id="uqg-fT-vou">
+                            <items>
+                                <button alignment="left" verticalAlignment="bottom" title="Send" id="wFp-E1-b3L">
+                                    <connections>
+                                        <action selector="SendMessage" destination="p7b-6W-mYp" id="gXO-Oa-uOf"/>
+                                    </connections>
+                                </button>
+                                <button alignment="right" verticalAlignment="bottom" title="Add Message" id="MGB-q8-12I">
+                                    <fontDescription key="font" type="system" pointSize="12"/>
+                                    <connections>
+                                        <action selector="AddMessage" destination="p7b-6W-mYp" id="yQw-Mt-0GL"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="MessageText" destination="j75-e4-SUx" id="k19-Is-Hah"/>
+                        <outlet property="addMessageButton" destination="MGB-q8-12I" id="bmb-me-Vhb"/>
+                        <outlet property="sendButton" destination="wFp-E1-b3L" id="FNz-8D-FOa"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-48" y="473"/>
         </scene>
     </scenes>
 </document>
