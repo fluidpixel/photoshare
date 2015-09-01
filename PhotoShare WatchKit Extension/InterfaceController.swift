@@ -12,12 +12,17 @@ import WatchConnectivity
 import ImageIO
 import Contacts
 
+struct ContactDetails {
+    static var contactNumber : String?
+    static var contactEmail : String?
+    static var message : [String]?
+}
+
 class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
     @IBOutlet var imageTable: WKInterfaceTable!
     @IBOutlet weak var watchImage: WKInterfaceImage!
     @IBOutlet var WkButton: WKInterfaceButton!
-    
     
     //stored variables
     var pageNumber = 0
@@ -26,9 +31,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     var storedIDs : [String : NSDate]?
     var images = [UIImage]()
     var session : WCSession!
-    var selectedImage : [Int] = [0]
+    var selectedImage : [Int] = []
     var dictationResult = ""
     var contactsFromPhone = [String : String]()
+    var contactsFromEmail = [String : String]()
     
     let maxPictureCount = 25
     let pictureCountKey = "pictureCount"
@@ -80,7 +86,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
         }
         
-        
         if !wasImageSet {
             WkButton.setHidden(false)
             WkButton.setTitle("No images found, tap to load them")
@@ -99,12 +104,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session.sendMessageData(requestData!, replyHandler: { (response: NSData) -> Void in
                 
                 print("response GOT")
-
             },
                   errorHandler: { (error: NSError) -> Void in
                     
                     print("ERROR : \(error)")
-                    
             })
         }
 
@@ -307,7 +310,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     @IBAction func SendEmail() {
         
-        SendData("Email")
+        GrabEmails()
+        //SendData("Email")
     }
     
     func GrabContacts() {
@@ -353,24 +357,47 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
     }
     
-    func AddMessage() {
+    func GrabEmails() {
         
-        presentTextInputControllerWithSuggestions(nil, allowedInputMode: WKTextInputMode.Plain, completion: { (result : [AnyObject]?) -> Void in
-            
-            print(result)
-            
-            if result != nil {
+        let store = CNContactStore()
+        
+        do {
+            try store.enumerateContactsWithFetchRequest(CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactEmailAddressesKey]), usingBlock: { (contact, status) -> Void in
                 
-                for all in result! {
+                for mail in contact.emailAddresses {
                     
-                    self.dictationResult = self.dictationResult + (all as! String)
+                    if mail.label.rangeOfString("Work") != nil || mail.label.rangeOfString("Home") != nil {
+                        
+                        let no  = mail.value as? String
+                        
+                        print(no)
+                        
+                        self.contactsFromEmail[no!] = "\(contact.givenName) \(contact.familyName)"
+                    }
                 }
                 
-                print(self.dictationResult)
-            }
-        })
+                
+                print("name: \(contact.givenName) \(contact.familyName)")
+                
+                print("Status - \(status)")
+                
+                
+            })
+                
+        } catch {
+            
+        }
+        
+        if contactsFromEmail.count > 0 {
+            
+            //display the list of available contacts to pick
+            pushControllerWithName("EmailController", context: ["segue" : "hierarchical", "data" : contactsFromEmail])
+            
+        }
         
     }
+    
+    
     
     func SendData(identifier: String) {
 

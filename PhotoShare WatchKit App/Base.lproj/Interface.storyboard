@@ -100,6 +100,39 @@
             </objects>
             <point key="canvasLocation" x="-237" y="473"/>
         </scene>
+        <!--EmailController-->
+        <scene sceneID="jcs-SP-EmD">
+            <objects>
+                <controller identifier="EmailController" hidesWhenLoading="NO" id="gGc-oi-gkO" customClass="EmailController" customModule="PhotoShare_WatchKit_Extension">
+                    <items>
+                        <table alignment="left" id="mKq-KS-Reg">
+                            <items>
+                                <tableRow identifier="Email Row" id="qvA-r9-CZJ" customClass="EmailRowController" customModule="PhotoShare_WatchKit_Extension">
+                                    <group key="rootItem" width="1" alignment="left" layout="vertical" id="Sb3-Uk-AxQ">
+                                        <items>
+                                            <label alignment="left" text="Name" id="epZ-du-HSu">
+                                                <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
+                                            </label>
+                                            <label alignment="left" verticalAlignment="bottom" text="Label" id="oTw-FC-ex1">
+                                                <fontDescription key="font" style="UICTFontTextStyleSubhead"/>
+                                            </label>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <outlet property="emailAddress" destination="oTw-FC-ex1" id="4aM-rH-x5D"/>
+                                        <outlet property="nameLabel" destination="epZ-du-HSu" id="IGw-K2-MeG"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                    <connections>
+                        <outlet property="emailTable" destination="mKq-KS-Reg" id="N06-9O-vcm"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-237" y="684"/>
+        </scene>
         <!--DictationController-->
         <scene sceneID="fcr-XG-Ice">
             <objects>

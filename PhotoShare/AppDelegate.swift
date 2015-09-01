@@ -121,6 +121,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
                 }
             }
             break
+            
+        case "Email":
+            print("Send Email triggered")
+            break
+        case "Text":
+            print("Send Text triggered")
+            break
         default:
             print("media is not twitter or facebook")
             break

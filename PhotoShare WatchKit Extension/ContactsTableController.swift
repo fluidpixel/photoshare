@@ -40,6 +40,8 @@ class ContactsTableController : WKInterfaceController {
             if let row = ContactsTable.rowControllerAtIndex(i) as? ContactsTableRow {
                 row.ContactName.setText(name)
                 row.contactNumber.setText(number)
+                
+                row.referenceNumber = number
             }
             i++
         }
@@ -51,6 +53,12 @@ class ContactsTableController : WKInterfaceController {
         //on tap for contacts
         
         //record details then move one to messaging
+        if let row = table.rowControllerAtIndex(rowIndex) as? ContactsTableRow {
+            ContactDetails.contactNumber = row.referenceNumber
+        }
+        
+        
+        
         
         pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "data" : ""])
         
@@ -63,5 +71,7 @@ class ContactsTableRow : NSObject {
     
     @IBOutlet var ContactName: WKInterfaceLabel!
     @IBOutlet var contactNumber: WKInterfaceLabel!
+    
+    var referenceNumber : String?
     
 }

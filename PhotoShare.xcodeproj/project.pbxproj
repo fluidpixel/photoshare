@@ -24,6 +24,7 @@
 		B97FF0C91B8E2105008F461E /* ContactsTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97FF0C81B8E2105008F461E /* ContactsTableController.swift */; };
 		B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B98BDCC11B8CA182001DFF9C /* Contacts.framework */; };
 		B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */; };
+		B99C81BF1B90C05A0001B457 /* EmailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99C81BE1B90C05A0001B457 /* EmailController.swift */; };
 		B9C11CD11B72627E00F239AD /* PhotoShare WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B9506D251B5FF3FE00B31FEF /* PhotoShare WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B9C11CD41B72627E00F239AD /* PhotoShare WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B9506D2F1B5FF3FF00B31FEF /* PhotoShare WatchKit App.app */; };
 		B9C11D3B1B726CBD00F239AD /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */; };
@@ -108,6 +109,7 @@
 		B97FF0C81B8E2105008F461E /* ContactsTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsTableController.swift; sourceTree = "<group>"; };
 		B98BDCC11B8CA182001DFF9C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
 		B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictationController.swift; sourceTree = "<group>"; };
+		B99C81BE1B90C05A0001B457 /* EmailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailController.swift; sourceTree = "<group>"; };
 		B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 		B9C11D3C1B726F2900F239AD /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -221,6 +223,7 @@
 				B9C11D3C1B726F2900F239AD /* NotificationController.swift */,
 				B97FF0C81B8E2105008F461E /* ContactsTableController.swift */,
 				B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */,
+				B99C81BE1B90C05A0001B457 /* EmailController.swift */,
 				B9506D2B1B5FF3FF00B31FEF /* Images.xcassets */,
 				B9506D271B5FF3FE00B31FEF /* Supporting Files */,
 			);
@@ -457,6 +460,7 @@
 			files = (
 				B9C11D3D1B726F2900F239AD /* NotificationController.swift in Sources */,
 				B9C11D3B1B726CBD00F239AD /* ExtensionDelegate.swift in Sources */,
+				B99C81BF1B90C05A0001B457 /* EmailController.swift in Sources */,
 				B9506D2A1B5FF3FF00B31FEF /* InterfaceController.swift in Sources */,
 				B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */,
 				54FDFC481B84A0EA0001BB5F /* ImageTableRowController.swift in Sources */,
