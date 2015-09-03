@@ -27,9 +27,9 @@ class Sharing {
 
   //class for adding share and send functionality
     
-    func SendToFB(image : UIImage?, completionHandler: (result: Bool) -> ()) {
+    func SendToFB(image : [UIImage?], completionHandler: (result: Bool) -> ()) {
         
-        if image != nil {
+        if image[0] != nil {
             
             if accountFB != nil {
             
@@ -41,7 +41,7 @@ class Sharing {
             
             let postRequest = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: feedURL, parameters: parameters)
                 
-            postRequest.addMultipartData(UIImagePNGRepresentation(image!), withName: "source", type: "multipart/form-data", filename: "photo.png")
+            postRequest.addMultipartData(UIImagePNGRepresentation(image[0]!), withName: "source", type: "multipart/form-data", filename: "photo.png")
             
             postRequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
                 

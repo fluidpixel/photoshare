@@ -42,14 +42,16 @@ class EmailController: WKInterfaceController {
         
         var i = 0
         
+        let array : [String]? = (data as NSDictionary).keysSortedByValueUsingSelector("compare:") as? [String]
+        
         //todo: sort result ofr better looking finish
         
-        for (value, name) in (data) {
+        for all in (array)! {
             if let row = emailTable.rowControllerAtIndex(i) as? EmailRowController {
-                row.emailAddress.setText(value)
-                row.referenceEmail = value
+                row.emailAddress.setText(data[all])
+                row.referenceEmail = data[all]
                 
-                row.nameLabel.setText(name)
+                row.nameLabel.setText(all)
             }
             
             i++

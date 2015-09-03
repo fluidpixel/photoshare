@@ -123,7 +123,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBAction func ShareWithFB(sender: UIButton) {
         
-        Classes.shareClass.SendToFB(myImage.image!) { (result) -> () in
+        Classes.shareClass.SendToFB([myImage.image!]) { (result) -> () in
             if result == true {
                 
                 print("INFO: Photo shared - Facebook")

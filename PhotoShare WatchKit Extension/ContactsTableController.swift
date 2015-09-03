@@ -36,12 +36,15 @@ class ContactsTableController : WKInterfaceController {
         
         ContactsTable.setNumberOfRows(data.count, withRowType: "Contact Row")
         var i = 0
-        for (number, name) in data {
+        
+        let array : [String]? = (data as NSDictionary).keysSortedByValueUsingSelector("compare:") as? [String]
+        
+        for (key) in array! {
             if let row = ContactsTable.rowControllerAtIndex(i) as? ContactsTableRow {
-                row.ContactName.setText(name)
-                row.contactNumber.setText(number)
+                row.ContactName.setText(data[key])
+                row.contactNumber.setText(key)
                 
-                row.referenceNumber = number
+                row.referenceNumber = data[key]
             }
             i++
         }

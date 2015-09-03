@@ -81,21 +81,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         
         print("Received message to share data via \(media)")
         
-        var sentImage : UIImage?
+        let array = userInfo["ID"] as! [NSDate]
+        var imageArray = [UIImage?]()
         
         for (date, url) in PhotoManager.sharedInstance.fullSizeArray {
             
-            if date == userInfo["ID"] as! NSDate {
-                if let data = NSData(contentsOfURL: url) {
-                    sentImage = UIImage(data: data)
-                }
+            for all in array {
                 
+                if date == all {
+                    if let data = NSData(contentsOfURL: url) {
+                        imageArray.append(UIImage(data: data))
+                    }
+                    
+                }
             }
+            
+            
         }
+        
+        //change this to work with
         
         switch(media) {
         case "Facebook":
-            Classes.shareClass.SendToFB(sentImage) { result in
+            Classes.shareClass.SendToFB(imageArray) { result in
                 
                 if result == true {
                     
@@ -109,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
             }
             break
         case "Twitter":
-            Classes.shareClass.SendTweet(sentImage) { result in
+            Classes.shareClass.SendTweet(imageArray[0]) { result in
             
                 if result == true {
                     

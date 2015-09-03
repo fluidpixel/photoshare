@@ -24,6 +24,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBOutlet weak var watchImage: WKInterfaceImage!
     @IBOutlet var WkButton: WKInterfaceButton!
     
+    //menu items
+    
+    
     //stored variables
     var pageNumber = 0
     var arraySize = 0
@@ -137,10 +140,18 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             selectedImage.removeAtIndex(index!)
             row.photo.setHidden(true)
             
+            if selectedImage.count > 0 {
+                self.setTitle("Share \(selectedImage.count) images")
+            } else {
+                self.setTitle("PhotoShare")
+            }
+            
+            
         } else {
     
             row.photo.setHidden(false)
             selectedImage.append(rowIndex)
+            self.setTitle("Share \(selectedImage.count) images")
         }
         
         
@@ -292,26 +303,51 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
 
     @IBAction func SendTweet() {
-
-        SendData("Twitter")
+        if selectedImage.count == 1 {
+            SendData("Twitter")
+        }else {
+            showAlert("Twitter", numberOfImages: 1)
+        }
     }
     
     
     @IBAction func ShareOnFB() {
+        
+        //facebook doesn't have a limit
         
         SendData("Facebook")
     }
     
     @IBAction func SendText() {
         
-        GrabContacts()
-        //SendData("Text")
+        if selectedImage.count <= 20 {
+            GrabContacts()
+            SendData("Text")
+        } else {
+            showAlert("Text", numberOfImages: 20)
+        }
+        
     }
     
     @IBAction func SendEmail() {
         
-        GrabEmails()
-        //SendData("Email")
+        if selectedImage.count <= 5 {
+            GrabEmails()
+            SendData("Email")
+        } else {
+            showAlert("Email", numberOfImages: 5)
+        }
+        
+    }
+    
+    func showAlert( identifier : String, numberOfImages : Int) {
+        
+        let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+            print("Action hit")
+        }
+        
+        presentAlertControllerWithTitle("Share Messages Error", message: "Image limit exceeded for \(identifier), please only select up to \(numberOfImages) image(s)", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
+        
     }
     
     func GrabContacts() {
@@ -329,6 +365,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                         let no  = numbers.value as? CNPhoneNumber
                         
                         print(no!.stringValue)
+
                         
                         self.contactsFromPhone[no!.stringValue] = "\(contact.givenName) \(contact.familyName)"
                     }
@@ -403,7 +440,17 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
         //dictionary - imagenumbers
         
-        let metaData : [String : AnyObject] = ["ID" : storedIDs!["\(selectedImage[0])"] as! AnyObject,
+        //to do - allow the sharing of multiples and messages
+        
+        var ids = [AnyObject]()
+        
+        for all in selectedImage {
+            
+            ids.append(storedIDs!["\(all)"]!)
+            
+        }
+        
+        let metaData : [String : AnyObject] = ["ID" : ids,
                                                 "Media" : identifier]
         
         
