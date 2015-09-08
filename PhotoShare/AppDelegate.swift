@@ -79,6 +79,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         //do your handle stuff here
         let media = userInfo["Media"] as! String
         
+        let message = userInfo["Message"] as! [String]
+        
+        let contact = userInfo["Contact"] as! String
+        
         print("Received message to share data via \(media)")
         
         let array = userInfo["ID"] as! [NSDate]
@@ -103,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         
         switch(media) {
         case "Facebook":
-            Classes.shareClass.SendToFB(imageArray) { result in
+            Classes.shareClass.SendToFB(imageArray, message: message) { result in
                 
                 if result == true {
                     
@@ -117,7 +121,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
             }
             break
         case "Twitter":
-            Classes.shareClass.SendTweet(imageArray[0]) { result in
+            Classes.shareClass.SendTweet(imageArray[0], message: message) { result in
             
                 if result == true {
                     

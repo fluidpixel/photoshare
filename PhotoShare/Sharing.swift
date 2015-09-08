@@ -27,7 +27,7 @@ class Sharing {
 
   //class for adding share and send functionality
     
-    func SendToFB(image : [UIImage?], completionHandler: (result: Bool) -> ()) {
+    func SendToFB(image : [UIImage?], message: [String]?, completionHandler: (result: Bool) -> ()) {
         
         if image[0] != nil {
             
@@ -36,6 +36,7 @@ class Sharing {
             var parameters = [String : AnyObject]()
             
             parameters["access_token"] = accountFB!.credential.oauthToken
+            parameters["message"] = message!
             
             let feedURL = NSURL(string: "https://graph.facebook.com/me/photos")
             
@@ -45,10 +46,8 @@ class Sharing {
             
             postRequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
                 
-                
                 print("response data: %i, url response: %@, error: %@", data.length, response, error);
 
-                
                 if error == nil {
                     print("Facebook response : \(response.statusCode)")
                     completionHandler(result: true)
@@ -56,7 +55,6 @@ class Sharing {
                     print("ERROR: \(error)")
                 }
             })
-            
 
             } else {
                 
@@ -70,7 +68,7 @@ class Sharing {
         
     }
     
-    func SendTweet(image : UIImage?, completionHandler : (result: Bool) -> ()) {
+    func SendTweet(image : UIImage?, message : [String]?, completionHandler : (result: Bool) -> ()) {
         
         if image != nil {
             
@@ -78,13 +76,15 @@ class Sharing {
                 
                 let requestURL = NSURL(string: "https://api.twitter.com/1.1/statuses/update_with_media.json")
                 
-                let postrequest = SLRequest(forServiceType: SLServiceTypeTwitter, requestMethod: SLRequestMethod.POST, URL: requestURL!, parameters: nil) //put photo here
+                let message = ["status" : message!]
+                
+                let postrequest = SLRequest(forServiceType: SLServiceTypeTwitter, requestMethod: SLRequestMethod.POST, URL: requestURL!, parameters: message)
                 
                 postrequest.account = accountTwitter
                 
                 let data = UIImagePNGRepresentation(image!)
-                
-                postrequest.addMultipartData(data, withName: "media", type: "multipart/form-data", filename: "photo.png") //add capability to name image
+
+                postrequest.addMultipartData(data, withName: "media", type: "multipart/form-data", filename: "photo.png")
                 
                 postrequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
                     
@@ -92,12 +92,9 @@ class Sharing {
                         print("Twitter response : \(response.statusCode)")
                         completionHandler(result: true)
                     }
-                    
-                    
-                    
+
                     print("ERROR: \(error)")
                 })
-                
             }
             else {
                 print("ERROR: Twitter not setup")

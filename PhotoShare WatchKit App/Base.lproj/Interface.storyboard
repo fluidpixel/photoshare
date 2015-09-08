@@ -67,11 +67,103 @@
             </objects>
             <point key="canvasLocation" x="-412" y="558"/>
         </scene>
+        <!--StartTourController-->
+        <scene sceneID="W68-Rf-3Lb">
+            <objects>
+                <controller identifier="StartTourController" hidesWhenLoading="NO" id="GTw-5e-gcq" customClass="TourInterfaceController" customModule="PhotoShare_WatchKit_Extension">
+                    <items>
+                        <label width="1" alignment="center" text="page 1" textAlignment="justified" numberOfLines="7" minimumScaleFactor="0.5" id="cOi-dP-F4d">
+                            <fontDescription key="font" type="system" pointSize="10"/>
+                        </label>
+                        <imageView alignment="center" verticalAlignment="bottom" image="Tour1" id="D8H-iC-0KI"/>
+                    </items>
+                    <connections>
+                        <outlet property="TourImage" destination="D8H-iC-0KI" id="ZL6-FR-bea"/>
+                        <outlet property="TourTextLabel" destination="cOi-dP-F4d" id="xpL-Ja-HRP"/>
+                        <segue destination="ZBq-ds-vka" kind="relationship" relationship="nextPage" id="6YF-Dz-E0N"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-412" y="210"/>
+        </scene>
+        <!--TourPage2-->
+        <scene sceneID="OJf-Td-ZdH">
+            <objects>
+                <controller identifier="TourPage2" hidesWhenLoading="NO" id="ZBq-ds-vka" customClass="TourInterfacePage2" customModule="PhotoShare_WatchKit_Extension">
+                    <items>
+                        <label width="1" alignment="center" text="page 2" numberOfLines="5" minimumScaleFactor="0.5" id="7aE-lF-7SP">
+                            <fontDescription key="font" type="system" pointSize="10"/>
+                        </label>
+                        <imageView alignment="left" verticalAlignment="bottom" image="Tour2" id="Usa-eP-iGJ"/>
+                    </items>
+                    <connections>
+                        <outlet property="Page2Image" destination="Usa-eP-iGJ" id="gWM-P6-l2u"/>
+                        <outlet property="Page2Label" destination="7aE-lF-7SP" id="SFC-uP-SCg"/>
+                        <segue destination="ksA-bc-mqB" kind="relationship" relationship="nextPage" id="6gu-y2-naH"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-212" y="210"/>
+        </scene>
+        <!--TourPage3-->
+        <scene sceneID="tqJ-xS-wwM">
+            <objects>
+                <controller identifier="TourPage3" hidesWhenLoading="NO" id="ksA-bc-mqB" customClass="TourInterfacePage3" customModule="PhotoShare_WatchKit_Extension">
+                    <items>
+                        <label width="1" alignment="center" text="page 3" numberOfLines="4" minimumScaleFactor="0.5" id="IVh-vb-6JK">
+                            <fontDescription key="font" type="system" pointSize="10"/>
+                        </label>
+                        <group width="1" alignment="left" id="lwD-lr-uHJ">
+                            <items>
+                                <imageView width="65" height="100" alignment="left" image="Tour3" contentMode="scaleAspectFit" id="vkm-yu-AlF"/>
+                                <imageView width="65" height="100" alignment="right" image="Tour4" contentMode="scaleAspectFit" id="ebu-Qg-LRt"/>
+                            </items>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="Page3Image" destination="vkm-yu-AlF" id="emW-O8-Iv3"/>
+                        <outlet property="Page3Label" destination="IVh-vb-6JK" id="0DK-gg-PIu"/>
+                        <segue destination="V2a-hf-gCc" kind="relationship" relationship="nextPage" id="3SE-ey-x5n"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-10" y="210"/>
+        </scene>
+        <!--TourPage4-->
+        <scene sceneID="MZM-R4-N9w">
+            <objects>
+                <controller identifier="TourPage4" hidesWhenLoading="NO" id="V2a-hf-gCc" customClass="TourInterfacePage4" customModule="PhotoShare_WatchKit_Extension">
+                    <items>
+                        <imageView alignment="left" verticalAlignment="center" id="MqI-xi-gER"/>
+                        <label width="1" alignment="center" text="page 4" numberOfLines="5" minimumScaleFactor="0.5" id="z7k-KF-bbY">
+                            <fontDescription key="font" type="system" pointSize="10"/>
+                        </label>
+                        <button width="1" alignment="left" verticalAlignment="bottom" title="Done" id="1hV-rj-sxX">
+                            <connections>
+                                <action selector="FinishedTour" destination="V2a-hf-gCc" id="8me-ih-0c7"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <outlet property="Page4Image" destination="MqI-xi-gER" id="Qyc-xo-rl1"/>
+                        <outlet property="Page5Button" destination="1hV-rj-sxX" id="Wqb-sy-HFG"/>
+                        <outlet property="Page5Label" destination="z7k-KF-bbY" id="0xU-Cr-74E"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="192" y="210"/>
+        </scene>
         <!--ContactsTableController-->
         <scene sceneID="5Ej-6w-fMq">
             <objects>
                 <controller identifier="ContactsTableController" hidesWhenLoading="NO" id="nBL-lb-gKZ" customClass="ContactsTableController" customModule="PhotoShare_WatchKit_Extension">
                     <items>
+                        <button width="1" alignment="left" title="Search Contacts" id="Ex5-yI-1aq">
+                            <accessibilityTraits key="accessibilityTraits" button="YES" searchField="YES"/>
+                            <connections>
+                                <action selector="OnSearch" destination="nBL-lb-gKZ" id="mbI-Hx-KKg"/>
+                            </connections>
+                        </button>
                         <table alignment="left" id="0Du-Mu-Ys0">
                             <items>
                                 <tableRow identifier="Contact Row" id="ZPQ-pc-P9Z" customClass="ContactsTableRow" customModule="PhotoShare_WatchKit_Extension">
@@ -95,6 +187,7 @@
                     </items>
                     <connections>
                         <outlet property="ContactsTable" destination="0Du-Mu-Ys0" id="wAv-UG-0gC"/>
+                        <outlet property="searchButton" destination="Ex5-yI-1aq" id="R6a-S2-G6g"/>
                     </connections>
                 </controller>
             </objects>

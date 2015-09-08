@@ -21,6 +21,7 @@
 		B9506D2C1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D2B1B5FF3FF00B31FEF /* Images.xcassets */; };
 		B9506D381B5FF3FF00B31FEF /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9506D361B5FF3FF00B31FEF /* Interface.storyboard */; };
 		B9506D3A1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D391B5FF3FF00B31FEF /* Images.xcassets */; };
+		B950F6451B9EFBCB007EB2CE /* TourInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B950F6441B9EFBCB007EB2CE /* TourInterfaceController.swift */; };
 		B97FF0C91B8E2105008F461E /* ContactsTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97FF0C81B8E2105008F461E /* ContactsTableController.swift */; };
 		B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B98BDCC11B8CA182001DFF9C /* Contacts.framework */; };
 		B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */; };
@@ -103,6 +104,7 @@
 		B9506D351B5FF3FF00B31FEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B9506D371B5FF3FF00B31FEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		B9506D391B5FF3FF00B31FEF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B950F6441B9EFBCB007EB2CE /* TourInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TourInterfaceController.swift; sourceTree = "<group>"; };
 		B95CFAE81B6A6D5800FFA636 /* PhotoShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PhotoShare.entitlements; sourceTree = "<group>"; };
 		B95CFAE91B6A6DE200FFA636 /* PhotoShare WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit Extension.entitlements"; sourceTree = "<group>"; };
 		B978B16A1B7511E700B97C5D /* PhotoShare WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit App.entitlements"; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				B97FF0C81B8E2105008F461E /* ContactsTableController.swift */,
 				B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */,
 				B99C81BE1B90C05A0001B457 /* EmailController.swift */,
+				B950F6441B9EFBCB007EB2CE /* TourInterfaceController.swift */,
 				B9506D2B1B5FF3FF00B31FEF /* Images.xcassets */,
 				B9506D271B5FF3FE00B31FEF /* Supporting Files */,
 			);
@@ -465,6 +468,7 @@
 				B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */,
 				54FDFC481B84A0EA0001BB5F /* ImageTableRowController.swift in Sources */,
 				B97FF0C91B8E2105008F461E /* ContactsTableController.swift in Sources */,
+				B950F6451B9EFBCB007EB2CE /* TourInterfaceController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

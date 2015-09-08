@@ -12,6 +12,10 @@ import WatchKit
 class ContactsTableController : WKInterfaceController {
     
     @IBOutlet var ContactsTable: WKInterfaceTable!
+    var filters : [String : String]?
+    var phoneContacts : Bool?
+    
+    @IBOutlet var searchButton: WKInterfaceButton!
     
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
@@ -19,7 +23,15 @@ class ContactsTableController : WKInterfaceController {
         _ = (context as! NSDictionary)["segue"] as? String
         let data : [String : String] = ((context as! NSDictionary)["data"] as? [String : String])!
         
-        loadTable(data)
+        if (context as! NSDictionary)["media"] as! String == "phone" {
+            phoneContacts = true
+        } else if (context as! NSDictionary)["media"] as! String == "email" {
+            phoneContacts = false
+        }
+        
+        filters = data
+        //filterResults()
+        //loadTable(data)
     }
     
     override func willActivate() {
@@ -32,21 +44,57 @@ class ContactsTableController : WKInterfaceController {
         super.didDeactivate()
     }
     
-    func loadTable(data : [String : String]) {
+    func loadTable(result : [String]) {
         
-        ContactsTable.setNumberOfRows(data.count, withRowType: "Contact Row")
+        ContactsTable.setNumberOfRows(result.count, withRowType: "Contact Row")
+        var validEntries = [String : String]()
+        
+        for (key, value) in filters! {
+            
+            for all in result {
+                
+                if all == value {
+                    validEntries[key] = value
+                }
+            }
+            
+        }
+        
+        
         var i = 0
         
-        let array : [String]? = (data as NSDictionary).keysSortedByValueUsingSelector("compare:") as? [String]
+        let array : [String]? = (validEntries as NSDictionary).keysSortedByValueUsingSelector("compare:") as? [String]
         
         for (key) in array! {
             if let row = ContactsTable.rowControllerAtIndex(i) as? ContactsTableRow {
-                row.ContactName.setText(data[key])
+                row.ContactName.setText(validEntries[key])
                 row.contactNumber.setText(key)
                 
-                row.referenceNumber = data[key]
+                row.referenceNumber = validEntries[key]
             }
             i++
+        }
+        
+    }
+    
+    @IBAction func OnSearch() {
+        
+        filterResults()
+    }
+    
+     func filterResults() {
+        
+        let names : [String] = Array(filters!.values)
+        
+        presentTextInputControllerWithSuggestions(names, allowedInputMode: WKTextInputMode.Plain) { (result : [AnyObject]?) -> Void in
+
+            if result != nil {
+                
+                self.loadTable(result! as! [String])
+                
+                
+            }
+            
         }
         
     }
@@ -57,12 +105,14 @@ class ContactsTableController : WKInterfaceController {
         
         //record details then move one to messaging
         if let row = table.rowControllerAtIndex(rowIndex) as? ContactsTableRow {
-            ContactDetails.contactNumber = row.referenceNumber
+            if phoneContacts == true {
+                ContactDetails.contactNumber = row.referenceNumber
+            } else if phoneContacts == false {
+                ContactDetails.contactEmail = row.referenceNumber
+            }
+            
         }
-        
-        
-        
-        
+
         pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "data" : ""])
         
     }

@@ -95,6 +95,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         } else {
             WkButton.setHidden(true)
             loadTableData()
+            //ShowDemo()
         }
         
         if (WCSession.isSupported()) {
@@ -114,6 +115,30 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             })
         }
 
+    }
+    
+     func ShowDemo() {
+        
+        let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
+        
+        if defaults?.boolForKey("hasPerformedFirstLaunch") == false {
+            
+            //set to true
+            defaults?.setBool(false, forKey: "hasPerformedFirstLaunch")
+            
+            let tourAction : WKAlertAction = WKAlertAction(title: "Sure!", style: WKAlertActionStyle.Default) { () -> Void in
+                print("Tour wanted")
+                
+                 self.presentControllerWithNames(["StartTourController", "TourPage2", "TourPage3", "TourPage4"], contexts: nil)
+            }
+            
+            let ignoreAction : WKAlertAction = WKAlertAction(title: "No thanks", style: WKAlertActionStyle.Default) { () -> Void in
+                print("No tour wanted")
+            }
+            
+            presentAlertControllerWithTitle("Hello!", message: "Thank you for using PhotoShare, would you like the quick tour on using this app?", preferredStyle: WKAlertControllerStyle.SideBySideButtonsAlert, actions: [tourAction, ignoreAction])
+            
+        }
     }
     
     func loadTableData() {
@@ -154,7 +179,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             self.setTitle("Share \(selectedImage.count) images")
         }
         
-        
     }
     
     
@@ -181,7 +205,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     
                     userdefaults?.setValue(oldestImageIndex, forKey: pictureCountKey)
                     
-                    
                 } else {
                     //update newest image and carry on
                     userdefaults?.setValue((images.count), forKey: pictureCountKey)
@@ -190,11 +213,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
                 }
                 
-                
-                
                 var url : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
-                
-                
                 
                 let fileName = "PhotoGallery\(userdefaults!.integerForKey(pictureCountKey)).jpg"
                 
@@ -234,12 +253,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     
                     defaults.setObject(newArray, forKey: pictureArrayKey)
                 }
-                
-//                var pictureCount = defaults.integerForKey(pictureCountKey)
-//                
-//                pictureCount++
-//                
-//                defaults.setValue(pictureCount, forKey: pictureCountKey)
                 
                 let updatedDate = NSDate()
 
@@ -298,8 +311,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     print("ERROR : \(error)")
                     
             })
-            
+            ShowDemo()
         }
+        
+        
     }
 
     @IBAction func SendTweet() {
@@ -322,7 +337,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         if selectedImage.count <= 20 {
             GrabContacts()
-            SendData("Text")
+            //SendData("Text")
         } else {
             showAlert("Text", numberOfImages: 20)
         }
@@ -333,7 +348,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         if selectedImage.count <= 5 {
             GrabEmails()
-            SendData("Email")
+           // SendData("Email")
         } else {
             showAlert("Email", numberOfImages: 5)
         }
@@ -352,7 +367,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     func GrabContacts() {
         
-        //do I actually /need/ this?
         let store = CNContactStore()
         
         do {
@@ -366,11 +380,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                         
                         print(no!.stringValue)
 
-                        
                         self.contactsFromPhone[no!.stringValue] = "\(contact.givenName) \(contact.familyName)"
                     }
                 }
-                
                 
                 print("name: \(contact.givenName) \(contact.familyName)")
                 
@@ -387,7 +399,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         if contactsFromPhone.count > 0 {
             
             //display the list of available contacts to pick
-            pushControllerWithName("ContactsTableController", context: ["segue" : "hierarchical", "data" : contactsFromPhone])
+            pushControllerWithName("ContactsTableController", context: ["segue" : "hierarchical", "data" : contactsFromPhone, "media" : "phone"])
             
         }
         
@@ -408,17 +420,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                         let no  = mail.value as? String
                         
                         print(no)
-                        
                         self.contactsFromEmail[no!] = "\(contact.givenName) \(contact.familyName)"
                     }
                 }
                 
-                
                 print("name: \(contact.givenName) \(contact.familyName)")
-                
                 print("Status - \(status)")
-                
-                
             })
                 
         } catch {
@@ -428,7 +435,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         if contactsFromEmail.count > 0 {
             
             //display the list of available contacts to pick
-            pushControllerWithName("EmailController", context: ["segue" : "hierarchical", "data" : contactsFromEmail])
+            pushControllerWithName("ContactsTableController", context: ["segue" : "hierarchical", "data" : contactsFromEmail, "media" : "email"])
             
         }
         
@@ -439,20 +446,24 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     func SendData(identifier: String) {
 
         //dictionary - imagenumbers
-        
         //to do - allow the sharing of multiples and messages
         
         var ids = [AnyObject]()
-        
         for all in selectedImage {
             
             ids.append(storedIDs!["\(all)"]!)
-            
+        
         }
         
-        let metaData : [String : AnyObject] = ["ID" : ids,
-                                                "Media" : identifier]
+        var contact : String = ""
         
+        if identifier == "Email" {
+            contact = ContactDetails.contactEmail!
+        } else if identifier == "Text" {
+            contact = ContactDetails.contactNumber!
+        }
+        
+        let metaData : [String : AnyObject] = ["ID" : ids, "Media" : identifier, "Message" : ContactDetails.message! as [AnyObject], "Contact Details" : contact]
         
         _ = session.transferUserInfo(metaData)
         

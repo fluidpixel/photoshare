@@ -14,6 +14,8 @@ class EmailController: WKInterfaceController {
 
     @IBOutlet var emailTable: WKInterfaceTable!
     
+    var filters : [String : String]?
+    
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
@@ -22,7 +24,9 @@ class EmailController: WKInterfaceController {
         _ = (context as! NSDictionary)["segue"] as? String
         let data : [String : String] = ((context as! NSDictionary)["data"] as? [String:String])!
         
-        loadTable(data)
+        filters = data
+        
+        //loadTable(data)
         
     }
 

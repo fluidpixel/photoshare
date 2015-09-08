@@ -123,7 +123,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBAction func ShareWithFB(sender: UIButton) {
         
-        Classes.shareClass.SendToFB([myImage.image!]) { (result) -> () in
+        Classes.shareClass.SendToFB([myImage.image!], message: nil) { (result) -> () in
             if result == true {
                 
                 print("INFO: Photo shared - Facebook")
@@ -138,7 +138,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBAction func ShareWithTwitter(sender: UIButton) {
         
-        Classes.shareClass.SendTweet(myImage.image!) { result in
+        Classes.shareClass.SendTweet(myImage.image!, message: nil) { result in
             
             if result == true {
                 
