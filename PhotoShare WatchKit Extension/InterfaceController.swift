@@ -16,6 +16,8 @@ struct ContactDetails {
     static var contactNumber : String?
     static var contactEmail : String?
     static var message : [String]?
+    static var contactName : String?
+    static let readyToSend = "messageIsReadyToSendKey"
 }
 
 class InterfaceController: WKInterfaceController, WCSessionDelegate {
@@ -38,6 +40,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     var dictationResult = ""
     var contactsFromPhone = [String : String]()
     var contactsFromEmail = [String : String]()
+    var mediumToSendWith = ""
     
     let maxPictureCount = 25
     let pictureCountKey = "pictureCount"
@@ -114,6 +117,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     print("ERROR : \(error)")
             })
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "InfoGatherComplete", name: ContactDetails.readyToSend, object: nil)
 
     }
     
@@ -319,7 +324,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
     @IBAction func SendTweet() {
         if selectedImage.count == 1 {
-            SendData("Twitter")
+            mediumToSendWith = "Twitter"
+            pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "data" : ""])
+            
         }else {
             showAlert("Twitter", numberOfImages: 1)
         }
@@ -329,14 +336,16 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBAction func ShareOnFB() {
         
         //facebook doesn't have a limit
+         mediumToSendWith = "Facebook"
+        pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "data" : ""])
         
-        SendData("Facebook")
     }
     
     @IBAction func SendText() {
         
         if selectedImage.count <= 20 {
             GrabContacts()
+            mediumToSendWith = "Text"
             //SendData("Text")
         } else {
             showAlert("Text", numberOfImages: 20)
@@ -347,12 +356,17 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBAction func SendEmail() {
         
         if selectedImage.count <= 5 {
+            mediumToSendWith = "Email"
             GrabEmails()
-           // SendData("Email")
+            
         } else {
             showAlert("Email", numberOfImages: 5)
         }
         
+    }
+    
+    func InfoGatherComplete() {
+        SendData(mediumToSendWith)
     }
     
     func showAlert( identifier : String, numberOfImages : Int) {
@@ -455,15 +469,26 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         }
         
-        var contact : String = ""
+        var contact : [String: String] = ["" : ""]
         
-        if identifier == "Email" {
-            contact = ContactDetails.contactEmail!
-        } else if identifier == "Text" {
-            contact = ContactDetails.contactNumber!
+        if ContactDetails.message == nil {
+            ContactDetails.message = [""]
         }
         
-        let metaData : [String : AnyObject] = ["ID" : ids, "Media" : identifier, "Message" : ContactDetails.message! as [AnyObject], "Contact Details" : contact]
+        if identifier == "Email" {
+            if ContactDetails.contactEmail != nil {
+                contact["Address"] = ContactDetails.contactEmail!
+                contact["Name"] = ContactDetails.contactName
+        
+            } else {
+                return
+            }
+            
+        } else if identifier == "Text" {
+            contact["Address"] = ContactDetails.contactNumber!
+        }
+        
+        let metaData : [String : AnyObject] = ["ID" : ids, "Media" : identifier, "Message" : ContactDetails.message! as [AnyObject], "Contact" : contact]
         
         _ = session.transferUserInfo(metaData)
         

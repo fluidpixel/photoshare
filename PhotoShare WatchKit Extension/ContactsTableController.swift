@@ -69,8 +69,8 @@ class ContactsTableController : WKInterfaceController {
             if let row = ContactsTable.rowControllerAtIndex(i) as? ContactsTableRow {
                 row.ContactName.setText(validEntries[key])
                 row.contactNumber.setText(key)
-                
-                row.referenceNumber = validEntries[key]
+                row.referenceName = validEntries[key]
+                row.referenceNumber = key
             }
             i++
         }
@@ -107,8 +107,10 @@ class ContactsTableController : WKInterfaceController {
         if let row = table.rowControllerAtIndex(rowIndex) as? ContactsTableRow {
             if phoneContacts == true {
                 ContactDetails.contactNumber = row.referenceNumber
+                ContactDetails.contactName = row.referenceName
             } else if phoneContacts == false {
                 ContactDetails.contactEmail = row.referenceNumber
+                ContactDetails.contactName = row.referenceName
             }
             
         }
@@ -126,5 +128,6 @@ class ContactsTableRow : NSObject {
     @IBOutlet var contactNumber: WKInterfaceLabel!
     
     var referenceNumber : String?
+    var referenceName : String?
     
 }

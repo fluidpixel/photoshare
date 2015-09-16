@@ -81,27 +81,56 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         
         let message = userInfo["Message"] as! [String]
         
-        let contact = userInfo["Contact"] as! String
+        var contact = userInfo["Contact"] as! [String : String]?
+        if contact == nil {
+            contact = ["Error" : "No Data"]
+        } else {
+            var temp : String = ""
+            for text in message{
+                temp = "\(temp) \(text)"
+                
+            }
+            contact!["Message"] = temp
+        }
         
         print("Received message to share data via \(media)")
         
         let array = userInfo["ID"] as! [NSDate]
         var imageArray = [UIImage?]()
         
-        for (date, url) in PhotoManager.sharedInstance.fullSizeArray {
-            
-            for all in array {
+        if media == "Twitter" {
+            for (date, url) in PhotoManager.sharedInstance.urlArray {
                 
-                if date == all {
-                    if let data = NSData(contentsOfURL: url) {
-                        imageArray.append(UIImage(data: data))
-                    }
+                for all in array {
                     
+                    if date == all {
+                        if let data = NSData(contentsOfURL: url) {
+                            imageArray.append(UIImage(data: data))
+                        }
+                        
+                    }
                 }
+                
+                
             }
-            
-            
+        }else {
+            for (date, url) in PhotoManager.sharedInstance.fullSizeArray {
+                
+                for all in array {
+                    
+                    if date == all {
+                        if let data = NSData(contentsOfURL: url) {
+                            imageArray.append(UIImage(data: data))
+                        }
+                        
+                    }
+                }
+                
+                
+            }
         }
+        
+        
         
         //change this to work with
         
@@ -136,6 +165,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
             
         case "Email":
             print("Send Email triggered")
+            
+            
+            
+            Classes.shareClass.ShareWithEmail("filename", images: imageArray, sendingData: contact!)
             break
         case "Text":
             print("Send Text triggered")

@@ -52,11 +52,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         let postingOptions = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["email"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
         
-        account.requestAccessToAccountsWithType(accountType, options: postingOptions as [NSObject : AnyObject]) { (success : ObjCBool, error : NSError!) -> Void in
-            
+        account.requestAccessToAccountsWithType(accountType, options: postingOptions as [NSObject : AnyObject]) { (success : Bool, error : NSError!) -> Void in
+    
             if success {
                 let options = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["publish_actions"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
-                account.requestAccessToAccountsWithType(accountType, options: options as [NSObject : AnyObject], completion: { (success: ObjCBool, error: NSError!) -> Void in
+                account.requestAccessToAccountsWithType(accountType, options: options as [NSObject : AnyObject], completion: { (success: Bool, error: NSError!) -> Void in
                     
                     if success {
                         let arrayOfAccounts = account.accountsWithAccountType(accountType)
@@ -67,6 +67,32 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                              Classes.shareClass.setUpAccounts(self.FBAccount, accountTwit: self.TwitterAccount)
                             print(self.FBAccount.credential)
                             
+                            //grab user's email address
+                            let request = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.GET, URL: NSURL(string: "https://graph.facebook.com/me"), parameters: ["fields" : "email"])
+                            //trying some stuff
+                            
+                            
+                            request.account = self.FBAccount
+                            
+                            request.performRequestWithHandler({ (data: NSData!, response: NSHTTPURLResponse!, error: NSError!) -> Void in
+                                
+                                if error == nil && (response as NSHTTPURLResponse).statusCode == 200 {
+                                    do {
+                                        let userData : NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+                                        
+                                        if userData["email"] != nil {
+                                            let email = userData["email"]
+                                            print(email)
+                                            NSUserDefaults.standardUserDefaults().setValue(email, forKey: "UserEmail")
+                                        }
+
+                                    }catch {
+                                        print(error)
+                                    }
+                                    
+                                    
+                                }
+                            })
                         }
                     } else {
                         print("Access denied - \(error.localizedDescription)")
@@ -79,7 +105,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         let anotherAcccountType = account.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)
         
-        account.requestAccessToAccountsWithType(anotherAcccountType, options: nil) { (success : ObjCBool, error : NSError!) -> Void in
+        account.requestAccessToAccountsWithType(anotherAcccountType, options: nil) { (success : Bool, error : NSError!) -> Void in
             
             if success {
                 let arrayOfAccountsTwitter = account.accountsWithAccountType(anotherAcccountType)
@@ -131,7 +157,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             } else if result == false {
                 self.showLoginAlert("Facebook")
             }
-        } 
+        }
+        
+      //  Classes.shareClass.ShareWithEmail("file.jpg", images: [myImage.image], sendingData: ["" : ""])
         
     }
     
