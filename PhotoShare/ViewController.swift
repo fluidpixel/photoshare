@@ -17,9 +17,14 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     @IBOutlet weak var myImage: UIImageView!
     @IBOutlet weak var galleryButton: UIButton!
     
-    var FBAccount: ACAccount!
-    var TwitterAccount: ACAccount!
+
     var currentImageCount : Int = 0
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+       
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,82 +47,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         let longPress = UILongPressGestureRecognizer(target: self, action: "ActionOnLongPress:")
         self.view.addGestureRecognizer(longPress)
         
-        let account = ACAccountStore()
-        
-        //link account to Facebook
-        
-        let accountType = account.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierFacebook)
-        
-        //be sure to move fb id to defaults
-        
-        let postingOptions = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["email"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
-        
-        account.requestAccessToAccountsWithType(accountType, options: postingOptions as [NSObject : AnyObject]) { (success : Bool, error : NSError!) -> Void in
-    
-            if success {
-                let options = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["publish_actions"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
-                account.requestAccessToAccountsWithType(accountType, options: options as [NSObject : AnyObject], completion: { (success: Bool, error: NSError!) -> Void in
-                    
-                    if success {
-                        let arrayOfAccounts = account.accountsWithAccountType(accountType)
-                        
-                        if arrayOfAccounts.count > 0 {
-                            self.FBAccount = arrayOfAccounts.last as! ACAccount
-                            
-                             Classes.shareClass.setUpAccounts(self.FBAccount, accountTwit: self.TwitterAccount)
-                            print(self.FBAccount.credential)
-                            
-                            //grab user's email address
-                            let request = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.GET, URL: NSURL(string: "https://graph.facebook.com/me"), parameters: ["fields" : "email"])
-                            //trying some stuff
-                            
-                            
-                            request.account = self.FBAccount
-                            
-                            request.performRequestWithHandler({ (data: NSData!, response: NSHTTPURLResponse!, error: NSError!) -> Void in
-                                
-                                if error == nil && (response as NSHTTPURLResponse).statusCode == 200 {
-                                    do {
-                                        let userData : NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-                                        
-                                        if userData["email"] != nil {
-                                            let email = userData["email"]
-                                            print(email)
-                                            NSUserDefaults.standardUserDefaults().setValue(email, forKey: "UserEmail")
-                                        }
-
-                                    }catch {
-                                        print(error)
-                                    }
-                                    
-                                    
-                                }
-                            })
-                        }
-                    } else {
-                        print("Access denied - \(error.localizedDescription)")
-                    }
-                })
-            } else {
-                print("Access denied - \(error.localizedDescription)")
-            }
-        }
-        
-        let anotherAcccountType = account.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)
-        
-        account.requestAccessToAccountsWithType(anotherAcccountType, options: nil) { (success : Bool, error : NSError!) -> Void in
-            
-            if success {
-                let arrayOfAccountsTwitter = account.accountsWithAccountType(anotherAcccountType)
-                
-                if arrayOfAccountsTwitter.count > 0 {
-                    
-                    self.TwitterAccount = arrayOfAccountsTwitter.last as! ACAccount
-                    Classes.shareClass.setUpAccounts(self.FBAccount, accountTwit: self.TwitterAccount)
-                }
-            }
-            
-        }
         
     }
     
@@ -149,7 +78,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBAction func ShareWithFB(sender: UIButton) {
         
-        Classes.shareClass.SendToFB([myImage.image!], message: nil) { (result) -> () in
+        Classes.shareClass.SendToFB([myImage.image!], message: nil, urls: [NSURL]()) { (result, detail) -> () in
             if result == true {
                 
                 print("INFO: Photo shared - Facebook")
@@ -166,7 +95,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBAction func ShareWithTwitter(sender: UIButton) {
         
-        Classes.shareClass.SendTweet(myImage.image!, message: nil) { result in
+        Classes.shareClass.SendTweet(myImage.image!, message: nil) { (result, detail) in
             
             if result == true {
                 

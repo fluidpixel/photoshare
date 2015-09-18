@@ -11,7 +11,7 @@ import Social
 import Accounts
 import MobileCoreServices
 
- let newestUpdateKey = "lastUpdateRecorded"
+let newestUpdateKey = "lastUpdateRecorded"
 
 class Sharing {
     
@@ -24,37 +24,124 @@ class Sharing {
         self.accountTwitter = accountTwit
     }
     
-    
+    var urls: [NSURL]?
 
   //class for adding share and send functionality
     
-    func SendToFB(image : [UIImage?], message: [String]?, completionHandler: (result: Bool) -> ()) {
+    func SendToFB(image : [UIImage?], message: [String]?, urls : [NSURL?], completionHandler: (result: Bool, detail: AnyObject?) -> ()) {
+        
+        //todo change for multiple images/retrieve errors
         var photoIds = [String]()
-        if image.count > 0 || image.first != nil {
-            
-            if accountFB != nil {
-            
-            var parameters = [String : AnyObject]()
-            
-            parameters["access_token"] = accountFB!.credential.oauthToken
+        var counter = 0
+        for var i = 0; i < image.count; i++ {
+        
+            if image[i] != nil {
                 
-            if message != nil {
-                //parameters["message"] = message!
+                if accountFB != nil {
+                
+                var parameters = [String : AnyObject]()
+                
+                parameters["access_token"] = accountFB!.credential.oauthToken
+                
+                let feedURL = NSURL(string: "https://graph.facebook.com/me/photos")
+                
+                let postRequest = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: feedURL, parameters: parameters)
+                    
+                postRequest.addMultipartData(UIImagePNGRepresentation(image[i]!), withName: "source", type: "multipart/form-data", filename: "photo.png")
+                
+                postRequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
+
+                    if error == nil {
+                
+                        print("Facebook response : \(response.statusCode)")
+                        
+                        if response.statusCode >= 400 && response.statusCode < 500 {
+                            completionHandler(result: false, detail: "Bad request, try again")
+                        } else if response.statusCode >= 500 {
+                            completionHandler(result: false, detail: "Server error, Facebook is having problems")
+                        }
+                        counter++
+                        
+                        do {
+                            let userData = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                            if userData == nil {
+                                
+                            }else {
+                                photoIds.append(userData!.valueForKey("id") as! String)
+                                print(userData!)
+                            }
+                        } catch {
+                            print(error)
+                        }
+                        
+                        //let m2 = ["Testing multiple images and text"]
+                        
+                         
+                        if (counter == image.count) {
+                            self.sendFBMessage(message, photoIds: photoIds) { (result, detail) -> () in
+                                
+                                if result == true {
+                                    completionHandler(result: true, detail: nil)
+                                }
+                            }
+                        }
+                    } else {
+                        print("ERROR: \(error)")
+                    }
+                })
+
+                } else {
+                    
+                    print("ERROR: Account not set up")
+                    completionHandler(result: false, detail: "Account not setup")
+                }
+            
+            } else {
+                print("ERROR: image does not exist")
+            }
+        }
+        
+    }
+    
+    func sendFBMessage(message: [String]?, photoIds : [String]?, completionHandler: (result : Bool, detail: AnyObject?) -> Void){
+        
+        if message != nil {
+            let postURL = NSURL(string: "https://graph.facebook.com/me/feed")
+            
+            var feedParameters = [String : AnyObject]()
+            
+            var finalMessage : String = ""
+            
+            for all in message! {
+                finalMessage += all
             }
             
-            let feedURL = NSURL(string: "https://graph.facebook.com/me/photos")
+    //        for var all = 0; all < photoIds!.count; all++ { //MULTIPLE IMAGES ON STATUS IS WIP
+    //            
+    //            feedParameters["image[\(all)][url]"] = photoIds![all]
+    //            feedParameters["image[\(all)][user_generated]"] = true
+    //        }
             
-            let postRequest = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: feedURL, parameters: parameters)
-                
-            postRequest.addMultipartData(UIImagePNGRepresentation(image[0]!), withName: "source", type: "multipart/form-data", filename: "photo.png")
+            feedParameters["message"] = finalMessage
             
-            postRequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
+            feedParameters["object_attachment"] = photoIds![0]
+            feedParameters["access_token"] = self.accountFB!.credential.oauthToken
+            
+            let postRequestFeed = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: postURL, parameters: feedParameters)
+            
+            postRequestFeed.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
                 
                 
-
+                
                 if error == nil {
-            
+                    
                     print("Facebook response : \(response.statusCode)")
+                    
+                    if response.statusCode >= 400 && response.statusCode < 500 {
+                        completionHandler(result: false, detail: "Bad request, try again")
+                    } else if response.statusCode >= 500 {
+                        completionHandler(result: false, detail: "Server error, Facebook is having problems")
+                    }
                     
                     
                     do {
@@ -62,73 +149,28 @@ class Sharing {
                         if userData == nil {
                             
                         }else {
-                            photoIds.append(userData!.valueForKey("id") as! String)
+                            
                             print(userData!)
+                            completionHandler(result: true, detail: userData!)
                         }
                     } catch {
+                        completionHandler(result: false, detail: "JSON parse error")
                         print(error)
                     }
-                     //my god clean this up
-                    if message != nil {
-                    let postURL = NSURL(string: "https://graph.facebook.com/me/feed")
                     
-                    var feedParameters = [String : AnyObject]()
-                        
-                    var finalMessage : String = "testing"
-                        
-                    for all in message! {
-                        finalMessage += all
-                    }
                     
-                    feedParameters["message"] = finalMessage
-                    feedParameters["object_attachment"] = photoIds[0]
-                    feedParameters["access_token"] = self.accountFB!.credential.oauthToken
                     
-                    let postRequestFeed = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: postURL, parameters: feedParameters)
-                    
-                    postRequestFeed.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
-                        
-                        
-                        
-                        if error == nil {
-                            
-                            print("Facebook response : \(response.statusCode)")
-                            
-                            
-                            do {
-                                let userData = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                                if userData == nil {
-                                    
-                                }else {
-                                    //photoIds.append(userData!.valueForKey("id") as! String)
-                                    print(userData!)
-                                }
-                            } catch {
-                                print(error)
-                            }
-
-                    
-                            completionHandler(result: true)
-                        }})
-                    }
                 } else {
-                    print("ERROR: \(error)")
+                    completionHandler(result: false, detail: error.localizedDescription)
                 }
             })
-
-            } else {
-                
-                print("ERROR: Account not set up")
-                completionHandler(result: false)
-            }
-        
         } else {
-            print("ERROR: image does not exist")
+            completionHandler(result: true, detail: nil)
         }
-        
+
     }
     
-    func SendTweet(image : UIImage?, message : [String]?, completionHandler : (result: Bool) -> ()) {
+    func SendTweet(image : UIImage?, message : [String]?, completionHandler : (result: Bool, details : AnyObject?) -> ()) {
         
         if image != nil {
             
@@ -167,6 +209,12 @@ class Sharing {
                     if error == nil {
                         print("Twitter response : \(response.statusCode)")
                         
+                        if response.statusCode >= 400 && response.statusCode < 500 {
+                            completionHandler(result: false, details: "Bad request, try again")
+                        } else if response.statusCode >= 500 {
+                            completionHandler(result: false, details: "Server error, Twitter is having problems")
+                        }
+                        
                         do {
                             let userData = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                             if userData == nil {
@@ -178,7 +226,7 @@ class Sharing {
                             print(error)
                         }
                         
-                        completionHandler(result: true)
+                        completionHandler(result: true, details: nil)
                     }
                     
                     
@@ -188,7 +236,7 @@ class Sharing {
             else {
                 print("ERROR: Twitter not setup")
                 
-                completionHandler(result: false)
+                completionHandler(result: false, details: "Account not setup")
             }
         } else {
             print("ERROR: image does not exist")
