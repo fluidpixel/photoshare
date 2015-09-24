@@ -27,11 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         // Override point for customization after application launch.
         print("LAUNCH")
         
+        
         session.delegate = self
         session.activateSession()
         
         return true
     }
+
 
 
     @available(iOS 9.0, *) func session(session: WCSession, didReceiveMessageData messageData: NSData, replyHandler: (NSData) -> Void) {
@@ -103,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         print("Received message to share data via \(media)")
         
         let array = userInfo["ID"] as! [NSDate]
-        var imageArray = [UIImage?]()
+        var imageArray = [UIImage]()
         var urlArray = [NSURL?]()
         
         
@@ -114,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
                     
                     if date == all {
                         if let data = NSData(contentsOfURL: url) {
-                            imageArray.append(UIImage(data: data))
+                            imageArray.append(UIImage(data: data)!)
                             
                         }
                         
@@ -130,7 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
                     
                     if date == all {
                         if let data = NSData(contentsOfURL: url) {
-                            imageArray.append(UIImage(data: data))
+                            imageArray.append(UIImage(data: data)!)
                             urlArray.append(url)
                         }
                         
@@ -143,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         
         switch(media) {
         case "Facebook":
-            Classes.shareClass.SendToFB(imageArray, message: message, urls : urlArray) { (result, details )in
+            Classes.shareClass.SendToFB(imageArray, message: message) { (result, details )in
                 
                 if result == true {
                     

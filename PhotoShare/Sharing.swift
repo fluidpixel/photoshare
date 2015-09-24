@@ -28,15 +28,13 @@ class Sharing {
 
   //class for adding share and send functionality
     
-    func SendToFB(image : [UIImage?], message: [String]?, urls : [NSURL?], completionHandler: (result: Bool, detail: AnyObject?) -> ()) {
+    func SendToFB(image : [UIImage], message: [String]?, completionHandler: (result: Bool, detail: AnyObject?) -> ()) {
         
         //todo change for multiple images/retrieve errors
         var photoIds = [String]()
         var counter = 0
         for var i = 0; i < image.count; i++ {
-        
-            if image[i] != nil {
-                
+            
                 if accountFB != nil {
                 
                 var parameters = [String : AnyObject]()
@@ -47,7 +45,7 @@ class Sharing {
                 
                 let postRequest = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: feedURL, parameters: parameters)
                     
-                postRequest.addMultipartData(UIImagePNGRepresentation(image[i]!), withName: "source", type: "multipart/form-data", filename: "photo.png")
+                postRequest.addMultipartData(UIImagePNGRepresentation(image[i]), withName: "source", type: "multipart/form-data", filename: "photo.png")
                 
                 postRequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
 
@@ -81,7 +79,7 @@ class Sharing {
                             self.sendFBMessage(message, photoIds: photoIds) { (result, detail) -> () in
                                 
                                 if result == true {
-                                    completionHandler(result: true, detail: nil)
+                                    completionHandler(result: true, detail: detail)
                                 }
                             }
                         }
@@ -93,12 +91,8 @@ class Sharing {
                 } else {
                     
                     print("ERROR: Account not set up")
-                    completionHandler(result: false, detail: "Account not setup")
+                    completionHandler(result: false, detail: "Account")
                 }
-            
-            } else {
-                print("ERROR: image does not exist")
-            }
         }
         
     }
@@ -165,7 +159,7 @@ class Sharing {
                 }
             })
         } else {
-            completionHandler(result: true, detail: nil)
+            completionHandler(result: true, detail: "Photo shared to Facebook")
         }
 
     }
@@ -226,7 +220,7 @@ class Sharing {
                             print(error)
                         }
                         
-                        completionHandler(result: true, details: nil)
+                        completionHandler(result: true, details: "Photo shared to Twitter")
                     }
                     
                     
@@ -236,7 +230,7 @@ class Sharing {
             else {
                 print("ERROR: Twitter not setup")
                 
-                completionHandler(result: false, details: "Account not setup")
+                completionHandler(result: false, details: "Account")
             }
         } else {
             print("ERROR: image does not exist")

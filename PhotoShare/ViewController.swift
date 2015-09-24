@@ -12,13 +12,16 @@ import Accounts
 import Social
 
 @available(iOS 9.0, *)
-class ViewController: UIViewController, UINavigationControllerDelegate {
+class ViewController: UIViewController, UINavigationControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    @IBOutlet weak var myImage: UIImageView!
     @IBOutlet weak var galleryButton: UIButton!
     
+    @IBOutlet weak var ImageCollection: UICollectionView!
 
     var currentImageCount : Int = 0
+    var images = [UIImage]()
+    var selectedImages = [UIImage]()
+
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -29,25 +32,21 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        ImageCollection.delegate = self
+        ImageCollection.dataSource = self
+        ImageCollection.allowsMultipleSelection = true
+        
+        let nib = UINib(nibName: "PhotoShareReuseView", bundle: nil)
+        ImageCollection.registerNib(nib, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "PhotoShareReuseView")
+        
+        ImageCollection.reloadData()
+        
         PhotoManager.sharedInstance.loadPhotos { (images) -> () in
-            self.myImage.image = images[self.currentImageCount] as? UIImage
-            self.myImage.reloadInputViews()
-        }
-        
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: "ActionOnSwipe:")
-        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
-        self.view.addGestureRecognizer(swipeRight)
-        
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: "ActionOnSwipe:")
-        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
-        self.view.addGestureRecognizer(swipeLeft)
-        // Do any additional setup after loading the view, typically from a nib.
-        
-        //add long press gesture recogniser as well
-        let longPress = UILongPressGestureRecognizer(target: self, action: "ActionOnLongPress:")
-        self.view.addGestureRecognizer(longPress)
-        
-        
+            
+            self.images = images as NSArray as! [UIImage]
+            self.ImageCollection.reloadData()            
+            
+            }
     }
     
     func showLoginAlert(identifier : String){
@@ -74,74 +73,144 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         self.showViewController(alert, sender: self)
     }
     
+    func ShareMessage(type : String, message : String) {
+
+        let alert = UIAlertController(title: "Share \(type)", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.Default, handler: nil))
+        self.showViewController(alert, sender: self)
+    }
     
     
     @IBAction func ShareWithFB(sender: UIButton) {
-        
-        Classes.shareClass.SendToFB([myImage.image!], message: nil, urls: [NSURL]()) { (result, detail) -> () in
-            if result == true {
-                
-                print("INFO: Photo shared - Facebook")
-                
-            } else if result == false {
-                self.showLoginAlert("Facebook")
+        if selectedImages.count > 0 {
+            Classes.shareClass.SendToFB(selectedImages, message: nil) { (result, detail) -> () in
+                if result == true {
+                    
+                    print("INFO: Photo shared - Facebook")
+                    self.ShareMessage("Complete", message: detail as! String)
+                    
+                } else if detail as? String == "Account"{
+                    
+                    self.showLoginAlert("Facebook")
+                    
+                } else if result == false {
+                    
+                    self.ShareMessage("Error", message: detail as! String)
+                }
             }
+        } else {
+            ShareMessage("Error", message: "You haven't selected any images")
         }
         
-      //  Classes.shareClass.ShareWithEmail("file.jpg", images: [myImage.image], sendingData: ["" : ""])
-        
     }
-    
     
     @IBAction func ShareWithTwitter(sender: UIButton) {
-        
-        Classes.shareClass.SendTweet(myImage.image!, message: nil) { (result, detail) in
-            
-            if result == true {
+        if selectedImages.count == 1 {
+            Classes.shareClass.SendTweet(selectedImages[0], message: nil) { (result, detail) in
                 
-                 print("INFO: Photo shared - Twitter")
-            } else if result == false {
-                
-                self.showLoginAlert("Twitter")
+                if result == true {
+                    
+                    print("INFO: Photo shared - Twitter")
+                    self.ShareMessage("Complete", message: detail as! String)
+                } else if detail as? String == "Account"{
+                    
+                    self.showLoginAlert("Twitter")
+                    
+                }else if result == false {
+                    
+                    self.ShareMessage("Error", message: detail as! String)
+                }
             }
+        } else {
+            ShareMessage("Error", message: "You can only share one image to Twitter at a time")
         }
+
     }
     
+    //collection view methods
     
-   
-    
-    @IBAction func ActionOnSwipe(sender: UISwipeGestureRecognizer) {
-        //change photos on swipe left/right
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+
+       let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ImageCell", forIndexPath: indexPath) as! ImageCollectionCell
         
-        switch sender.direction {
+        if indexPath.row < images.count {
+            cell.CellImage.image = images[indexPath.row]
+        }
+        
+        return cell
+    }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return images.count
+    }
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
+        selectedImages.append(images[indexPath.row])
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! ImageCollectionCell
+        
+        cell.layer.borderWidth = 2.0
+        cell.layer.borderColor = UIColor.greenColor().CGColor
+      
+       
+    }
+    
+    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+        if let cell = collectionView.cellForItemAtIndexPath(indexPath) as? ImageCollectionCell {
             
-        case UISwipeGestureRecognizerDirection.Left:
-            
-            if currentImageCount + 1 < PhotoManager.sharedInstance.images.count {
-                currentImageCount = currentImageCount + 1
-                myImage.image = PhotoManager.sharedInstance.images[currentImageCount] as? UIImage
-            }
-            
-            print("Swipe Right")
-        case UISwipeGestureRecognizerDirection.Right:
-            
-            if currentImageCount > 0 {
-                currentImageCount = currentImageCount - 1
-                myImage.image = PhotoManager.sharedInstance.images[currentImageCount] as? UIImage
+            let image = cell.CellImage.image
+            if selectedImages.contains(image!) {
+                let index = selectedImages.indexOf(image!)
                 
+                selectedImages.removeAtIndex(index!)
             }
-            print("Swipe left")
+            
+            cell.layer.borderColor = UIColor.clearColor().CGColor
+        }
+        
+        
+    }
+    
+    //collection view flow layout
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        let pictureDimension = view.frame.size.width / 4.0
+        
+        return CGSizeMake(pictureDimension, pictureDimension)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        
+        let leftRightInset = view.frame.size.width / 14.0
+        return UIEdgeInsetsMake(0, leftRightInset, 0, leftRightInset)
+    }
+    
+    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionElementKindSectionHeader:
+            
+            if let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "PhotoShareReuseView", forIndexPath: indexPath) as? PhotoShareReusableView {
+                if selectedImages.count > 0 {
+                    headerView.commentLabel.text = "PhotoShare sharing \(selectedImages.count) images"
+                }else {
+                    headerView.commentLabel.text = "PhotoShare"
+                }
+                
+                
+                return headerView
+            }
+            
         default:
             break
+            
         }
+        return UICollectionReusableView()
     }
     
-    @IBAction func ActionOnLongPress(sender: UILongPressGestureRecognizer) {
-        
-        print("Long press activated")
-        
-        
-    }
     
 
 }

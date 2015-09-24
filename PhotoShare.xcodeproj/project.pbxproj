@@ -10,6 +10,7 @@
 		54FDFC451B834F2D0001BB5F /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC441B834F2D0001BB5F /* PhotoManager.swift */; };
 		54FDFC481B84A0EA0001BB5F /* ImageTableRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC471B84A0E60001BB5F /* ImageTableRowController.swift */; };
 		B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93EC68E1B6FC10E007A2596 /* Sharing.swift */; };
+		B942A3BA1BB1632200562AFC /* PhotoShareLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */; settings = {ASSET_TAGS = (); }; };
 		B94F67C31B6284F5002B7ABA /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B94F67C21B6284F5002B7ABA /* Social.framework */; };
 		B9506D021B5FB08700B31FEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9506D011B5FB08700B31FEF /* AppDelegate.swift */; };
 		B9506D041B5FB08700B31FEF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9506D031B5FB08700B31FEF /* ViewController.swift */; };
@@ -22,9 +23,11 @@
 		B9506D381B5FF3FF00B31FEF /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9506D361B5FF3FF00B31FEF /* Interface.storyboard */; };
 		B9506D3A1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D391B5FF3FF00B31FEF /* Images.xcassets */; };
 		B950F6451B9EFBCB007EB2CE /* TourInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B950F6441B9EFBCB007EB2CE /* TourInterfaceController.swift */; };
+		B95FD3A41BB1AF7000792CA6 /* PhotoShareReuseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */; settings = {ASSET_TAGS = (); }; };
 		B97FF0C91B8E2105008F461E /* ContactsTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97FF0C81B8E2105008F461E /* ContactsTableController.swift */; };
 		B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B98BDCC11B8CA182001DFF9C /* Contacts.framework */; };
 		B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */; };
+		B998927E1BB009C400CB84B1 /* ImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */; settings = {ASSET_TAGS = (); }; };
 		B99C81BF1B90C05A0001B457 /* EmailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99C81BE1B90C05A0001B457 /* EmailController.swift */; };
 		B9C11CD11B72627E00F239AD /* PhotoShare WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B9506D251B5FF3FE00B31FEF /* PhotoShare WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B9C11CD41B72627E00F239AD /* PhotoShare WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B9506D2F1B5FF3FF00B31FEF /* PhotoShare WatchKit App.app */; };
@@ -85,6 +88,7 @@
 		54FDFC441B834F2D0001BB5F /* PhotoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		54FDFC471B84A0E60001BB5F /* ImageTableRowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTableRowController.swift; sourceTree = "<group>"; };
 		B93EC68E1B6FC10E007A2596 /* Sharing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sharing.swift; sourceTree = "<group>"; };
+		B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoShareLayout.swift; sourceTree = "<group>"; };
 		B94F67C21B6284F5002B7ABA /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		B9506CFC1B5FB08700B31FEF /* PhotoShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9506D001B5FB08700B31FEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -107,10 +111,12 @@
 		B950F6441B9EFBCB007EB2CE /* TourInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TourInterfaceController.swift; sourceTree = "<group>"; };
 		B95CFAE81B6A6D5800FFA636 /* PhotoShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PhotoShare.entitlements; sourceTree = "<group>"; };
 		B95CFAE91B6A6DE200FFA636 /* PhotoShare WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit Extension.entitlements"; sourceTree = "<group>"; };
+		B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoShareReuseView.xib; sourceTree = "<group>"; };
 		B978B16A1B7511E700B97C5D /* PhotoShare WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PhotoShare WatchKit App.entitlements"; sourceTree = "<group>"; };
 		B97FF0C81B8E2105008F461E /* ContactsTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsTableController.swift; sourceTree = "<group>"; };
 		B98BDCC11B8CA182001DFF9C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
 		B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictationController.swift; sourceTree = "<group>"; };
+		B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCollectionCell.swift; sourceTree = "<group>"; };
 		B99C81BE1B90C05A0001B457 /* EmailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailController.swift; sourceTree = "<group>"; };
 		B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 		B9C11D3C1B726F2900F239AD /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
@@ -187,6 +193,9 @@
 				B9506D081B5FB08800B31FEF /* Images.xcassets */,
 				B9506D0A1B5FB08800B31FEF /* LaunchScreen.xib */,
 				B9506CFF1B5FB08700B31FEF /* Supporting Files */,
+				B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */,
+				B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */,
+				B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */,
 			);
 			path = PhotoShare;
 			sourceTree = "<group>";
@@ -408,6 +417,7 @@
 				B9506D071B5FB08800B31FEF /* Main.storyboard in Resources */,
 				B9506D0C1B5FB08800B31FEF /* LaunchScreen.xib in Resources */,
 				B9506D091B5FB08800B31FEF /* Images.xcassets in Resources */,
+				B95FD3A41BB1AF7000792CA6 /* PhotoShareReuseView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +455,8 @@
 				54FDFC451B834F2D0001BB5F /* PhotoManager.swift in Sources */,
 				B9506D041B5FB08700B31FEF /* ViewController.swift in Sources */,
 				B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */,
+				B998927E1BB009C400CB84B1 /* ImageCollectionCell.swift in Sources */,
+				B942A3BA1BB1632200562AFC /* PhotoShareLayout.swift in Sources */,
 				B9506D021B5FB08700B31FEF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

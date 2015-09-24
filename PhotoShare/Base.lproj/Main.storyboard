@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -17,15 +17,47 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OQ2-Xy-TSW">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <gestureRecognizers/>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ree-on-8Pj">
-                                <rect key="frame" x="540" y="540" width="50" height="50"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="h5g-31-ZVk">
+                                <rect key="frame" x="0.0" y="20" width="600" height="514"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="BKb-x6-qbg"/>
-                                    <constraint firstAttribute="height" constant="50" id="ily-RQ-HCd"/>
+                                    <constraint firstAttribute="height" constant="540" id="qa8-HC-jtd"/>
+                                </constraints>
+                                <collectionViewLayout key="collectionViewLayout" id="vKP-u9-j6P" customClass="PhotoShareLayout" customModule="PhotoShare" customModuleProvider="target"/>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCell" id="81m-sN-Ei4" customClass="ImageCollectionCell" customModule="PhotoShare" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="twy-oc-Vxn">
+                                                    <rect key="frame" x="-55" y="1" width="240" height="128"/>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="twy-oc-Vxn" firstAttribute="top" secondItem="81m-sN-Ei4" secondAttribute="topMargin" constant="-7" id="AIQ-Th-oHW"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="twy-oc-Vxn" secondAttribute="bottom" constant="-37" id="EsL-25-S6v"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="twy-oc-Vxn" secondAttribute="trailing" constant="-93" id="KTS-9q-ghJ"/>
+                                            <constraint firstItem="twy-oc-Vxn" firstAttribute="leading" secondItem="81m-sN-Ei4" secondAttribute="leadingMargin" constant="-63" id="op4-4z-xRh"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="CellImage" destination="twy-oc-Vxn" id="DCj-Qp-BbI"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="qa8-HC-jtd"/>
+                                    </mask>
+                                </variation>
+                            </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ree-on-8Pj">
+                                <rect key="frame" x="550" y="542" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="plj-Qs-7fu"/>
                                 </constraints>
                                 <state key="normal" image="Facebook">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -34,11 +66,15 @@
                                     <action selector="ShareWithFB:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sbA-Oc-Zi9"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z5F-8S-znJ">
+                                <rect key="frame" x="58" y="542" width="484" height="50"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oyp-hP-ITf">
-                                <rect key="frame" x="482" y="540" width="50" height="50"/>
+                                <rect key="frame" x="0.0" y="542" width="50" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="KK1-pN-GNa"/>
-                                    <constraint firstAttribute="height" constant="50" id="cCr-5l-nEL"/>
+                                    <constraint firstAttribute="width" constant="50" id="bAe-UN-3Fl"/>
+                                    <constraint firstAttribute="height" constant="50" id="wMF-5H-xSq"/>
                                 </constraints>
                                 <state key="normal" image="Twitter">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -50,27 +86,51 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="8cH-to-a84"/>
-                            <constraint firstAttribute="centerX" secondItem="OQ2-Xy-TSW" secondAttribute="centerX" id="HIx-fI-Y21"/>
-                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="bottom" secondItem="ree-on-8Pj" secondAttribute="bottom" constant="10" id="K0I-NQ-RQa"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="OQ2-Xy-TSW" secondAttribute="bottom" id="MAB-o1-pwX"/>
-                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="trailing" secondItem="ree-on-8Pj" secondAttribute="trailing" constant="10" id="Yqx-kb-KDi"/>
-                            <constraint firstItem="ree-on-8Pj" firstAttribute="leading" secondItem="Oyp-hP-ITf" secondAttribute="trailing" constant="8" id="a6O-sv-vna"/>
-                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="dOD-ys-i8F"/>
-                            <constraint firstItem="OQ2-Xy-TSW" firstAttribute="bottom" secondItem="Oyp-hP-ITf" secondAttribute="bottom" constant="10" id="osr-Oe-hjL"/>
+                            <constraint firstItem="Z5F-8S-znJ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" symbolic="YES" id="7lp-CW-GYa"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Z5F-8S-znJ" secondAttribute="bottom" constant="8" symbolic="YES" id="DlA-O3-U39"/>
+                            <constraint firstItem="ree-on-8Pj" firstAttribute="top" secondItem="h5g-31-ZVk" secondAttribute="bottom" constant="8" symbolic="YES" id="Ivn-pE-seV"/>
+                            <constraint firstItem="ree-on-8Pj" firstAttribute="trailing" secondItem="h5g-31-ZVk" secondAttribute="trailing" id="Iwi-0m-0JY"/>
+                            <constraint firstItem="Oyp-hP-ITf" firstAttribute="top" secondItem="Z5F-8S-znJ" secondAttribute="top" id="Ope-UB-XrQ"/>
+                            <constraint firstItem="Oyp-hP-ITf" firstAttribute="leading" secondItem="h5g-31-ZVk" secondAttribute="leading" id="PWV-cS-Jby"/>
+                            <constraint firstItem="Z5F-8S-znJ" firstAttribute="leading" secondItem="Oyp-hP-ITf" secondAttribute="trailing" constant="8" symbolic="YES" id="Rhc-kk-M2d"/>
+                            <constraint firstItem="Z5F-8S-znJ" firstAttribute="top" secondItem="h5g-31-ZVk" secondAttribute="bottom" constant="8" symbolic="YES" id="UmV-xI-68e"/>
+                            <constraint firstItem="h5g-31-ZVk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Uol-fk-2sa"/>
+                            <constraint firstItem="Z5F-8S-znJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Xhg-cN-fBv"/>
+                            <constraint firstItem="h5g-31-ZVk" firstAttribute="centerX" secondItem="Z5F-8S-znJ" secondAttribute="centerX" id="ZYj-TF-8Rr"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ree-on-8Pj" secondAttribute="trailing" id="ZlK-Cy-8JE"/>
+                            <constraint firstItem="Oyp-hP-ITf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="bc7-rx-Rya"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Oyp-hP-ITf" secondAttribute="bottom" constant="8" symbolic="YES" id="cbC-cw-Jyq"/>
+                            <constraint firstItem="h5g-31-ZVk" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="dRR-ce-hHa"/>
+                            <constraint firstItem="ree-on-8Pj" firstAttribute="leading" secondItem="Z5F-8S-znJ" secondAttribute="trailing" constant="8" symbolic="YES" id="fLQ-nn-o26"/>
+                            <constraint firstItem="h5g-31-ZVk" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="hDs-oE-tk0"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="h5g-31-ZVk" secondAttribute="trailing" constant="-20" id="im5-2V-iYb"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ree-on-8Pj" secondAttribute="bottom" constant="8" symbolic="YES" id="r0K-7k-9FX"/>
+                            <constraint firstItem="h5g-31-ZVk" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="uIh-ct-7ca"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="dRR-ce-hHa"/>
+                                <exclude reference="im5-2V-iYb"/>
+                                <exclude reference="uIh-ct-7ca"/>
+                                <exclude reference="bc7-rx-Rya"/>
+                                <exclude reference="7lp-CW-GYa"/>
+                                <exclude reference="UmV-xI-68e"/>
+                                <exclude reference="ZlK-Cy-8JE"/>
+                            </mask>
+                        </variation>
                     </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
-                        <outlet property="myImage" destination="OQ2-Xy-TSW" id="aiN-IZ-jDN"/>
+                        <outlet property="ImageCollection" destination="h5g-31-ZVk" id="JwP-FK-Asn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="392" y="473"/>
+            <point key="canvasLocation" x="303" y="514"/>
         </scene>
     </scenes>
     <resources>
-        <image name="Facebook" width="50" height="50"/>
+        <image name="Facebook" width="29" height="29"/>
         <image name="Twitter" width="1687" height="1687"/>
     </resources>
 </document>
