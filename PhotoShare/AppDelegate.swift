@@ -10,184 +10,69 @@ import UIKit
 import WatchConnectivity
 import Social
 import Accounts
+import Photos
+
+import WatchKit
 
 struct Classes {
     static let shareClass = Sharing()
 }
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
+let SharedApp = UIApplication.sharedApplication().delegate as! AppDelegate
 
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhotoLibraryChangeObserver {
+    
     var window: UIWindow?
     var session = WCSession.defaultSession()
     var FBAccount: ACAccount!
     var TwitterAccount: ACAccount!
-
+    
+    var fetchResult:PHFetchResult!
+    var watchImageManager = PHImageManager.defaultManager()
+    
+    var activeFileTransfers = Set<WCSessionFileTransfer>()
+    
+    var watchImageSize = CGSize(width: 312, height: 390)
+    
+    // MARK: UIApplicationDelegate
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         print("LAUNCH")
         
+        #if DEBUG
+            // Send any uncaught exceptions as a message to the watch
+            NSSetUncaughtExceptionHandler {
+                (exception:NSException) -> Void in
+                print("CRASH: \(exception.description)")
+                print("Stack Trace: \(exception.callStackSymbols)")
+                let session = WCSession.defaultSession()
+                session.sendMessage(["CRASH":"\(exception.description)", "Stack Trace:": "(exception.callStackSymbols)"], replyHandler: nil, errorHandler: nil)
+            }
+        #endif
         
         session.delegate = self
         session.activateSession()
         
+        // Initiliase Photo Library Fetch
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.fetchLimit = 25
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        
+        self.fetchResult = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
+        
+        self.sessionReachabilityDidChange(self.session)
+        
+        PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
+        
         return true
     }
-
-
-
-    @available(iOS 9.0, *) func session(session: WCSession, didReceiveMessageData messageData: NSData, replyHandler: (NSData) -> Void) {
-        
-        print("Message received from watch \(messageData)")
-        
-        let stringDate : String = NSString(data: messageData, encoding: NSUTF8StringEncoding)! as String
-        
-        let format = NSDateFormatter()
-        
-        format.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        
-        let date = format.dateFromString(stringDate)
-        
-        let lastKnownUpdate : NSDate = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(newestUpdateKey) as! NSDate
-        
-        if lastKnownUpdate.earlierDate(date!) == date! {
-            
-            //transfer all files that are later than that date
-            for (key, _) in PhotoManager.sharedInstance.urlArray {
-                
-                if key.laterDate(date!) == key {
-                    
-                    let metadata = ["creationDate" : key]
-                    
-                    _ = session.transferFile(PhotoManager.sharedInstance.urlArray[key]!, metadata: metadata)
-                }
-                
-                
-            }
-        } else { //this should not trigger really
-            
-            print("The last update date for the watch is sooner than the phone, something has gone really wrong here")
-//            PhotoManager.sharedInstance.loadPhotos()
-        }
-        
-        
+    
+    
+    func applicationWillTerminate(application: UIApplication) {
+        PHPhotoLibrary.sharedPhotoLibrary().unregisterChangeObserver(self)
     }
     
-    func session(session: WCSession, didFinishFileTransfer fileTransfer: WCSessionFileTransfer, error: NSError?) {
-        
-        print(error?.localizedDescription)
-        
-        //need to handle this through an alert of some kind
-        
-        
-        
-    }
-    
-    @available(iOS 9.0, *) func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
-        
-        //do your handle stuff here
-        let media = userInfo["Media"] as! String
-        
-        let message = userInfo["Message"] as! [String]
-        
-        var contact = userInfo["Contact"] as! [String : String]?
-        if contact == nil {
-            contact = ["Error" : "No Data"]
-        } else {
-            var temp : String = ""
-            for text in message{
-                temp = "\(temp) \(text)"
-                
-            }
-            contact!["Message"] = temp
-        }
-        
-        print("Received message to share data via \(media)")
-        
-        let array = userInfo["ID"] as! [NSDate]
-        var imageArray = [UIImage]()
-        var urlArray = [NSURL?]()
-        
-        
-        if media == "Twitter" {
-            for (date, url) in PhotoManager.sharedInstance.urlArray {
-                
-                for all in array {
-                    
-                    if date == all {
-                        if let data = NSData(contentsOfURL: url) {
-                            imageArray.append(UIImage(data: data)!)
-                            
-                        }
-                        
-                    }
-                }
-                
-                
-            }
-        }else {
-            for (date, url) in PhotoManager.sharedInstance.fullSizeArray {
-                
-                for all in array {
-                    
-                    if date == all {
-                        if let data = NSData(contentsOfURL: url) {
-                            imageArray.append(UIImage(data: data)!)
-                            urlArray.append(url)
-                        }
-                        
-                    }
-                }
-            }
-        }
-
-        //change this to work with
-        
-        switch(media) {
-        case "Facebook":
-            Classes.shareClass.SendToFB(imageArray, message: message) { (result, details )in
-                
-                if result == true {
-                    
-                    print("Success! Sent from watch")
-                    _ = session.transferUserInfo(["Result": "Success"])
-                } else if result == false {
-                    print("User not logged in")
-                    _ = session.transferUserInfo(["Result": "Fail", "detail" : details!])
-                }
-                
-            }
-            break
-        case "Twitter":
-            Classes.shareClass.SendTweet(imageArray[0], message: message) { (result, detail) in
-            
-                if result == true {
-                    
-                    print("Success! Sent from watch")
-                    _ = session.transferUserInfo(["Result": "Success"])
-                } else if result == false {
-                    print("User not logged in")
-                    _ = session.transferUserInfo(["Result": "Fail", "detail" : detail!])
-                }
-            }
-            break
-            
-        case "Email":
-            print("Send Email triggered")
-            
-            
-            
-            Classes.shareClass.ShareWithEmail("filename", images: imageArray, sendingData: contact!)
-            break
-        case "Text":
-            print("Send Text triggered")
-            break
-        default:
-            print("media is not twitter or facebook")
-            break
-        }
-        
-    }
     
     func applicationDidBecomeActive(application: UIApplication) {
         
@@ -267,9 +152,285 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
             }
             
         }
+        
+        
+    }
+    
+    // MARK: WCSessionDelegate
+    
+    // TODO: Fix this for new Photo-Library Integration
+
+    func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
+        
+        let media = userInfo["Media"] as! String
+        let message = userInfo["Message"] as! [String]
+        
+        var contact = userInfo["Contact"] as? [String : String]
+        if contact == nil {
+            contact = ["Error" : "No Data"]
+        } else {
+            var temp : String = ""
+            for text in message{
+                temp = "\(temp) \(text)"
+                
+            }
+            contact!["Message"] = temp
+        }
+        
+        let localIDs:[String] = userInfo[kSelectedImagesLocalIdentifiers] as? [String] ?? []
+
+        let assets = PHAsset.fetchAssetsWithLocalIdentifiers(localIDs, options: nil)
+        var images:[UIImage] = []
+        
+        assets.enumerateObjectsUsingBlock {
+            if let asset = $0.0 as? PHAsset {
+                images.append(self.getHQImageForAssetSync(asset))
+            }
+        }
+        
+        switch (media) {
+            
+        case "Facebook":
+            Classes.shareClass.SendToFB(images, message: message) {
+                (result, details )in
+                
+                if result == true {
+                    
+                    print("Success! Sent from watch")
+                    _ = session.transferUserInfo(["Result": "Success"])
+                } else if result == false {
+                    print("User not logged in")
+                    _ = session.transferUserInfo(["Result": "Fail", "detail" : details!])
+                }
+                
+            }
+            
+        case "Twitter":
+            Classes.shareClass.SendTweet(images[0], message: message) {
+                (result, detail) in
+                
+                if result == true {
+                    
+                    print("Success! Sent from watch")
+                    _ = session.transferUserInfo(["Result": "Success"])
+                } else if result == false {
+                    print("User not logged in")
+                    _ = session.transferUserInfo(["Result": "Fail", "detail" : detail!])
+                }
+            }
+            
+        case "Email":
+            print("Send Email triggered")
+            
+            Classes.shareClass.ShareWithEmail("filename", images: images, sendingData: contact!)
+            
+        case "Text":
+            print("Send Text triggered")
+            
+        default:
+            print("media is not twitter or facebook")
+            print("User Info Received: \(userInfo)")
+            #if DEBUG
+                session.sendMessage(["Unknown User Info Received by App":userInfo], replyHandler: nil, errorHandler: nil)
+            #endif
+        }
+
+    }
+    
+    func session(session: WCSession, didFinishFileTransfer fileTransfer: WCSessionFileTransfer, error: NSError?) {
+        #if DEBUG
+            if let error = error {
+                session.sendMessage(["File Transfer Error": error.localizedDescription], replyHandler: nil, errorHandler: nil)
+            }
+        #endif
+        if fileTransfer.file.metadata?[kDeleteWhenTransfered]?.boolValue ?? false {
+            do {
+                try NSFileManager.defaultManager().removeItemAtURL(fileTransfer.file.fileURL)
+            }
+            catch {
+                #if DEBUG
+                    session.sendMessage(["File Removal Error": fileTransfer.file.fileURL.path ?? "(NULL)"], replyHandler: nil, errorHandler: nil)
+                #endif
+            }
+        }
+        
+        self.activeFileTransfers.remove(fileTransfer)
+        
+    }
+    
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+        print("didReceiveMessage:\(message) - reply")
 
         
     }
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
+        if let _ = message[kWPRequestImageData] as? String {
+            sessionReachabilityDidChange(session)
+        }
+        else if let localID = message[kWPRequestImageForLocalIdentifier] as? String {
+            self.sendImage(localID, session: session)
+        }
+    }
+    
+    func sessionReachabilityDidChange(session: WCSession) {
+        print("sessionReachabilityDidChange")
+        if session.reachable {
+            
+            let watchSize = WKInterfaceDevice.currentDevice().screenBounds.size
+            let watchScale = WKInterfaceDevice.currentDevice().screenScale
+            self.watchImageSize = CGSize(width: watchScale * watchSize.width, height: watchScale * watchSize.height)
+            
+            self.sendAssetList(session)
+            
+//            self.fetchResult.enumerateObjectsUsingBlock {
+//                if let asset = $0.0 as? PHAsset {
+//                    self.sendImage(asset, session: session)
+//                }
+//            }
+            
+        }
+        else {
+            // TODO: Watch App has disconnected
+            self.cancelAllImageFileTransfers()
+        }
+    }
+    
+    func sendAssetList(session: WCSession) -> [String] {
+        
+        var list = [String]()
+        list.reserveCapacity(self.fetchResult.count)
+        for index in 0..<self.fetchResult.count {
+            list.insert( self.fetchResult[index].localIdentifier, atIndex: index )
+        }
+        
+        if session.reachable {
+            session.sendMessage([kLocalIdentifierList: list], replyHandler: nil, errorHandler: nil)
+        }
+        return list
+    }
+    
+    // cancels all file transfers for a given asset
+    func cancelFileTransfers(localID:String) {
+        for ft in self.activeFileTransfers {
+            if let id = ft.file.metadata?[kLocalIdentifier]?.string where id == localID {
+                self.activeFileTransfers.remove(ft)
+                ft.cancel()
+                _ = try? NSFileManager.defaultManager().removeItemAtURL(ft.file.fileURL)
+            }
+        }
+    }
+    func cancelAllImageFileTransfers() {
+        for ft in self.activeFileTransfers {
+            if let _ = ft.file.metadata?[kLocalIdentifier] {
+                self.activeFileTransfers.remove(ft)
+                ft.cancel()
+                _ = try? NSFileManager.defaultManager().removeItemAtURL(ft.file.fileURL)
+            }
+        }
+    }
+    
+    @objc(sendImageForLocalIdentifier:session:)
+    func sendImage(localID:String, session: WCSession) {
+        if let asset = PHAsset.fetchAssetsWithLocalIdentifiers([localID], options: nil).firstObject as? PHAsset {
+            self.sendImage(asset, session: session)
+            
+        }
+    }
 
+    @objc(sendImageAsset:session:)
+    func sendImage(asset:PHAsset, session: WCSession) {
+        if session.reachable, let tempFile = createTemporaryFilename("PNG") {
+            
+            let options = PHImageRequestOptions()
+            options.deliveryMode = PHImageRequestOptionsDeliveryMode.Opportunistic
+            options.resizeMode = PHImageRequestOptionsResizeMode.Exact
+            
+            self.watchImageManager.requestImageForAsset(asset, targetSize: watchImageSize, contentMode: .AspectFill, options: options) {
+                (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
+                
+                if session.reachable, let image = img, let imageData = UIImagePNGRepresentation(image) {
+                    do {
+                        try imageData.writeToURL(tempFile, options: .AtomicWrite)
+                        
+                        var metadata:[String:AnyObject] = [:] // info as? [String:AnyObject] ?? [:]
+                        metadata[kLocalIdentifier] = asset.localIdentifier
+                        metadata[kDeleteWhenTransfered] = true
+                        metadata[kAssedModificationDate] = asset.modificationDate
+
+                        self.cancelFileTransfers(asset.localIdentifier)
+                        
+                        self.activeFileTransfers.insert(session.transferFile(tempFile, metadata: metadata))
+                       // self.activeFileTransfers.insert(session.transferFile(tempFile, metadata: metadata))
+                        
+                    }
+                    catch {
+                        // Failed to create temporary file
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    
+    // MARK: PHPhotoLibraryChangeObserver
+    func photoLibraryDidChange(changeInstance: PHChange) {
+        
+        if let changes = changeInstance.changeDetailsForFetchResult(fetchResult) {
+            self.fetchResult = changes.fetchResultAfterChanges
+            if self.session.reachable {
+                
+                var assetsToSend = Set<PHObject>()
+                
+                if changes.hasIncrementalChanges {
+                    
+                    // if there are moves, insertions or deletions then send the new asset list
+                    if changes.hasMoves || changes.removedObjects.count > 0 || changes.insertedObjects.count > 0 {
+                        self.sendAssetList(self.session)
+                    }
+                    
+                    assetsToSend.unionInPlace(changes.insertedObjects)
+                    assetsToSend.unionInPlace(changes.changedObjects)
+ 
+                }
+                else {
+                    
+                    self.sendAssetList(self.session)
+
+                    self.fetchResult.enumerateObjectsUsingBlock {
+                        assetsToSend.insert($0.0 as! PHObject)
+                    }
+                    
+                }
+                
+                for object in assetsToSend {
+                    if let asset = object as? PHAsset {
+                        self.sendImage(asset, session: self.session)
+                    }
+                }
+
+            }
+            
+        }
+        
+    }
+    
+    // Must be run on a background thread
+    func getHQImageForAssetSync(asset:PHAsset) -> UIImage {
+        let options = PHImageRequestOptions()
+        options.synchronous = true
+        options.deliveryMode = .HighQualityFormat
+        options.resizeMode = .None
+        
+        let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+        
+        var rv:UIImage!
+        PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: options) {
+            (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
+            rv = img
+        }
+        
+        return rv
+    }
 }
 

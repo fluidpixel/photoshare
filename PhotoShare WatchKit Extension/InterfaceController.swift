@@ -26,33 +26,43 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBOutlet weak var watchImage: WKInterfaceImage!
     @IBOutlet var WkButton: WKInterfaceButton!
     
+    // Synced data from phone
+    var assetList:[String] = ["NONE"]
+    var assetImages:[String:UIImage] = [:]
+    
+    var session : WCSession!
     //menu items
     
     
-    //stored variables
+//    //stored variables
     var pageNumber = 0
-    var arraySize = 0
-    var storedImages = [Int : AnyObject]()
+//    var arraySize = 0
+//    var storedImages = [Int : AnyObject]()
     var storedIDs : [String : NSDate]?
-    var images = [UIImage]()
-    var session : WCSession!
+//    var images = [UIImage]()
+
     var selectedImage : [Int] = []
+    
+    var selectedLocalIdentifiers:[String] { return selectedImage.map { assetList[$0] } }
+    
     var dictationResult = ""
     var contactsFromPhone = [String : String]()
     var contactsFromEmail = [String : String]()
     var mediumToSendWith = ""
     
-    let maxPictureCount = 25
+//    let maxPictureCount = 25
     let pictureCountKey = "pictureCount"
     let lastUpdateKey = "DateLastModified"
-    let pictureArrayKey = "photoAddresses"
-    let IDsArrayKey = "StoredIDs"
-    let latestImageKey = "NewestImage"
+//    let pictureArrayKey = "photoAddresses"
+//    let IDsArrayKey = "StoredIDs"
+//    let latestImageKey = "NewestImage"
 
-    
+
+    // MARK: WKInterfaceController overrides
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
+        /*
         let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
         
         var dateLastModified : NSDate? = defaults?.objectForKey(lastUpdateKey) as? NSDate
@@ -101,13 +111,18 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             loadTableData()
             //ShowDemo()
         }
+        */
         
-        if (WCSession.isSupported()) {
+        if WCSession.isSupported() {
             
             session = WCSession.defaultSession()
             session.delegate = self
             session.activateSession()
             
+            // This will wake up the phone and request the latest phot library data
+            session.sendMessage([kWPRequestImageData:true], replyHandler: nil, errorHandler: nil)
+
+            /*
             let format = NSDateFormatter()
             
             format.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -123,11 +138,139 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     
                     print("ERROR : \(error)")
             })
+            */
+            
         }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "InfoGatherComplete", name: ContactDetails.readyToSend, object: nil)
 
     }
+    
+    override func table(table: WKInterfaceTable, didSelectRowAtIndex rowIndex: Int) {
+        
+        print("Selected image at row \(rowIndex)")
+        //image filtering
+        let row = table.rowControllerAtIndex(rowIndex) as! ImageTableRowController
+        
+        if selectedImage.contains(rowIndex) {
+            let index = selectedImage.indexOf(rowIndex)
+            
+            selectedImage.removeAtIndex(index!)
+            row.photo.setHidden(true)
+            
+            if selectedImage.count > 0 {
+                self.setTitle("Share \(selectedImage.count) images")
+            } else {
+                self.setTitle("PhotoShare")
+            }
+            
+            
+        } else {
+            
+            row.photo.setHidden(false)
+            selectedImage.append(rowIndex)
+            self.setTitle("Share \(selectedImage.count) images")
+        }
+        
+    }
+    
+    
+    
+    // MARK: WCSessionDelegate
+    func session(session: WCSession, didReceiveFile file: WCSessionFile) {
+        if let localID = file.metadata?[kLocalIdentifier] as? String,
+            let pathURL = file.fileURL.path,
+            let image = UIImage(contentsOfFile: pathURL) {
+                
+                print("Received File for: \(localID) size:\(image.size)")
+                
+                self.assetImages[localID] = image
+                
+                if let index = self.assetList.indexOf(localID),
+                    let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            print("\tWritten to row(\(index)) - \(tableRow)")
+                            tableRow.WKGroup.setBackgroundImageData(NSData(contentsOfFile: pathURL))     
+                        }
+                }
+        }
+        else {
+            print("Unknown File Metadata: \(file.metadata)")
+        }
+    }
+    
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+        print("Unknown Message \(message)")
+    }
+    
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
+        if let newAssetList = message[kLocalIdentifierList] as? [String] {
+            if self.assetList != newAssetList {
+                
+                if newAssetList.count == 0 {
+                    WkButton.setHidden(false)
+                    WkButton.setTitle("No images found, tap to load them")
+                }
+                else {
+                    WkButton.setHidden(true)
+//                    loadTableData()
+//                    ShowDemo()
+                }
+                
+                self.assetList = newAssetList
+                
+                // Cleanup
+                for unusedImageKey in (self.assetImages.keys.filter { !self.assetList.contains($0) }) {
+                    self.assetImages.removeValueForKey(unusedImageKey)
+                }
+                
+                
+                
+                self.imageTable.setNumberOfRows(self.assetList.count, withRowType: "image row")
+                for index in 0..<self.assetList.count {
+                    if let image = self.assetImages[self.assetList[index]],
+                        let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
+                            tableRow.WKGroup.setBackgroundImage(image)
+                    }
+                    else {
+                        // Not got the image - request it
+                        session.sendMessage([kWPRequestImageForLocalIdentifier : self.assetList[index]], replyHandler: nil, errorHandler: nil)
+                    }
+                    
+                }
+            }
+        }
+        else {
+            print("Unknown Message \(message)")
+        }
+    }
+    
+    func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
+        
+        print("Recevied reply from phone - result : \(userInfo.values.first)")
+        
+        let alert = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+            
+        }
+        
+        var errormsg : String? = nil
+        
+        if userInfo["Result"] as! String == "Success" {
+            clearSentPictures()
+        } else {
+            errormsg = userInfo["detail"] as? String
+        }
+        
+        let title = (userInfo["Result"] as! String == "Success") ? "Message Sent!" : "Message Failed to Send!"
+        
+        
+        
+        presentAlertControllerWithTitle(title, message: errormsg, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
+        
+    }
+    
+    
+    // MARK: Utility Functions
     
      func ShowDemo() {
         
@@ -153,151 +296,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
     }
     
-    func loadTableData() {
-        imageTable.setNumberOfRows(images.count, withRowType: "image row")
-        
-        for (index, image) in images.enumerate() {
-            if let row = imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
-                row.WKGroup.setBackgroundImage(image)
-                //row.photo.setImage(image)
-            }
-        }
-    }
-    
-    override func table(table: WKInterfaceTable, didSelectRowAtIndex rowIndex: Int) {
-        
-        print("Selected image at row \(rowIndex)")
-        
-        //image filtering
-        let row = table.rowControllerAtIndex(rowIndex) as! ImageTableRowController
-        
-        if selectedImage.contains(rowIndex) {
-            let index = selectedImage.indexOf(rowIndex)
-            
-            selectedImage.removeAtIndex(index!)
-            row.photo.setHidden(true)
-            
-            if selectedImage.count > 0 {
-                self.setTitle("Share \(selectedImage.count) images")
-            } else {
-                self.setTitle("PhotoShare")
-            }
-            
-            
-        } else {
-    
-            row.photo.setHidden(false)
-            selectedImage.append(rowIndex)
-            self.setTitle("Share \(selectedImage.count) images")
-        }
-        
-    }
-    
-    
-    // SESSIONS
-    func session(session: WCSession, didReceiveFile file: WCSessionFile) {
-        
-        print("received a file at : \(file.fileURL.relativePath!)")
-        
-        let identifier = file.metadata
-        
-        let creationDate = identifier!["creationDate"] as! NSDate
-        
-        if let data = NSData(contentsOfURL: file.fileURL) {
-            if let image = UIImage(data: data) {
-                
-                let userdefaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
-                 var url : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
-                
-                let fileName = "PhotoGallery\(userdefaults!.integerForKey(pictureCountKey)).jpg"
-                
-                if let tempStoredIDs = userdefaults?.dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
-                    
-                    storedIDs = tempStoredIDs
-                    
-                }else {
-                    storedIDs = [String : NSDate]()
-                }
-                
-                url = url.stringByAppendingPathComponent(fileName)
-                
-                let index  = userdefaults!.integerForKey(pictureCountKey)
-                
-                storedImages[index] = UIImage(contentsOfFile: "\(url)")
-                storedIDs!["\(index)"] = creationDate
-                
-                if images.count >= maxPictureCount {
-                    //push out oldest image from array
-                    
-                    let newestImageIndex  = userdefaults?.integerForKey(pictureCountKey)
-                    
-                    let oldestImageIndex = (newestImageIndex! + 1) % maxPictureCount
-                    
-                    userdefaults?.setValue(oldestImageIndex, forKey: pictureCountKey)
-                    
-                } else {
-                    //update newest image and carry on
-                    userdefaults?.setValue((images.count), forKey: pictureCountKey)
-                    
-                    images.append(image)
 
-                }
-
-                UIImageJPEGRepresentation(image, 0.5)?.writeToFile(url as String, atomically: true)
-                
-                print(url)
-
-                if let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare") {
-                
-                if var arrayCurrent = defaults.arrayForKey(pictureArrayKey) {
-                    
-                    arrayCurrent.append(url)
-                    
-                    defaults.setObject(arrayCurrent, forKey: pictureArrayKey)
-                    
-                } else {
-                    var newArray = [String]()
-                    
-                    newArray.append(url as String)
-                    
-                    defaults.setObject(newArray, forKey: pictureArrayKey)
-                }
-                
-                let updatedDate = NSDate()
-
-                defaults.setObject(updatedDate, forKey: lastUpdateKey)
-                defaults.setObject(storedIDs, forKey: IDsArrayKey)
-                    
-                }
-            }
-        }
-
-    }
     
-    func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
-        
-        print("Recevied reply from phone - result : \(userInfo.values.first)")
-        
-        let alert = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
-            
-        }
-        
-        var errormsg : String? = nil
-        
-        if userInfo["result"] as! String == "Success" {
-            clearSentPictures()
-        } else {
-            errormsg = userInfo["detail"] as? String
-        }
-        
-        let title = (userInfo["result"] as! String == "Success") ? "Message Sent!" : "Message Failed to Send!"
-        
-        
-        
-        presentAlertControllerWithTitle(title, message: errormsg, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
-        
-    }
-    //END SESSIONS
+
     
     func clearSentPictures(){
         
@@ -314,12 +315,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         if NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey) > 0 {
         
-            if images.count > 0 {
-                pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
-                
-                WkButton.setHidden(true)
-                loadTableData()
-            }
+//            if images.count > 0 {
+//                pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
+//                
+//                WkButton.setHidden(true)
+//                loadTableData()
+//            }
         } else {
             
             var dateLastModified : NSDate? = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(lastUpdateKey) as? NSDate
@@ -485,13 +486,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         //dictionary - imagenumbers
         //to do - allow the sharing of multiples and messages
         
-        var ids = [AnyObject]()
-        for all in selectedImage {
-            
-            ids.append(storedIDs!["\(all)"]!)
-        
-        }
-        
         var contact : [String: String] = ["" : ""]
         
         if ContactDetails.message == nil {
@@ -511,10 +505,94 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             contact["Address"] = ContactDetails.contactNumber!
         }
         
-        let metaData : [String : AnyObject] = ["ID" : ids, "Media" : identifier, "Message" : ContactDetails.message! as [AnyObject], "Contact" : contact]
+        let metaData : [String : AnyObject] = [kSelectedImagesLocalIdentifiers : self.selectedLocalIdentifiers,
+            "Media" : identifier,
+            "Message" : ContactDetails.message! as [AnyObject],
+            "Contact" : contact]
         
-        _ = session.transferUserInfo(metaData)
+        session.transferUserInfo(metaData)
         
     }
 
 }
+
+/*
+func session(session: WCSession, didReceiveFile file: WCSessionFile) {
+    
+    print("received a file at : \(file.fileURL.relativePath!)")
+    
+    let identifier = file.metadata
+    
+    let creationDate = identifier!["creationDate"] as! NSDate
+    
+    if let data = NSData(contentsOfURL: file.fileURL) {
+        if let image = UIImage(data: data) {
+            
+            let userdefaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
+            var url : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
+            
+            let fileName = "PhotoGallery\(userdefaults!.integerForKey(pictureCountKey)).jpg"
+            
+            if let tempStoredIDs = userdefaults?.dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
+                
+                storedIDs = tempStoredIDs
+                
+            }else {
+                storedIDs = [String : NSDate]()
+            }
+            
+            url = url.stringByAppendingPathComponent(fileName)
+            
+            let index  = userdefaults!.integerForKey(pictureCountKey)
+            
+            storedImages[index] = UIImage(contentsOfFile: "\(url)")
+            storedIDs!["\(index)"] = creationDate
+            
+            if images.count >= maxPictureCount {
+                //push out oldest image from array
+                
+                let newestImageIndex  = userdefaults?.integerForKey(pictureCountKey)
+                
+                let oldestImageIndex = (newestImageIndex! + 1) % maxPictureCount
+                
+                userdefaults?.setValue(oldestImageIndex, forKey: pictureCountKey)
+                
+            } else {
+                //update newest image and carry on
+                userdefaults?.setValue((images.count), forKey: pictureCountKey)
+                
+                images.append(image)
+                
+            }
+            
+            UIImageJPEGRepresentation(image, 0.5)?.writeToFile(url as String, atomically: true)
+            
+            print(url)
+            
+            if let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare") {
+                
+                if var arrayCurrent = defaults.arrayForKey(pictureArrayKey) {
+                    
+                    arrayCurrent.append(url)
+                    
+                    defaults.setObject(arrayCurrent, forKey: pictureArrayKey)
+                    
+                } else {
+                    var newArray = [String]()
+                    
+                    newArray.append(url as String)
+                    
+                    defaults.setObject(newArray, forKey: pictureArrayKey)
+                }
+                
+                let updatedDate = NSDate()
+                
+                defaults.setObject(updatedDate, forKey: lastUpdateKey)
+                defaults.setObject(storedIDs, forKey: IDsArrayKey)
+                
+            }
+        }
+    }
+    
+}
+*/

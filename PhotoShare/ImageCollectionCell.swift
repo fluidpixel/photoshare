@@ -12,7 +12,12 @@ class ImageCollectionCell: UICollectionViewCell {
     
     @IBOutlet weak var CellImage: UIImageView!
     
+    var localIdentifier:String = ""
 
+    override func prepareForReuse() {
+        self.localIdentifier = ""
+        self.CellImage.image = nil
+    }
 }
 
 class PhotoShareReusableView : UICollectionReusableView {
