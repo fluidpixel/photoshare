@@ -22,6 +22,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     var images = [UIImage]()
     var selectedImages = [UIImage]()
 
+    var collectionHeader:PhotoShareReusableView?
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -156,7 +157,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         cell.layer.borderWidth = 2.0
         cell.layer.borderColor = UIColor.greenColor().CGColor
       
-       
+        self.setCollectionViewHeader()
+
     }
     
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
@@ -170,6 +172,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
             }
             
             cell.layer.borderColor = UIColor.clearColor().CGColor
+            
+            self.setCollectionViewHeader()
+            
         }
         
         
@@ -194,13 +199,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         case UICollectionElementKindSectionHeader:
             
             if let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "PhotoShareReuseView", forIndexPath: indexPath) as? PhotoShareReusableView {
-                if selectedImages.count > 0 {
-                    headerView.commentLabel.text = "PhotoShare sharing \(selectedImages.count) images"
-                }else {
-                    headerView.commentLabel.text = "PhotoShare"
-                }
-                
-                
+                self.collectionHeader = headerView
+                self.setCollectionViewHeader()
                 return headerView
             }
             
@@ -211,6 +211,16 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         return UICollectionReusableView()
     }
     
+    
+    
+    func setCollectionViewHeader() {
+        if selectedImages.count > 0 {
+            self.collectionHeader?.commentLabel.text = "PhotoShare sharing \(selectedImages.count) images"
+        }
+        else {
+            self.collectionHeader?.commentLabel.text = "PhotoShare"
+        }
+    }
     
 
 }
