@@ -19,6 +19,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     @IBOutlet weak var ImageCollection: UICollectionView!
 
+    @IBOutlet var twitterButton: UIButton!
+    @IBOutlet var facebookButton: UIButton!
+    
     var collectionHeader:PhotoShareReusableView?
 
     var assets:PHFetchResult?
@@ -36,6 +39,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         self.assets = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
         
         PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
+        
+        self.twitterButton.enabled = false
+        self.facebookButton.enabled = false
         
     }
     
@@ -285,6 +291,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         else {
             self.collectionHeader?.commentLabel.text = "PhotoShare"
         }
+        self.twitterButton.enabled = (selectionCount == 1) && SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter)
+        self.facebookButton.enabled = selectionCount > 0
     }
     
 
