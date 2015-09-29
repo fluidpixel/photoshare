@@ -198,10 +198,10 @@
 				B9506D081B5FB08800B31FEF /* Images.xcassets */,
 				B9506D0A1B5FB08800B31FEF /* LaunchScreen.xib */,
 				B9506CFF1B5FB08700B31FEF /* Supporting Files */,
-				DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */,
 				B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */,
 				B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */,
 				B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */,
+				DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */,
 			);
 			path = PhotoShare;
 			sourceTree = "<group>";

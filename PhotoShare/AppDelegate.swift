@@ -299,14 +299,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     
     func sendAssetList(session: WCSession) -> [String] {
         
-        var list = [String]()
+        var list:[String] = []
+        var modified:[String:NSDate] = [:]
+        
         list.reserveCapacity(self.fetchResult.count)
         for index in 0..<self.fetchResult.count {
-            list.insert( self.fetchResult[index].localIdentifier, atIndex: index )
+            let asset = self.fetchResult[index]
+            list.insert( asset.localIdentifier, atIndex: index )
+            
+            modified[asset.localIdentifier] = asset.modificationDate
+            
         }
         
         if session.reachable {
-            session.sendMessage([kLocalIdentifierList: list], replyHandler: nil, errorHandler: nil)
+            session.sendMessage([kLocalIdentifierList: list, kAssetsLastModifiedDates:modified], replyHandler: nil, errorHandler: nil)
         }
         return list
     }

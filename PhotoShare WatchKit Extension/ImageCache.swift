@@ -211,5 +211,18 @@ class ImageCache {
         }
         return required.subtract(self.cachedIDsHQ)
     }
+    
+    func imagesRequiringRefresh(list:[String:NSDate]) -> [String] {
+        var rv:[String] = []
+        for item in list {
+            if let eDate = self.imageCache[item.0]?.modifiedDate {
+                if eDate < item.1 {
+                    rv.append(item.0)
+                }
+            }
+        }
+        
+        return rv
+    }
 }
 

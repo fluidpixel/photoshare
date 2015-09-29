@@ -177,10 +177,23 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
+        var received = false
+        
         if let newAssetList = message[kLocalIdentifierList] as? [String] {
             self.assetList = newAssetList
+            received = true
         }
-        else {
+        
+        if let modifiedDates = message[kAssetsLastModifiedDates] as? [String:NSDate] {
+            let ref = self.assetCache.imagesRequiringRefresh(modifiedDates)
+            if self.session.reachable {
+                self.session.sendMessage([kWPRequestImagesForLocalIdentifiers : ref], replyHandler: nil, errorHandler: nil)
+            }
+            
+            received = true
+        }
+        
+        if !received {
             print("Unknown Message \(message)")
         }
     }
