@@ -112,6 +112,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             }
         }
         
+        self.setTitle("PhotoShare")
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "InfoGatherComplete", name: ContactDetails.readyToSend, object: nil)
 
     }
