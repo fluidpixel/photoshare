@@ -17,6 +17,8 @@ class ImageCollectionCell: UICollectionViewCell {
     override func prepareForReuse() {
         self.localIdentifier = ""
         self.CellImage.image = nil
+        
+        self.selected = false
     }
 }
 

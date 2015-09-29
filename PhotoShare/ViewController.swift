@@ -83,50 +83,113 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     
     @IBAction func ShareWithFB(sender: UIButton) {
-        if selectedImages.count > 0 {
-            Classes.shareClass.SendToFB(selectedImages, message: nil) { (result, detail) -> () in
-                if result == true {
-                    
-                    print("INFO: Photo shared - Facebook")
-                    self.ShareMessage("Complete", message: detail as! String)
-                    
-                } else if detail as? String == "Account"{
-                    
-                    self.showLoginAlert("Facebook")
-                    
-                } else if result == false {
-                    
-                    self.ShareMessage("Error", message: detail as! String)
+        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) {
+            
+            let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+            
+            sheet.setInitialText("")
+            
+            for image in selectedImages {
+                
+                sheet.addImage(image)
+            }
+            
+            sheet.completionHandler = { (result : SLComposeViewControllerResult) in
+                
+                switch result {
+                case SLComposeViewControllerResult.Cancelled:
+                    print("Post cancelled")
+                    break
+                case SLComposeViewControllerResult.Done:
+                    print("Post sent")
+                    self.ClearAllSelections()
+                    self.ShareMessage("Complete", message: "")
                 }
             }
-        } else {
-            ShareMessage("Error", message: "You haven't selected any images")
+             self.presentViewController(sheet, animated: true, completion: nil)
+        }else {
+
+            if selectedImages.count > 0 {
+                Classes.shareClass.SendToFB(selectedImages, message: nil) { (result, detail) -> () in
+                    if result == true {
+                        
+                        print("INFO: Photo shared - Facebook")
+                        self.ShareMessage("Complete", message: detail as! String)
+                        
+                    } else if detail as? String == "Account"{
+                        
+                        self.showLoginAlert("Facebook")
+                        
+                    } else if result == false {
+                        
+                        self.ShareMessage("Error", message: detail as! String)
+                    }
+                }
+            } else {
+                ShareMessage("Error", message: "You haven't selected any images")
+            }
         }
-        
     }
     
     @IBAction func ShareWithTwitter(sender: UIButton) {
-        if selectedImages.count == 1 {
-            Classes.shareClass.SendTweet(selectedImages[0], message: nil) { (result, detail) in
+        
+        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
+            
+            let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+            
+            sheet.setInitialText("")
+            
+            sheet.addImage(selectedImages[0])
+            
+            sheet.completionHandler = { (result : SLComposeViewControllerResult) in
                 
-                if result == true {
-                    
-                    print("INFO: Photo shared - Twitter")
-                    self.ShareMessage("Complete", message: detail as! String)
-                } else if detail as? String == "Account"{
-                    
-                    self.showLoginAlert("Twitter")
-                    
-                }else if result == false {
-                    
-                    self.ShareMessage("Error", message: detail as! String)
+                switch result {
+                case SLComposeViewControllerResult.Cancelled:
+                    print("Post cancelled")
+                    break
+                case SLComposeViewControllerResult.Done:
+                    print("Post sent")
+                    self.ClearAllSelections()
+                    self.ShareMessage("Complete", message: "")
                 }
+                
+                
             }
-        } else {
-            ShareMessage("Error", message: "You can only share one image to Twitter at a time")
+            self.presentViewController(sheet, animated: true, completion: nil)
+            
         }
+        
+//        if selectedImages.count == 1 {
+//            Classes.shareClass.SendTweet(selectedImages[0], message: nil) { (result, detail) in
+//                
+//                if result == true {
+//                    
+//                    print("INFO: Photo shared - Twitter")
+//                    self.ShareMessage("Complete", message: detail as! String)
+//                } else if detail as? String == "Account"{
+//                    
+//                    self.showLoginAlert("Twitter")
+//                    
+//                }else if result == false {
+//                    
+//                    self.ShareMessage("Error", message: detail as! String)
+//                }
+//            }
+//        } else {
+//            ShareMessage("Error", message: "You can only share one image to Twitter at a time")
+//        }
 
     }
+    
+    func ClearAllSelections() {
+        
+        for indexPath : NSIndexPath in ImageCollection.indexPathsForSelectedItems()! {
+            
+            ImageCollection.deselectItemAtIndexPath(indexPath, animated: false)
+        }
+    }
+    
+    
     
     //collection view methods
     
@@ -136,6 +199,16 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         
         if indexPath.row < images.count {
             cell.CellImage.image = images[indexPath.row]
+            
+            if selectedImages.contains(images[indexPath.row]){
+                cell.selected = true
+                cell.layer.borderColor = UIColor.greenColor().CGColor
+            }
+        }
+        
+        
+        if cell.selected != true {
+            cell.layer.borderColor = UIColor.clearColor().CGColor
         }
         
         return cell
@@ -153,9 +226,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         
         selectedImages.append(images[indexPath.row])
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! ImageCollectionCell
-        
-        cell.layer.borderWidth = 2.0
-        cell.layer.borderColor = UIColor.greenColor().CGColor
+        if cell.selected == true {
+            cell.layer.borderWidth = 2.0
+            cell.layer.borderColor = UIColor.greenColor().CGColor
+        }else {
+             cell.layer.borderColor = UIColor.clearColor().CGColor
+        }
       
         self.setCollectionViewHeader()
 
