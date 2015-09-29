@@ -15,7 +15,9 @@ let kApplicationDidFinishLaunching = "kApplicationDidFinishLaunching"
 let kRequestLocalIdentifierList = "kRequestLocalIdentifierList"
 let kLocalIdentifierList = "kLocalIdentifierList"
 
-let kWPRequestImageForLocalIdentifier = "kWPRequestImageForLocalIdentifier"
+let kAssetsLastModifiedDates = "kAssetsLastModifiedDates"
+
+let kWPRequestImagesForLocalIdentifiers = "kWPRequestImagesForLocalIdentifiers"
 
 let kWPRequestImageData = "kWPRequestImageData"
 

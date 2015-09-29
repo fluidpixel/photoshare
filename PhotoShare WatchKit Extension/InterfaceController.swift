@@ -12,6 +12,8 @@ import WatchConnectivity
 import ImageIO
 import Contacts
 
+let kStoredImageList = "kStoredImageList"
+
 struct ContactDetails {
     static var contactNumber : String?
     static var contactEmail : String?
@@ -26,23 +28,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBOutlet weak var watchImage: WKInterfaceImage!
     @IBOutlet var WkButton: WKInterfaceButton!
     
-    // Synced data from phone
-    var assetList:[String] = ["NONE"]
-    var assetImages:[String:UIImage] = [:]
+    
+    var assetCache = ImageCache()
     
     var session : WCSession!
-    //menu items
     
-    
-//    //stored variables
-    var pageNumber = 0
-//    var arraySize = 0
-//    var storedImages = [Int : AnyObject]()
-    var storedIDs : [String : NSDate]?
-//    var images = [UIImage]()
-
     var selectedImage : [Int] = []
-    
     var selectedLocalIdentifiers:[String] { return selectedImage.map { assetList[$0] } }
     
     var dictationResult = ""
@@ -50,68 +41,55 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     var contactsFromEmail = [String : String]()
     var mediumToSendWith = ""
     
-//    let maxPictureCount = 25
+    // Synced data from phone
+    var assetList:[String] = ["NONE"] {
+        
+        didSet {
+            if oldValue == ["NONE"] || oldValue != self.assetList {
+                USER_DEFAULTS?.setObject(self.assetList, forKey: kStoredImageList)
+                
+                if self.assetList.count == 0 {
+                    WkButton.setHidden(false)
+                    WkButton.setTitle("No images found, tap to load them")
+                }
+                else {
+                    WkButton.setHidden(true)    //loadTableData(), ShowDemo()
+                }
+                
+                var requiredIDs:[String] = self.assetCache.cleanupAndRefresh(self.assetList)
+                
+                self.imageTable.setNumberOfRows(self.assetList.count, withRowType: "image row")
+                
+                for index in 0..<self.assetList.count {
+                    let localID = self.assetList[index]
+                    if let imageData = self.assetCache[localID],
+                        let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
+                            tableRow.WKGroup.setBackgroundImageData(imageData)
+                    }
+                    else {
+                        requiredIDs.append(localID)
+                    }
+                }
+                
+                // request images not in cache
+                if requiredIDs.count > 0 {
+                    requiredIDs = [String](Set<String>(requiredIDs))    // remove duplicates
+                    if self.session.reachable {
+                        self.session.sendMessage([kWPRequestImagesForLocalIdentifiers : requiredIDs], replyHandler: nil, errorHandler: nil)
+                    }
+                }
+                
+            }
+        }
+        
+    }
+    
     let pictureCountKey = "pictureCount"
     let lastUpdateKey = "DateLastModified"
-//    let pictureArrayKey = "photoAddresses"
-//    let IDsArrayKey = "StoredIDs"
-//    let latestImageKey = "NewestImage"
-
-
+    
     // MARK: WKInterfaceController overrides
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
-        
-        /*
-        let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
-        
-        var dateLastModified : NSDate? = defaults?.objectForKey(lastUpdateKey) as? NSDate
-        
-        if dateLastModified == nil {
-            dateLastModified = NSDate.distantPast()
-        }
-        
-        if let tempStoredIDs = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
-            
-            storedIDs = tempStoredIDs
-            print(storedIDs)
-            
-        }else {
-            storedIDs = [String : NSDate]()
-        }
-        
-        //load in currently stored pictures
-        
-        let pictureCounter = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey)
-        
-        var wasImageSet = false
-        
-        for var i = 0; i <= pictureCounter; i++ {
-            
-            let filename = "PhotoGallery\(i).jpg"
-            var dir : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
-            dir = dir.stringByAppendingPathComponent(filename)
-            
-            let image = UIImage(contentsOfFile: dir as String)
-            
-            if image != nil {
-                if i == 0 {
-                    wasImageSet = true
-                }
-                images.append(image!)
-            }
-            
-        }
-        
-        if !wasImageSet {
-            WkButton.setHidden(false)
-            WkButton.setTitle("No images found, tap to load them")
-        } else {
-            WkButton.setHidden(true)
-            loadTableData()
-            //ShowDemo()
-        }
-        */
         
         if WCSession.isSupported() {
             
@@ -119,28 +97,22 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session.delegate = self
             session.activateSession()
             
-            // This will wake up the phone and request the latest phot library data
-            session.sendMessage([kWPRequestImageData:true], replyHandler: nil, errorHandler: nil)
-
-            /*
-            let format = NSDateFormatter()
-            
-            format.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            
-            let str = format.stringFromDate(dateLastModified!)
-            
-            let requestData = str.dataUsingEncoding(NSUTF8StringEncoding)
-            session.sendMessageData(requestData!, replyHandler: { (response: NSData) -> Void in
-                
-                print("response GOT")
-            },
-                  errorHandler: { (error: NSError) -> Void in
-                    
-                    print("ERROR : \(error)")
-            })
-            */
-            
+            if session.reachable {
+                // This will wake up the phone and request the latest phot library data
+                session.sendMessage([kWPRequestImageData:true], replyHandler: nil, errorHandler: nil)
+            }
+            else {
+                // Can't contact phone. Use last known asset list (if present)
+                if let storedIDs = USER_DEFAULTS?.arrayForKey(kStoredImageList) as? [String] {
+                    self.assetList = storedIDs
+                }
+                else {
+                    self.assetList = []
+                }
+            }
         }
+        
+        self.setTitle("PhotoShare")
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "InfoGatherComplete", name: ContactDetails.readyToSend, object: nil)
 
@@ -184,8 +156,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 
                 print("Received File for: \(localID) size:\(image.size)")
                 
-                self.assetImages[localID] = image
-                
                 if let index = self.assetList.indexOf(localID),
                     let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
                         dispatch_async(dispatch_get_main_queue()) {
@@ -193,6 +163,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                             tableRow.WKGroup.setBackgroundImageData(NSData(contentsOfFile: pathURL))     
                         }
                 }
+                
+                try! self.assetCache.insertItem(receivedFile: file, forceRefresh: false)
+                
         }
         else {
             print("Unknown File Metadata: \(file.metadata)")
@@ -204,43 +177,23 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
+        var received = false
+        
         if let newAssetList = message[kLocalIdentifierList] as? [String] {
-            if self.assetList != newAssetList {
-                
-                if newAssetList.count == 0 {
-                    WkButton.setHidden(false)
-                    WkButton.setTitle("No images found, tap to load them")
-                }
-                else {
-                    WkButton.setHidden(true)
-//                    loadTableData()
-//                    ShowDemo()
-                }
-                
-                self.assetList = newAssetList
-                
-                // Cleanup
-                for unusedImageKey in (self.assetImages.keys.filter { !self.assetList.contains($0) }) {
-                    self.assetImages.removeValueForKey(unusedImageKey)
-                }
-                
-                
-                
-                self.imageTable.setNumberOfRows(self.assetList.count, withRowType: "image row")
-                for index in 0..<self.assetList.count {
-                    if let image = self.assetImages[self.assetList[index]],
-                        let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
-                            tableRow.WKGroup.setBackgroundImage(image)
-                    }
-                    else {
-                        // Not got the image - request it
-                        session.sendMessage([kWPRequestImageForLocalIdentifier : self.assetList[index]], replyHandler: nil, errorHandler: nil)
-                    }
-                    
-                }
-            }
+            self.assetList = newAssetList
+            received = true
         }
-        else {
+        
+        if let modifiedDates = message[kAssetsLastModifiedDates] as? [String:NSDate] {
+            let ref = self.assetCache.imagesRequiringRefresh(modifiedDates)
+            if self.session.reachable {
+                self.session.sendMessage([kWPRequestImagesForLocalIdentifiers : ref], replyHandler: nil, errorHandler: nil)
+            }
+            
+            received = true
+        }
+        
+        if !received {
             print("Unknown Message \(message)")
         }
     }
@@ -515,84 +468,3 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
 
 }
-
-/*
-func session(session: WCSession, didReceiveFile file: WCSessionFile) {
-    
-    print("received a file at : \(file.fileURL.relativePath!)")
-    
-    let identifier = file.metadata
-    
-    let creationDate = identifier!["creationDate"] as! NSDate
-    
-    if let data = NSData(contentsOfURL: file.fileURL) {
-        if let image = UIImage(data: data) {
-            
-            let userdefaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
-            var url : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
-            
-            let fileName = "PhotoGallery\(userdefaults!.integerForKey(pictureCountKey)).jpg"
-            
-            if let tempStoredIDs = userdefaults?.dictionaryForKey(IDsArrayKey) as? [String : NSDate] {
-                
-                storedIDs = tempStoredIDs
-                
-            }else {
-                storedIDs = [String : NSDate]()
-            }
-            
-            url = url.stringByAppendingPathComponent(fileName)
-            
-            let index  = userdefaults!.integerForKey(pictureCountKey)
-            
-            storedImages[index] = UIImage(contentsOfFile: "\(url)")
-            storedIDs!["\(index)"] = creationDate
-            
-            if images.count >= maxPictureCount {
-                //push out oldest image from array
-                
-                let newestImageIndex  = userdefaults?.integerForKey(pictureCountKey)
-                
-                let oldestImageIndex = (newestImageIndex! + 1) % maxPictureCount
-                
-                userdefaults?.setValue(oldestImageIndex, forKey: pictureCountKey)
-                
-            } else {
-                //update newest image and carry on
-                userdefaults?.setValue((images.count), forKey: pictureCountKey)
-                
-                images.append(image)
-                
-            }
-            
-            UIImageJPEGRepresentation(image, 0.5)?.writeToFile(url as String, atomically: true)
-            
-            print(url)
-            
-            if let defaults = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare") {
-                
-                if var arrayCurrent = defaults.arrayForKey(pictureArrayKey) {
-                    
-                    arrayCurrent.append(url)
-                    
-                    defaults.setObject(arrayCurrent, forKey: pictureArrayKey)
-                    
-                } else {
-                    var newArray = [String]()
-                    
-                    newArray.append(url as String)
-                    
-                    defaults.setObject(newArray, forKey: pictureArrayKey)
-                }
-                
-                let updatedDate = NSDate()
-                
-                defaults.setObject(updatedDate, forKey: lastUpdateKey)
-                defaults.setObject(storedIDs, forKey: IDsArrayKey)
-                
-            }
-        }
-    }
-    
-}
-*/

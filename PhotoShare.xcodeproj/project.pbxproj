@@ -35,6 +35,7 @@
 		B9C11D3D1B726F2900F239AD /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C11D3C1B726F2900F239AD /* NotificationController.swift */; };
 		DA7BEB5F1BB28D2500AB78C9 /* SharedMessageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */; settings = {ASSET_TAGS = (); }; };
 		DA7BEB601BB28D2500AB78C9 /* SharedMessageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */; settings = {ASSET_TAGS = (); }; };
+		DAD6993E1BBA87EF00E118B5 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD6993D1BBA87EF00E118B5 /* ImageCache.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,6 +124,7 @@
 		B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 		B9C11D3C1B726F2900F239AD /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 		DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedMessageKeys.swift; sourceTree = "<group>"; };
+		DAD6993D1BBA87EF00E118B5 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,10 +198,10 @@
 				B9506D081B5FB08800B31FEF /* Images.xcassets */,
 				B9506D0A1B5FB08800B31FEF /* LaunchScreen.xib */,
 				B9506CFF1B5FB08700B31FEF /* Supporting Files */,
-				DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */,
 				B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */,
 				B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */,
 				B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */,
+				DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */,
 			);
 			path = PhotoShare;
 			sourceTree = "<group>";
@@ -233,6 +235,7 @@
 			isa = PBXGroup;
 			children = (
 				B95CFAE91B6A6DE200FFA636 /* PhotoShare WatchKit Extension.entitlements */,
+				DAD6993D1BBA87EF00E118B5 /* ImageCache.swift */,
 				B9506D291B5FF3FF00B31FEF /* InterfaceController.swift */,
 				B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */,
 				B9C11D3C1B726F2900F239AD /* NotificationController.swift */,
@@ -478,6 +481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAD6993E1BBA87EF00E118B5 /* ImageCache.swift in Sources */,
 				B9C11D3D1B726F2900F239AD /* NotificationController.swift in Sources */,
 				B9C11D3B1B726CBD00F239AD /* ExtensionDelegate.swift in Sources */,
 				B99C81BF1B90C05A0001B457 /* EmailController.swift in Sources */,
