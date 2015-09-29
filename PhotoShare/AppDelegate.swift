@@ -267,8 +267,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         if let _ = message[kWPRequestImageData] as? String {
             sessionReachabilityDidChange(session)
         }
-        else if let localID = message[kWPRequestImageForLocalIdentifier] as? String {
-            self.sendImage(localID, session: session)
+        else if let localIDs = message[kWPRequestImagesForLocalIdentifiers] as? [String] {
+            for localID in localIDs {
+                self.sendImage(localID, session: session)
+            }
         }
     }
     
@@ -360,7 +362,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
                         self.cancelFileTransfers(asset.localIdentifier)
                         
                         self.activeFileTransfers.insert(session.transferFile(tempFile, metadata: metadata))
-                       // self.activeFileTransfers.insert(session.transferFile(tempFile, metadata: metadata))
                         
                     }
                     catch {
