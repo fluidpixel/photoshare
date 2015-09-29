@@ -20,6 +20,19 @@ class ImageCollectionCell: UICollectionViewCell {
         
         self.selected = false
     }
+    
+    override var selected:Bool {
+        didSet {
+            if self.selected {
+                self.layer.borderWidth = 2.0
+                self.layer.borderColor = UIColor.greenColor().CGColor
+            }
+            else {
+                self.layer.borderColor = UIColor.clearColor().CGColor
+            }
+        }
+    }
+
 }
 
 class PhotoShareReusableView : UICollectionReusableView {

@@ -10,24 +10,37 @@ import UIKit
 import Photos
 import Accounts
 import Social
+import Photos
 
 @available(iOS 9.0, *)
-class ViewController: UIViewController, UINavigationControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class ViewController: UIViewController, UINavigationControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var galleryButton: UIButton!
     
     @IBOutlet weak var ImageCollection: UICollectionView!
 
-    var currentImageCount : Int = 0
-    var images = [UIImage]()
-    var selectedImages = [UIImage]()
-
     var collectionHeader:PhotoShareReusableView?
+
+    var assets:PHFetchResult?
+    var shareCache = PHCachingImageManager()
+    var viewCache = PHImageManager.defaultManager()
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-       
+        // Initiliase Photo Library Fetch
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.fetchLimit = 25
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        
+        self.assets = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
+        
+        PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
+        
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        PHPhotoLibrary.sharedPhotoLibrary().unregisterChangeObserver(self)
     }
     
     override func viewDidLoad() {
@@ -41,13 +54,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         ImageCollection.registerNib(nib, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "PhotoShareReuseView")
         
         ImageCollection.reloadData()
-        
-        PhotoManager.sharedInstance.loadPhotos { (images) -> () in
-            
-            self.images = images as NSArray as! [UIImage]
-            self.ImageCollection.reloadData()            
-            
-            }
     }
     
     func showLoginAlert(identifier : String){
@@ -83,50 +89,57 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     
     @IBAction func ShareWithFB(sender: UIButton) {
-        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) {
+        self.retrieveImageArray {
+            (selectedImages:[UIImage]) -> Void in
             
-            let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
-            
-            sheet.setInitialText("")
-            
-            for image in selectedImages {
+            if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) {
                 
-                sheet.addImage(image)
-            }
-            
-            sheet.completionHandler = { (result : SLComposeViewControllerResult) in
+                let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
                 
-                switch result {
-                case SLComposeViewControllerResult.Cancelled:
-                    print("Post cancelled")
-                    break
-                case SLComposeViewControllerResult.Done:
-                    print("Post sent")
-                    self.ClearAllSelections()
-                    self.ShareMessage("Complete", message: "")
+                sheet.setInitialText("")
+                
+                for image in selectedImages {
+                    
+                    sheet.addImage(image)
                 }
-            }
-             self.presentViewController(sheet, animated: true, completion: nil)
-        }else {
-
-            if selectedImages.count > 0 {
-                Classes.shareClass.SendToFB(selectedImages, message: nil) { (result, detail) -> () in
-                    if result == true {
-                        
-                        print("INFO: Photo shared - Facebook")
-                        self.ShareMessage("Complete", message: detail as! String)
-                        
-                    } else if detail as? String == "Account"{
-                        
-                        self.showLoginAlert("Facebook")
-                        
-                    } else if result == false {
-                        
-                        self.ShareMessage("Error", message: detail as! String)
+                
+                sheet.completionHandler = { (result : SLComposeViewControllerResult) in
+                    
+                    switch result {
+                    case SLComposeViewControllerResult.Cancelled:
+                        print("Post cancelled")
+                        break
+                    case SLComposeViewControllerResult.Done:
+                        print("Post sent")
+                        self.ClearAllSelections()
+                        self.ShareMessage("Complete", message: "")
                     }
                 }
-            } else {
-                ShareMessage("Error", message: "You haven't selected any images")
+                self.presentViewController(sheet, animated: true, completion: nil)
+                
+            }
+            else {
+                
+                if selectedImages.count > 0 {
+                    Classes.shareClass.SendToFB(selectedImages, message: nil) { (result, detail) -> () in
+                        if result == true {
+                            
+                            print("INFO: Photo shared - Facebook")
+                            self.ShareMessage("Complete", message: detail as! String)
+                            
+                        } else if detail as? String == "Account"{
+                            
+                            self.showLoginAlert("Facebook")
+                            
+                        } else if result == false {
+                            
+                            self.ShareMessage("Error", message: detail as! String)
+                        }
+                    }
+                }
+                else {
+                    self.ShareMessage("Error", message: "You haven't selected any images")
+                }
             }
         }
     }
@@ -135,50 +148,48 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         
         if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
             
-            let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
-            
-            sheet.setInitialText("")
-            
-            sheet.addImage(selectedImages[0])
-            
-            sheet.completionHandler = { (result : SLComposeViewControllerResult) in
-                
-                switch result {
-                case SLComposeViewControllerResult.Cancelled:
-                    print("Post cancelled")
-                    break
-                case SLComposeViewControllerResult.Done:
-                    print("Post sent")
-                    self.ClearAllSelections()
-                    self.ShareMessage("Complete", message: "")
-                }
-                
-                
+            if let indexPaths = self.ImageCollection.indexPathsForSelectedItems() where indexPaths.count == 1,
+                let asset = self.assets?.firstObject as? PHAsset {
+                    
+                    
+                    let options = PHImageRequestOptions()
+                    //options.synchronous = true
+                    options.deliveryMode = .HighQualityFormat
+                    //options.resizeMode = .None
+                    
+                    let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+                    
+                    PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: options) {
+                        (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
+                        if let image = img {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                
+                                let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+                                
+                                sheet.setInitialText("")
+                                
+                                sheet.addImage(image)
+                                
+                                sheet.completionHandler = { (result : SLComposeViewControllerResult) in
+                                    
+                                    switch result {
+                                    case SLComposeViewControllerResult.Cancelled:
+                                        print("Post cancelled")
+                                        break
+                                    case SLComposeViewControllerResult.Done:
+                                        print("Post sent")
+                                        self.ClearAllSelections()
+                                        self.ShareMessage("Complete", message: "")
+                                    }
+                                    
+                                    
+                                }
+                                self.presentViewController(sheet, animated: true, completion: nil)
+                            }
+                        }
+                    }
             }
-            self.presentViewController(sheet, animated: true, completion: nil)
-            
         }
-        
-//        if selectedImages.count == 1 {
-//            Classes.shareClass.SendTweet(selectedImages[0], message: nil) { (result, detail) in
-//                
-//                if result == true {
-//                    
-//                    print("INFO: Photo shared - Twitter")
-//                    self.ShareMessage("Complete", message: detail as! String)
-//                } else if detail as? String == "Account"{
-//                    
-//                    self.showLoginAlert("Twitter")
-//                    
-//                }else if result == false {
-//                    
-//                    self.ShareMessage("Error", message: detail as! String)
-//                }
-//            }
-//        } else {
-//            ShareMessage("Error", message: "You can only share one image to Twitter at a time")
-//        }
-
     }
     
     func ClearAllSelections() {
@@ -194,28 +205,31 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     //collection view methods
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-
-       let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ImageCell", forIndexPath: indexPath) as! ImageCollectionCell
         
-        if indexPath.row < images.count {
-            cell.CellImage.image = images[indexPath.row]
-            
-            if selectedImages.contains(images[indexPath.row]){
-                cell.selected = true
-                cell.layer.borderColor = UIColor.greenColor().CGColor
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ImageCell", forIndexPath: indexPath) as! ImageCollectionCell
+        
+        if indexPath.row < assets?.count {
+            if let asset = assets?[indexPath.row] as? PHAsset {
+                cell.localIdentifier = asset.localIdentifier
+                
+                viewCache.requestImageForAsset(asset, targetSize: cell.frame.size, contentMode: .AspectFit, options: nil) {
+                    (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
+                    if cell.localIdentifier == asset.localIdentifier, let image = img {
+                        cell.CellImage.image = image
+                    }
+                    else if img == nil {
+                        print("An error occurred retrieving data from the photo library")
+                        print(info)
+                    }
+                }
             }
         }
-        
-        
-        if cell.selected != true {
-            cell.layer.borderColor = UIColor.clearColor().CGColor
-        }
-        
+
         return cell
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        return assets?.count ?? 0
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
@@ -223,37 +237,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        selectedImages.append(images[indexPath.row])
-        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! ImageCollectionCell
-        if cell.selected == true {
-            cell.layer.borderWidth = 2.0
-            cell.layer.borderColor = UIColor.greenColor().CGColor
-        }else {
-             cell.layer.borderColor = UIColor.clearColor().CGColor
-        }
-      
         self.setCollectionViewHeader()
-
     }
     
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-        if let cell = collectionView.cellForItemAtIndexPath(indexPath) as? ImageCollectionCell {
-            
-            let image = cell.CellImage.image
-            if selectedImages.contains(image!) {
-                let index = selectedImages.indexOf(image!)
-                
-                selectedImages.removeAtIndex(index!)
-            }
-            
-            cell.layer.borderColor = UIColor.clearColor().CGColor
-            
-            self.setCollectionViewHeader()
-            
-        }
-        
-        
+        self.setCollectionViewHeader()
     }
     
     //collection view flow layout
@@ -290,8 +278,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     
     func setCollectionViewHeader() {
-        if selectedImages.count > 0 {
-            self.collectionHeader?.commentLabel.text = "PhotoShare sharing \(selectedImages.count) images"
+        let selectionCount = self.ImageCollection.indexPathsForSelectedItems()?.count ?? 0
+        if selectionCount > 0 {
+            self.collectionHeader?.commentLabel.text = "PhotoShare sharing \(selectionCount) images"
         }
         else {
             self.collectionHeader?.commentLabel.text = "PhotoShare"
@@ -299,5 +288,49 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     }
     
 
+    // MARK: PHPhotoLibraryChangeObserver
+    func photoLibraryDidChange(changeInstance: PHChange) {
+        // TODO:
+        
+    }
+    
+    
+    // MARK: Photo library utilities
+    func retrieveImageArray(toBlock:([UIImage]) -> Void ) {
+        if let indexPaths = self.ImageCollection.indexPathsForSelectedItems() where indexPaths.count > 0 {
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) {
+                
+                var rv:[UIImage] = []
+                for index in indexPaths {
+                    if let asset = self.assets?[index.row] as? PHAsset {
+                        
+                        let options = PHImageRequestOptions()
+                        options.synchronous = true
+                        options.deliveryMode = .HighQualityFormat
+                        options.resizeMode = .None
+                        
+                        let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+                        
+                        PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: options) {
+                            (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
+                            if let image = img {
+                                rv.append(image)
+                            }
+                        }
+                    }
+                }
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                     toBlock(rv)
+                }
+
+            }
+        }
+        else {
+            toBlock([UIImage]())
+        }
+        
+    }
+    
 }
 
