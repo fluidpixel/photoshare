@@ -218,6 +218,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
             if let asset = assets?[indexPath.row] as? PHAsset {
                 cell.localIdentifier = asset.localIdentifier
                 
+                cell.CellImage.image = nil
+                cell.favourite.hidden = !asset.favorite
+                
                 viewCache.requestImageForAsset(asset, targetSize: cell.frame.size, contentMode: .AspectFit, options: nil) {
                     (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
                     if cell.localIdentifier == asset.localIdentifier, let image = img {
@@ -295,11 +298,59 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         self.facebookButton.enabled = selectionCount > 0
     }
     
+    var selectedItems:[String] {
+        get {
+            if let selection = self.ImageCollection.indexPathsForSelectedItems() where selection.count > 0,
+                let assets = self.assets {
+                    return selection.map { return assets[$0.row].localIdentifier }
+            }
+            else {
+                return []
+            }
+        }
+        set {
+            if let assets = self.assets {
+                for index in 0..<assets.count {
+                    if let asset = assets[index] as? PHAsset where newValue.indexOf(asset.localIdentifier) != nil {
+                        self.ImageCollection.selectItemAtIndexPath( NSIndexPath(forRow: index, inSection: 0), animated: false, scrollPosition: .None)
+                    }
+                    else {
+                        self.ImageCollection.deselectItemAtIndexPath( NSIndexPath(forRow: index, inSection: 0), animated: false)
+                    }
+                }
+            }
+        }
+    }
 
     // MARK: PHPhotoLibraryChangeObserver
     func photoLibraryDidChange(changeInstance: PHChange) {
         // TODO:
-        
+        if let assets = self.assets,
+            let changes = changeInstance.changeDetailsForFetchResult(assets) {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    if !changes.hasIncrementalChanges || changes.hasMoves || (changes.insertedIndexes != nil) || (changes.removedIndexes != nil) {
+                        // Full refesh - need to preserve the user's selection
+                        let selectedItems = self.selectedItems
+                        
+                        self.assets = changes.fetchResultAfterChanges
+                        self.ImageCollection.reloadData()
+                        
+                        self.selectedItems = selectedItems
+                        
+                    }
+                    else if let changedIndexes = changes.changedIndexes {
+                        // no changes in order etc so only reload changed images
+                        
+                        self.assets = changes.fetchResultAfterChanges
+                        
+                        let indexPaths = self.ImageCollection.indexPathsForVisibleItems().filter { changedIndexes.containsIndex($0.row) }
+                        print("Changing Index Paths: \(indexPaths.map {$0.row})")
+                        self.ImageCollection.reloadItemsAtIndexPaths(indexPaths)
+                    }
+                }
+        }
     }
     
     

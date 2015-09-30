@@ -5,7 +5,7 @@
 //  Created by Stuart Varrall on 18/08/2015.
 //  Copyright © 2015 Fluid Pixel. All rights reserved.
 //
-
+/* No Longer Used
 import Foundation
 import Photos
 
@@ -137,3 +137,4 @@ class PhotoManager {
         }
     }
 }
+*/

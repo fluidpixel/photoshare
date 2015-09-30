@@ -34,17 +34,30 @@
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="twy-oc-Vxn">
                                                     <rect key="frame" x="-55" y="1" width="240" height="128"/>
                                                 </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="💛" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PAD-8C-uck">
+                                                    <rect key="frame" x="8" y="8" width="25" height="25"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="25" id="9vN-nH-fWY"/>
+                                                        <constraint firstAttribute="width" constant="25" id="M1R-21-Hzj"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
                                             <constraint firstItem="twy-oc-Vxn" firstAttribute="top" secondItem="81m-sN-Ei4" secondAttribute="topMargin" constant="-7" id="AIQ-Th-oHW"/>
                                             <constraint firstAttribute="bottomMargin" secondItem="twy-oc-Vxn" secondAttribute="bottom" constant="-37" id="EsL-25-S6v"/>
+                                            <constraint firstItem="PAD-8C-uck" firstAttribute="top" secondItem="81m-sN-Ei4" secondAttribute="topMargin" id="FWJ-Tm-zFy"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="twy-oc-Vxn" secondAttribute="trailing" constant="-93" id="KTS-9q-ghJ"/>
+                                            <constraint firstItem="PAD-8C-uck" firstAttribute="leading" secondItem="81m-sN-Ei4" secondAttribute="leadingMargin" id="aPf-VF-Okd"/>
                                             <constraint firstItem="twy-oc-Vxn" firstAttribute="leading" secondItem="81m-sN-Ei4" secondAttribute="leadingMargin" constant="-63" id="op4-4z-xRh"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="CellImage" destination="twy-oc-Vxn" id="DCj-Qp-BbI"/>
+                                            <outlet property="favourite" destination="PAD-8C-uck" id="vDK-HN-F5J"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>

@@ -12,6 +12,8 @@ class ImageCollectionCell: UICollectionViewCell {
     
     @IBOutlet weak var CellImage: UIImageView!
     
+    @IBOutlet var favourite: UILabel!
+    
     var localIdentifier:String = ""
 
     override func prepareForReuse() {
