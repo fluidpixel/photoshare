@@ -150,22 +150,20 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     // MARK: WCSessionDelegate
     func session(session: WCSession, didReceiveFile file: WCSessionFile) {
-        if let localID = file.metadata?[kLocalIdentifier] as? String,
-            let pathURL = file.fileURL.path,
-            let image = UIImage(contentsOfFile: pathURL) {
-                
-                print("Received File for: \(localID) size:\(image.size)")
-                
-                if let index = self.assetList.indexOf(localID),
-                    let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
-                        dispatch_async(dispatch_get_main_queue()) {
-                            print("\tWritten to row(\(index)) - \(tableRow)")
-                            tableRow.WKGroup.setBackgroundImageData(NSData(contentsOfFile: pathURL))     
-                        }
-                }
-                
-                try! self.assetCache.insertItem(receivedFile: file)
-                
+        if let localID = file.metadata?[kLocalIdentifier] as? String {
+            
+            print("Received File for: \(file.metadata)")
+
+            if !(try! self.assetCache.insertItem(receivedFile: file)) {
+                print("Image already cached - using cahced version instead")
+            }
+            
+            if let index = self.assetList.indexOf(localID),
+                let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController,
+                let imageData = self.assetCache[localID] {
+                    tableRow.WKGroup.setBackgroundImageData(imageData)
+            }
+            
         }
         else {
             print("Unknown File Metadata: \(file.metadata)")
