@@ -347,6 +347,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
 
     @objc(sendImageAsset:session:)
     func sendImage(asset:PHAsset, session: WCSession) {
+        
+        self.cancelFileTransfers(asset.localIdentifier)
+        
         if session.reachable, let tempFile = createTemporaryFilename("PNG") {
             
             let options = PHImageRequestOptions()
@@ -365,8 +368,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
                         metadata[kDeleteWhenTransfered] = true
                         metadata[kAssedModificationDate] = asset.modificationDate
                         metadata["PHImageResultIsDegradedKey"] = info?[PHImageResultIsDegradedKey]?.boolValue ?? true
-                        
-                        self.cancelFileTransfers(asset.localIdentifier)
                         
                         self.activeFileTransfers.insert(session.transferFile(tempFile, metadata: metadata))
                         
