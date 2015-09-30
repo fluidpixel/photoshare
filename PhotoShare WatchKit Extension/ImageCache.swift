@@ -12,8 +12,15 @@ import WatchKit
 
 let USER_DEFAULTS = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")
 
+enum CacheIndexKeys : String {
+    case CacheIndex
+    case Filename
+    case ModifiedDate
+    case Degraded
+}
+
 private let kCacheIndexKey = "kCacheIndexKey"
-private let kCacheIndexURLKey = "kCacheIndexURLKey"
+private let kCacheIndexFilenameKey = "kCacheIndexFilenameKey"
 private let kCacheIndexModifiedDateKey = "kCacheIndexModifiedDateKey"
 private let kCacheIndexDegradedKey = "kCacheIndexDegradedKey"
 
@@ -26,17 +33,6 @@ private func cacheFolder() -> NSURL {
     return NSURL(fileURLWithPath: cache, isDirectory: true)
 }
 
-private func createCacheFilename(pathExtension:String) throws -> NSURL {
-    let rv = cacheFolder().URLByAppendingPathComponent(NSUUID().UUIDString).URLByAppendingPathExtension(pathExtension)
-    
-    if NSFileManager.defaultManager().fileExistsAtPath(rv.path!) {
-        try NSFileManager.defaultManager().removeItemAtURL(rv)
-    }
-
-    return rv
-}
-
-
 enum IncorrectMetaData : ErrorType {
     case LocalIdentifierMissing
     case ModifiedDateMissing
@@ -44,33 +40,34 @@ enum IncorrectMetaData : ErrorType {
 
 
 struct ImageCacheData {
-    let url:NSURL
     let modifiedDate:NSDate
     let degraded:Bool
+    let filename:String
     
+    var url:NSURL { return cacheFolder().URLByAppendingPathComponent(filename) }
     
-    init(url u: NSURL, modifiedDate md: NSDate, degraded dg: Bool) {
-        self.url = u
+    init(filename fn:String, modifiedDate md: NSDate, degraded dg: Bool) {
+        self.filename = fn
         self.modifiedDate = md
         self.degraded = dg
     }
     
     init?(dictionary:[String:AnyObject]) {
         
-        guard let file = dictionary[kCacheIndexURLKey] as? String else { return nil }
+        guard let file = dictionary[kCacheIndexFilenameKey] as? String else { return nil }
         
         // Myterious double optional
         guard let md = dictionary[kCacheIndexModifiedDateKey] as? NSDate else { return nil }
         
         guard let dg = dictionary[kCacheIndexDegradedKey]?.boolValue else { return nil }
         
-        self.url = cacheFolder().URLByAppendingPathComponent(file)
+        self.filename = file
         self.modifiedDate = md
         self.degraded = dg
     }
     
     var dictionaryValue:[String:AnyObject] {
-        return [kCacheIndexURLKey:url.lastPathComponent!, kCacheIndexModifiedDateKey:modifiedDate, kCacheIndexDegradedKey:degraded]
+        return [kCacheIndexFilenameKey:self.filename, kCacheIndexModifiedDateKey:modifiedDate, kCacheIndexDegradedKey:degraded]
     }
 }
 
@@ -84,11 +81,15 @@ class ImageCache {
         
         if clear, let files = try? NSFileManager.defaultManager().contentsOfDirectoryAtURL(cacheFolder(), includingPropertiesForKeys: nil, options: []) {
             print("Cache cleanup")
+            
+            USER_DEFAULTS?.removeObjectForKey(kCacheIndexKey)
+            
             for file in files {
                 print("removing ItemAtURL \(file)")
                 
                 try! NSFileManager.defaultManager().removeItemAtURL(file)
             }
+            abort()
         }
         else {
             // restore cache from user defaults
@@ -151,45 +152,48 @@ class ImageCache {
         return false
     }
     
-    func insertItem(localID:String, item:ImageCacheData, force:Bool = false) -> Bool {
-
-        if !force, let existingItem = self.imageCache[localID] {
-            
-            if existingItem.modifiedDate > item.modifiedDate {
-                return false
-            }
-            else if existingItem.modifiedDate == item.modifiedDate && !existingItem.degraded && item.degraded {
-                return false
-            }
-            
-        }
-        
-        if let replacedItem = self.imageCache.updateValue(item, forKey: localID) {
-            if replacedItem.url != item.url { // very unlikely
-                try! NSFileManager.defaultManager().removeItemAtURL(replacedItem.url)
-            }
-        }
-        
-        return true
-        
-    }
     
-    func insertItem(receivedFile file: WCSessionFile, forceRefresh:Bool) throws -> Bool {
+    func insertItem(receivedFile file: WCSessionFile) throws -> Bool {
         
         guard let newLocalID = file.metadata?[kLocalIdentifier] as? String else { throw IncorrectMetaData.LocalIdentifierMissing }
         guard let newModifiedDate = file.metadata?[kAssedModificationDate] as? NSDate else { throw IncorrectMetaData.ModifiedDateMissing }
         
-        let newDegraded:Bool = file.metadata?["PHImageResultIsDegradedKey"]?.boolValue ?? false
+        let newDegraded:Bool = file.metadata?["PHImageResultIsDegradedKey"]?.boolValue ?? true
         
-        let newURL = try createCacheFilename(file.fileURL.pathExtension!)
+        let newItem = ImageCacheData(filename: file.fileURL.lastPathComponent!, modifiedDate: newModifiedDate, degraded: newDegraded)
         
-        try NSFileManager.defaultManager().moveItemAtURL(file.fileURL, toURL: newURL)
+        if let existingItem = self.imageCache[newLocalID] {
+            // Already in cache - check it is not new or not degraded
+            
+            if existingItem.modifiedDate > newModifiedDate {
+                return false
+            }
+            else if existingItem.modifiedDate == newModifiedDate && !existingItem.degraded && newDegraded {
+                return false
+            }
+            
+            do {
+                try NSFileManager.defaultManager().removeItemAtURL(existingItem.url)
+            }
+            catch let error as NSError {
+                print("Unexpectedly, \(existingItem.url) does not exist or can't be deleted. \(error)")
+            }
+            
+        }
         
-        let newItem = ImageCacheData(url: newURL, modifiedDate: newModifiedDate, degraded: newDegraded)
-        
-        return self.insertItem(newLocalID, item: newItem, force: forceRefresh)
+        do {
+            try NSFileManager.defaultManager().moveItemAtURL(file.fileURL, toURL: newItem.url)
+            self.imageCache.updateValue(newItem, forKey: newLocalID)
+            return true
+        }
+        catch let error as NSError {
+            print("Unexpectedly, \(newItem.url) can't be created. \(error)")
+            throw error
+            //return false
+        }
         
     }
+    
     
     func urlIsRequired(url:NSURL) -> Bool {
         for item in self.imageCache {
@@ -215,14 +219,16 @@ class ImageCache {
     func imagesRequiringRefresh(list:[String:NSDate]) -> [String] {
         var rv:[String] = []
         for item in list {
-            if let eDate = self.imageCache[item.0]?.modifiedDate {
-                if eDate < item.1 {
+            if let cachedImageData = self.imageCache[item.0] {
+                if cachedImageData.degraded || cachedImageData.modifiedDate < item.1 {
                     rv.append(item.0)
                 }
+            }
+            else {
+                rv.append(item.0)
             }
         }
         
         return rv
     }
 }
-

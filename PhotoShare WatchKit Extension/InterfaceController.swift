@@ -164,7 +164,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                         }
                 }
                 
-                try! self.assetCache.insertItem(receivedFile: file, forceRefresh: false)
+                try! self.assetCache.insertItem(receivedFile: file)
                 
         }
         else {
