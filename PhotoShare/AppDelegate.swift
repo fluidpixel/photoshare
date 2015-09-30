@@ -350,7 +350,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         self.cancelFileTransfers(asset.localIdentifier)
         
-        if session.reachable, let tempFile = createTemporaryFilename("PNG") {
+        if session.reachable, let tempFile = createTemporaryFilename("JPG") {
             
             let options = PHImageRequestOptions()
             options.deliveryMode = PHImageRequestOptionsDeliveryMode.Opportunistic
@@ -359,7 +359,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
             self.watchImageManager.requestImageForAsset(asset, targetSize: watchImageSize, contentMode: .AspectFill, options: options) {
                 (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
                 
-                if session.reachable, let image = img, let imageData = UIImagePNGRepresentation(image) {
+                if session.reachable, let image = img, let imageData = UIImageJPEGRepresentation(image, 1.0) {
                     do {
                         try imageData.writeToURL(tempFile, options: .AtomicWrite)
                         
