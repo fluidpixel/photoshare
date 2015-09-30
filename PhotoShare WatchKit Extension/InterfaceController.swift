@@ -34,7 +34,18 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     var session : WCSession!
     
     var selectedImage : [Int] = []
-    var selectedLocalIdentifiers:[String] { return selectedImage.map { assetList[$0] } }
+    var selectedLocalIdentifiers:[String] {
+        get {
+            return self.selectedImage.map { assetList[$0] }
+        }
+        set {
+            self.selectedImage = newValue.flatMap { assetList.indexOf($0) }
+
+            for index in 0..<assetList.count {
+                (self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController)?.photo.setHidden(!self.selectedImage.contains(index))
+            }
+        }
+    }
     
     var dictationResult = ""
     var contactsFromPhone = [String : String]()
@@ -46,6 +57,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         didSet {
             if oldValue == ["NONE"] || oldValue != self.assetList {
+                
+                let selectedLocalIdentifiers = self.selectedImage.map { oldValue[$0] }
+                
                 USER_DEFAULTS?.setObject(self.assetList, forKey: kStoredImageList)
                 
                 if self.assetList.count == 0 {
@@ -78,6 +92,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                         self.session.sendMessage([kWPRequestImagesForLocalIdentifiers : requiredIDs], replyHandler: nil, errorHandler: nil)
                     }
                 }
+                
+                self.selectedLocalIdentifiers = selectedLocalIdentifiers
                 
             }
         }
