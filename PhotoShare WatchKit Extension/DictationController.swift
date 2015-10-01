@@ -38,9 +38,12 @@ class DictationController: WKInterfaceController {
         presentTextInputControllerWithSuggestions(nil, allowedInputMode: WKTextInputMode.Plain) { (result : [AnyObject]?) -> Void in
             
             var stringMessage = ""
-            for results in result! {
-                stringMessage = stringMessage + (results as! String)
+            if result?.count > 0 {
+                for results in result! {
+                    stringMessage = stringMessage + (results as! String)
+                }
             }
+            
             self.MessageText.setText(stringMessage)
             
             ContactDetails.message = (result as? [String]?)!
