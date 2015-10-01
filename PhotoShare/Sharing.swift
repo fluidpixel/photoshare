@@ -40,6 +40,8 @@ class Sharing {
                 var parameters = [String : AnyObject]()
                 
                 parameters["access_token"] = accountFB!.credential.oauthToken
+                    
+                parameters["caption"] = "testing"
                 
                 let feedURL = NSURL(string: "https://graph.facebook.com/me/photos")
                 
@@ -76,12 +78,12 @@ class Sharing {
                         
                          
                         if (counter == image.count) {
-                            self.sendFBMessage(message, photoIds: photoIds) { (result, detail) -> () in
+                           // self.sendFBMessage(["testing"], photoIds: photoIds) { (result, detail) -> () in
                                 
-                                if result == true {
-                                    completionHandler(result: true, detail: detail)
-                                }
-                            }
+                           //     if result == true {
+                           //         completionHandler(result: true, detail: detail)
+                           //     }
+                          //  }
                         }
                     } else {
                         print("ERROR: \(error)")
@@ -115,49 +117,51 @@ class Sharing {
     //            feedParameters["image[\(all)][url]"] = photoIds![all]
     //            feedParameters["image[\(all)][user_generated]"] = true
     //        }
-            
-            feedParameters["message"] = finalMessage
-            
-            feedParameters["object_attachment"] = photoIds![0]
-            feedParameters["access_token"] = self.accountFB!.credential.oauthToken
-            
-            let postRequestFeed = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: postURL, parameters: feedParameters)
-            
-            postRequestFeed.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
-                
-                
-                
-                if error == nil {
+    //        for ids in photoIds! {
                     
-                    print("Facebook response : \(response.statusCode)")
+                    feedParameters["message"] = finalMessage
                     
-                    if response.statusCode >= 400 && response.statusCode < 500 {
-                        completionHandler(result: false, detail: "Bad request, try again")
-                    } else if response.statusCode >= 500 {
-                        completionHandler(result: false, detail: "Server error, Facebook is having problems")
-                    }
+                    feedParameters["object_attachment"] = photoIds![0]
+                    feedParameters["access_token"] = self.accountFB!.credential.oauthToken
                     
+                    let postRequestFeed = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: postURL, parameters: feedParameters)
                     
-                    do {
-                        let userData = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                        if userData == nil {
+                    postRequestFeed.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
+                        
+                        
+                        
+                        if error == nil {
                             
-                        }else {
+                            print("Facebook response : \(response.statusCode)")
                             
-                            print(userData!)
-                            completionHandler(result: true, detail: userData!)
+                            if response.statusCode >= 400 && response.statusCode < 500 {
+                                completionHandler(result: false, detail: "Bad request, try again")
+                            } else if response.statusCode >= 500 {
+                                completionHandler(result: false, detail: "Server error, Facebook is having problems")
+                            }
+                            
+                            
+                            do {
+                                let userData = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                                if userData == nil {
+                                    
+                                }else {
+                                    
+                                    print(userData!)
+                                    completionHandler(result: true, detail: userData!)
+                                }
+                            } catch {
+                                completionHandler(result: false, detail: "JSON parse error")
+                                print(error)
+                            }
+                            
+                            
+                            
+                        } else {
+                            completionHandler(result: false, detail: error.localizedDescription)
                         }
-                    } catch {
-                        completionHandler(result: false, detail: "JSON parse error")
-                        print(error)
-                    }
-                    
-                    
-                    
-                } else {
-                    completionHandler(result: false, detail: error.localizedDescription)
-                }
-            })
+                    })
+               // }
         } else {
             completionHandler(result: true, detail: "Photo shared to Facebook")
         }

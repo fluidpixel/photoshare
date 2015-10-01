@@ -22,7 +22,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="540" id="qa8-HC-jtd"/>
                                 </constraints>
-                                <collectionViewLayout key="collectionViewLayout" id="vKP-u9-j6P" customClass="PhotoShareLayout" customModule="PhotoShare" customModuleProvider="target"/>
+                                <collectionViewLayout key="collectionViewLayout" id="vKP-u9-j6P" customClass="PinnedHeaderLayout" customModule="PhotoShare" customModuleProvider="target"/>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCell" id="81m-sN-Ei4" customClass="ImageCollectionCell" customModule="PhotoShare" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>

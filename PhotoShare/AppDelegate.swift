@@ -71,11 +71,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     
     func applicationWillTerminate(application: UIApplication) {
         PHPhotoLibrary.sharedPhotoLibrary().unregisterChangeObserver(self)
+        NSNotificationCenter.defaultCenter().removeObserver(FBAccount)
+        NSNotificationCenter.defaultCenter().removeObserver(TwitterAccount)
     }
     
-    
-    func applicationDidBecomeActive(application: UIApplication) {
-        
+    func login() {
         let account = ACAccountStore()
         
         //link account to Facebook
@@ -103,10 +103,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
                             
                             //grab user's email address
                             let request = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.GET, URL: NSURL(string: "https://graph.facebook.com/me"), parameters: ["fields" : "email"])
-                            //trying some stuff
-                            
                             
                             request.account = self.FBAccount
+                            
+                            NSNotificationCenter.defaultCenter().addObserver(self.FBAccount, selector: "accountChanged:", name: ACAccountStoreDidChangeNotification, object: nil)
                             
                             request.performRequestWithHandler({ (data: NSData!, response: NSHTTPURLResponse!, error: NSError!) -> Void in
                                 
@@ -123,8 +123,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
                                     }catch {
                                         print(error)
                                     }
-                                    
-                                    
                                 }
                             })
                         }
@@ -148,11 +146,62 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
                     
                     self.TwitterAccount = arrayOfAccountsTwitter.last as! ACAccount
                     Classes.shareClass.setUpAccounts(self.FBAccount, accountTwit: self.TwitterAccount)
+                    NSNotificationCenter.defaultCenter().addObserver(self.TwitterAccount, selector: "accountChanged:", name: ACAccountStoreDidChangeNotification, object: nil)
                 }
             }
             
         }
+
+    }
+    
+    @objc func accountChanged(notif : NSNotification) {
+        refreshAccountTokenStatus()
+    }
+    
+    func refreshAccountTokenStatus() {
+        let account = ACAccountStore()
+        //FACEBOOK
+        account.renewCredentialsForAccount(FBAccount) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
+            if (error != nil) {
+                switch result {
+                case ACAccountCredentialRenewResult.Renewed:
+                    print("FACEBOOK: Credentials renewed")
+                    break
+                case ACAccountCredentialRenewResult.Rejected:
+                    print("FACEBOOK: User declined permission to renew")
+                    break
+                case ACAccountCredentialRenewResult.Failed:
+                    print("FACEBOOK: renew failed, you can try again")
+                    break
+                }
+            } else {
+                print("\(error.localizedDescription)")
+            }
+        }
+        //TWITTER
+        account.renewCredentialsForAccount(TwitterAccount) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
+            if (error != nil) {
+                switch result {
+                case ACAccountCredentialRenewResult.Renewed:
+                    print("TWITTER: Credentials renewed")
+                    break
+                case ACAccountCredentialRenewResult.Rejected:
+                    print("TWITTER: User declined permission to renew")
+                    break
+                case ACAccountCredentialRenewResult.Failed:
+                    print("TWITTER: renew failed, you can try again")
+                    break
+                }
+            } else {
+                print("\(error.localizedDescription)")
+            }
+        }
+    }
+    
+    
+    func applicationDidBecomeActive(application: UIApplication) { //is this ever called from the watch?
         
+        login()
         
     }
     
@@ -161,6 +210,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     // TODO: Fix this for new Photo-Library Integration
 
     func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
+        
+        if FBAccount == nil || TwitterAccount == nil {
+            login()
+        }
         
         let media = userInfo["Media"] as! String
         let message = userInfo["Message"] as! [String]
