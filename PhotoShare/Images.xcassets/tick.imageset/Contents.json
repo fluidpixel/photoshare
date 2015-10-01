@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "tick_2x.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "tick@2x.png",
       "scale" : "2x"
     },
     {

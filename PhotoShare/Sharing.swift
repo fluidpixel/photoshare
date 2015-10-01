@@ -273,9 +273,9 @@ class Sharing {
             print("ERROR : Could not find valid email for sender")
         }
         // testing data
-        var sendTo = "laurenevabrown28@gmail.com"
-        var sendName = "Lauren Brown"
-        var message = "This is a test"
+        let sendTo = "laurenevabrown28@gmail.com"
+        let sendName = "Lauren Brown"
+        let message = "This is a test"
         
         // set sendingData
         if sendingData["Error"] != nil {
