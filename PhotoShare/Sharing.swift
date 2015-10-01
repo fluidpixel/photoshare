@@ -39,9 +39,18 @@ class Sharing {
                 
                 var parameters = [String : AnyObject]()
                 
+                var finalMessage = ""
+                
+                if message != nil {
+                    for all in message! {
+                        finalMessage += all
+                    }
+                }
+                
+            
                 parameters["access_token"] = accountFB!.credential.oauthToken
                     
-                parameters["caption"] = "testing"
+                parameters["caption"] = finalMessage
                 
                 let feedURL = NSURL(string: "https://graph.facebook.com/me/photos")
                 
