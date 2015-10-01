@@ -19,6 +19,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     @IBOutlet weak var ImageCollection: UICollectionView!
 
+    @IBOutlet weak var ClearAllButton: UIButton!
     @IBOutlet var twitterButton: UIButton!
     @IBOutlet var facebookButton: UIButton!
     
@@ -83,18 +84,31 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
             })
         }))
         
-        self.showViewController(alert, sender: self)
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     func ShareMessage(type : String, message : String) {
 
         let alert = UIAlertController(title: "Share \(type)", message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.Default, handler: nil))
-        self.showViewController(alert, sender: self)
+        
+        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.Default, handler: { (UIAlertAction) -> Void in
+            alert.dismissViewControllerAnimated(true, completion: { () -> Void in
+                print("User chose not to login")
+            })
+        }))
+        
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+            
     }
     
     
     @IBAction func ShareWithFB(sender: UIButton) {
+
         self.retrieveImageArray {
             (selectedImages:[UIImage]) -> Void in
             
@@ -109,16 +123,19 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
                     sheet.addImage(image)
                 }
                 
-                sheet.completionHandler = { (result : SLComposeViewControllerResult) in
-                    
-                    switch result {
+                sheet.completionHandler = { (response : SLComposeViewControllerResult) in
+
+                    switch response {
                     case SLComposeViewControllerResult.Cancelled:
+                        
                         print("Post cancelled")
+                        self.ShareMessage("Error", message: "Post cancelled")
                         break
                     case SLComposeViewControllerResult.Done:
                         print("Post sent")
                         self.ClearAllSelections()
-                        self.ShareMessage("Complete", message: "")
+                        self.ShareMessage("Complete", message: "Message sent!")
+                        break
                     }
                 }
                 self.presentViewController(sheet, animated: true, completion: nil)
@@ -204,13 +221,20 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
             
             ImageCollection.deselectItemAtIndexPath(indexPath, animated: false)
         }
+        setCollectionViewHeader()
+        twitterButton.enabled = false
+        facebookButton.enabled = false
     }
     
+    @IBAction func OnClearAll(sender: UIButton) {
+        ClearAllSelections()
+    }
     
     
     //collection view methods
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ImageCell", forIndexPath: indexPath) as! ImageCollectionCell
         
