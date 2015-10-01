@@ -1,4 +1,4 @@
-//
+
 //  InterfaceController.swift
 //  PhotoShare WatchKit Extension
 //
@@ -445,9 +445,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
         
     }
-    
-    
-    
+
     func SendData(identifier: String) {
 
         //dictionary - imagenumbers
@@ -477,7 +475,29 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             "Message" : ContactDetails.message! as [AnyObject],
             "Contact" : contact]
         
-        session.transferUserInfo(metaData)
+       // session.transferUserInfo(metaData)
+        
+        if session.reachable {
+            session.sendMessage(metaData, replyHandler: { (response: [String : AnyObject]) -> Void in
+                
+                self.responseAlert(identifier, message: response["detail"] as? String, complete: response["Result"] as? String)
+                self.clearSentPictures()
+                
+                }, errorHandler: { (error: NSError) -> Void in
+                    
+                    
+            })
+        }
+        
+    }
+    
+    func responseAlert(identifier : String, message: String?, complete: String?) {
+        
+        let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+            print("Action hit")
+        }
+        
+        presentAlertControllerWithTitle("Share Messages \(complete!) - \(identifier)", message: (message != nil) ? "\(message)" : "", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
         
     }
 

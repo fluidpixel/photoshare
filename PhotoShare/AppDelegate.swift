@@ -209,16 +209,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     
     // TODO: Fix this for new Photo-Library Integration
 
-    func session(session: WCSession, didReceiveUserInfo userInfo: [String : AnyObject]) {
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
         
         if FBAccount == nil || TwitterAccount == nil {
             login()
         }
         
-        let media = userInfo["Media"] as! String
-        let message = userInfo["Message"] as! [String]
+        let media = message["Media"] as! String
+        let messageReceived = message["Message"] as! [String]
         
-        var contact = userInfo["Contact"] as? [String : String]
+        var contact = message["Contact"] as? [String : String]
+        
         if contact == nil {
             contact = ["Error" : "No Data"]
         } else {
@@ -230,7 +231,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
             contact!["Message"] = temp
         }
         
-        let localIDs:[String] = userInfo[kSelectedImagesLocalIdentifiers] as? [String] ?? []
+        let localIDs:[String] = message[kSelectedImagesLocalIdentifiers] as? [String] ?? []
 
         let assets = PHAsset.fetchAssetsWithLocalIdentifiers(localIDs, options: nil)
         var images:[UIImage] = []
@@ -244,31 +245,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         switch (media) {
             
         case "Facebook":
-            Classes.shareClass.SendToFB(images, message: message) {
+            Classes.shareClass.SendToFB(images, message: messageReceived) {
                 (result, details )in
                 
                 if result == true {
                     
                     print("Success! Sent from watch")
-                    _ = session.transferUserInfo(["Result": "Success"])
+                    replyHandler(["Result": "Success"])
+                    //_ = session.transferUserInfo(["Result": "Success"])
                 } else if result == false {
                     print("User not logged in")
-                    _ = session.transferUserInfo(["Result": "Fail", "detail" : details!])
+                    replyHandler(["Result": "Failed", "detail" : details!])
+                    //_ = session.transferUserInfo(["Result": "Fail", "detail" : details!])
                 }
                 
             }
             
         case "Twitter":
-            Classes.shareClass.SendTweet(images[0], message: message) {
+            Classes.shareClass.SendTweet(images[0], message: messageReceived) {
                 (result, detail) in
                 
                 if result == true {
                     
                     print("Success! Sent from watch")
-                    _ = session.transferUserInfo(["Result": "Success"])
+                    replyHandler(["Result": "Success"])
+                    //_ = session.transferUserInfo(["Result": "Success"])
                 } else if result == false {
                     print("User not logged in")
-                    _ = session.transferUserInfo(["Result": "Fail", "detail" : detail!])
+                    replyHandler(["Result": "Failed", "detail" : detail!])
+                    //_ = session.transferUserInfo(["Result": "Fail", "detail" : detail!])
                 }
             }
             
@@ -282,9 +287,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
             
         default:
             print("media is not twitter or facebook")
-            print("User Info Received: \(userInfo)")
+            print("User Info Received: \(message)")
             #if DEBUG
-                session.sendMessage(["Unknown User Info Received by App":userInfo], replyHandler: nil, errorHandler: nil)
+                session.sendMessage(["Unknown User Info Received by App":message], replyHandler: nil, errorHandler: nil)
             #endif
         }
 
@@ -311,11 +316,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
     }
     
-    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
-        print("didReceiveMessage:\(message) - reply")
-
-        
-    }
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
         if let _ = message[kWPRequestImageData] as? String {
             sessionReachabilityDidChange(session)

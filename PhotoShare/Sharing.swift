@@ -46,8 +46,7 @@ class Sharing {
                         finalMessage += all
                     }
                 }
-                
-            
+
                 parameters["access_token"] = accountFB!.credential.oauthToken
                     
                 parameters["caption"] = finalMessage
@@ -56,7 +55,7 @@ class Sharing {
                 
                 let postRequest = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.POST, URL: feedURL, parameters: parameters)
                     
-                postRequest.addMultipartData(UIImagePNGRepresentation(image[i]), withName: "source", type: "multipart/form-data", filename: "photo.png")
+                postRequest.addMultipartData(UIImageJPEGRepresentation(image[i], 0.8), withName: "source", type: "multipart/form-data", filename: "photo.jpg")
                 
                 postRequest.performRequestWithHandler({ (data : NSData!, response : NSHTTPURLResponse!, error : NSError!) -> Void in
 
@@ -87,6 +86,7 @@ class Sharing {
                         
                          
                         if (counter == image.count) {
+                            completionHandler(result: true, detail: "All messages sent")
                            // self.sendFBMessage(["testing"], photoIds: photoIds) { (result, detail) -> () in
                                 
                            //     if result == true {
@@ -120,13 +120,6 @@ class Sharing {
             for all in message! {
                 finalMessage += all
             }
-            
-    //        for var all = 0; all < photoIds!.count; all++ { //MULTIPLE IMAGES ON STATUS IS WIP
-    //            
-    //            feedParameters["image[\(all)][url]"] = photoIds![all]
-    //            feedParameters["image[\(all)][user_generated]"] = true
-    //        }
-    //        for ids in photoIds! {
                     
                     feedParameters["message"] = finalMessage
                     
