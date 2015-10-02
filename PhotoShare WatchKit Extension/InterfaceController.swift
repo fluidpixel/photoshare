@@ -42,7 +42,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             self.selectedImage = newValue.flatMap { assetList.indexOf($0) }
 
             for index in 0..<assetList.count {
-                (self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController)?.photo.setHidden(!self.selectedImage.contains(index))
+                (self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController)?.selectedTick.setHidden(!self.selectedImage.contains(index))
             }
         }
     }
@@ -78,7 +78,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     let localID = self.assetList[index]
                     if let imageData = self.assetCache[localID],
                         let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController {
-                            tableRow.WKGroup.setBackgroundImageData(imageData)
+                            tableRow.photoGroup.setBackgroundImageData(imageData)
+                            tableRow.loadingLabel.setHidden(true)
                     }
                     else {
                         requiredIDs.append(localID)
@@ -144,7 +145,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             let index = selectedImage.indexOf(rowIndex)
             
             selectedImage.removeAtIndex(index!)
-            row.photo.setHidden(true)
+            row.selectedTick.setHidden(true)
             
             if selectedImage.count > 0 {
                 self.setTitle("Share \(selectedImage.count) images")
@@ -155,7 +156,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
         } else {
             
-            row.photo.setHidden(false)
+            row.selectedTick.setHidden(false)
             selectedImage.append(rowIndex)
             self.setTitle("Share \(selectedImage.count) images")
         }
@@ -177,7 +178,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             if let index = self.assetList.indexOf(localID),
                 let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController,
                 let imageData = self.assetCache[localID] {
-                    tableRow.WKGroup.setBackgroundImageData(imageData)
+                    tableRow.photoGroup.setBackgroundImageData(imageData)
+                    tableRow.loadingLabel.setHidden(true)
             }
             
         }
@@ -272,7 +274,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         for var i = 0; i < imageTable.numberOfRows; i++ {
             let row = imageTable.rowControllerAtIndex(i) as! ImageTableRowController
             
-            row.photo.setHidden(true)
+            row.selectedTick.setHidden(true)
         }
         selectedImage.removeAll()
         self.setTitle("PhotoShare")
