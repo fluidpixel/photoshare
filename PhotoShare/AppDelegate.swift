@@ -407,7 +407,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
             
             let options = PHImageRequestOptions()
             options.deliveryMode = PHImageRequestOptionsDeliveryMode.Opportunistic
-            options.resizeMode = PHImageRequestOptionsResizeMode.Exact
+            options.resizeMode = PHImageRequestOptionsResizeMode.Fast
             
             self.watchImageManager.requestImageForAsset(asset, targetSize: watchImageSize, contentMode: .AspectFill, options: options) {
                 (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
