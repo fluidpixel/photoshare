@@ -79,7 +79,9 @@ class ImageCache {
         
         self.imageCache = [:]
         
-        if clear, let files = try? NSFileManager.defaultManager().contentsOfDirectoryAtURL(cacheFolder(), includingPropertiesForKeys: nil, options: []) {
+        if clear,
+            let files = try? NSFileManager.defaultManager().contentsOfDirectoryAtURL(cacheFolder(), includingPropertiesForKeys: nil, options: [])
+            where files.count > 0 {
             print("Cache cleanup")
             
             USER_DEFAULTS?.removeObjectForKey(kCacheIndexKey)
@@ -146,17 +148,30 @@ class ImageCache {
     
     func removeItem(localID:String) -> Bool {
         if let removedItem = self.imageCache.removeValueForKey(localID) {
-            try! NSFileManager.defaultManager().removeItemAtURL(removedItem.url)
-            return true
+            do {
+                try NSFileManager.defaultManager().removeItemAtURL(removedItem.url)
+                return true
+            }
+            catch {
+                print("Could not remove file : \(removedItem.url)")
+                return false
+            }
         }
         return false
     }
     
     
-    func insertItem(receivedFile file: WCSessionFile) throws -> Bool {
+    func insertItem(receivedFile file: WCSessionFile) -> Bool {
         
-        guard let newLocalID = file.metadata?[kLocalIdentifier] as? String else { throw IncorrectMetaData.LocalIdentifierMissing }
-        guard let newModifiedDate = file.metadata?[kAssetModificationDate] as? NSDate else { throw IncorrectMetaData.ModifiedDateMissing }
+        guard let newLocalID = file.metadata?[kLocalIdentifier] as? String else {
+            print(IncorrectMetaData.LocalIdentifierMissing)
+            return false
+        }
+        
+        guard let newModifiedDate = file.metadata?[kAssetModificationDate] as? NSDate else {
+            print(IncorrectMetaData.ModifiedDateMissing)
+            return false
+        }
         
         let newDegraded:Bool = file.metadata?["PHImageResultIsDegradedKey"]?.boolValue ?? true
         
@@ -188,8 +203,7 @@ class ImageCache {
         }
         catch let error as NSError {
             print("Unexpectedly, \(newItem.url) can't be created. \(error)")
-            throw error
-            //return false
+            return false
         }
         
     }

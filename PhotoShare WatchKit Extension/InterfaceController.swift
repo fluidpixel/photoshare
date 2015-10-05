@@ -173,7 +173,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
             print("Received File for: \(file.metadata)")
 
-            if !(try! self.assetCache.insertItem(receivedFile: file)) {
+            if !self.assetCache.insertItem(receivedFile: file) {
                 print("Image already cached - using cahced version instead")
             }
             

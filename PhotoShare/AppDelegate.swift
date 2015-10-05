@@ -61,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         self.fetchResult = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
         
-        self.sessionReachabilityDidChange(self.session)
+        self.initWatchConnection()
         
         PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
         
@@ -203,6 +203,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         login()
         
+        self.initWatchConnection()
+        
     }
     
     // MARK: WCSessionDelegate
@@ -328,25 +330,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     }
     
     func sessionReachabilityDidChange(session: WCSession) {
-        print("sessionReachabilityDidChange")
+        print("sessionReachabilityDidChange (TO: \(session.reachable)")
+        self.initWatchConnection()
+    }
+    
+    func initWatchConnection() {
         if session.reachable {
-            
             let watchSize = WKInterfaceDevice.currentDevice().screenBounds.size
             let watchScale = WKInterfaceDevice.currentDevice().screenScale
             self.watchImageSize = CGSize(width: watchScale * watchSize.width, height: watchScale * watchSize.height)
-            
             self.sendAssetList(session)
-            
-//            self.fetchResult.enumerateObjectsUsingBlock {
-//                if let asset = $0.0 as? PHAsset {
-//                    self.sendImage(asset, session: session)
-//                }
-//            }
-            
-        }
-        else {
-            // TODO: Watch App has disconnected
-            self.cancelAllImageFileTransfers()
         }
     }
     
