@@ -335,6 +335,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     
     func initWatchConnection() {
         if session.reachable {
+            
+            // Create a 3 minute connection background task
+            let application = UIApplication.sharedApplication()
+            var identifier = UIBackgroundTaskInvalid
+            let endBlock = {
+                if identifier != UIBackgroundTaskInvalid {
+                    application.endBackgroundTask(identifier)
+                }
+                identifier = UIBackgroundTaskInvalid
+            }
+            identifier = application.beginBackgroundTaskWithExpirationHandler(endBlock)
+            
             let watchSize = WKInterfaceDevice.currentDevice().screenBounds.size
             let watchScale = WKInterfaceDevice.currentDevice().screenScale
             self.watchImageSize = CGSize(width: watchScale * watchSize.width, height: watchScale * watchSize.height)
