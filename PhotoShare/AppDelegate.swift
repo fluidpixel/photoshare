@@ -401,6 +401,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
             let options = PHImageRequestOptions()
             options.deliveryMode = PHImageRequestOptionsDeliveryMode.Opportunistic
             options.resizeMode = PHImageRequestOptionsResizeMode.Fast
+            options.version = PHImageRequestOptionsVersion.Current
             
             self.watchImageManager.requestImageForAsset(asset, targetSize: watchImageSize, contentMode: .AspectFill, options: options) {
                 (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
@@ -476,6 +477,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         options.synchronous = true
         options.deliveryMode = .HighQualityFormat
         options.resizeMode = .None
+        options.version = PHImageRequestOptionsVersion.Current
         
         let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
         
