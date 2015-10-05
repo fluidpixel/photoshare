@@ -319,7 +319,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     }
     
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
-        if let _ = message[kWPRequestImageData] as? String {
+        if let _ = message[kWPRequestImageData] {
              self.initWatchConnection()
         }
         else if let localIDs = message[kWPRequestImagesForLocalIdentifiers] as? [String] {
