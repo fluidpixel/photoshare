@@ -419,7 +419,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
                         var metadata:[String:AnyObject] = [:] // info as? [String:AnyObject] ?? [:]
                         metadata[kLocalIdentifier] = asset.localIdentifier
                         metadata[kDeleteWhenTransfered] = true
-                        metadata[kAssedModificationDate] = asset.modificationDate
+                        metadata[kAssetModificationDate] = asset.modificationDate
                         metadata["PHImageResultIsDegradedKey"] = info?[PHImageResultIsDegradedKey]?.boolValue ?? true
                         
                         self.activeFileTransfers.insert(session.transferFile(tempFile, metadata: metadata))

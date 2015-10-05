@@ -28,7 +28,7 @@ let kNotifyWatchThatImageHasChanged = "kNotifyWatchThatImageHasChanged"
 
 let kDeleteWhenTransfered = "kDeleteWhenTransfered"
 
-let kAssedModificationDate = "kAssedModificationDate"
+let kAssetModificationDate = "kAssetModificationDate"
 
 
 

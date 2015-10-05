@@ -156,7 +156,7 @@ class ImageCache {
     func insertItem(receivedFile file: WCSessionFile) throws -> Bool {
         
         guard let newLocalID = file.metadata?[kLocalIdentifier] as? String else { throw IncorrectMetaData.LocalIdentifierMissing }
-        guard let newModifiedDate = file.metadata?[kAssedModificationDate] as? NSDate else { throw IncorrectMetaData.ModifiedDateMissing }
+        guard let newModifiedDate = file.metadata?[kAssetModificationDate] as? NSDate else { throw IncorrectMetaData.ModifiedDateMissing }
         
         let newDegraded:Bool = file.metadata?["PHImageResultIsDegradedKey"]?.boolValue ?? true
         
