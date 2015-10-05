@@ -241,7 +241,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
     }
     
-    
+    func sessionReachabilityDidChange(session: WCSession) {
+        if session.reachable {
+            session.sendMessage([kWPRequestImageData:true], replyHandler: nil, errorHandler: nil)
+        }
+    }
+
     // MARK: Utility Functions
     
      func ShowDemo() {

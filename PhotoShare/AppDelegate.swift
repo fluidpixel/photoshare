@@ -320,7 +320,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
         if let _ = message[kWPRequestImageData] as? String {
-            sessionReachabilityDidChange(session)
+             self.initWatchConnection()
         }
         else if let localIDs = message[kWPRequestImagesForLocalIdentifiers] as? [String] {
             for localID in localIDs {
@@ -330,7 +330,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     }
     
     func sessionReachabilityDidChange(session: WCSession) {
-        print("sessionReachabilityDidChange (TO: \(session.reachable)")
         self.initWatchConnection()
     }
     
