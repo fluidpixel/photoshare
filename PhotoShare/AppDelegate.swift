@@ -61,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         self.fetchResult = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
         
-        self.sessionReachabilityDidChange(self.session)
+        self.initWatchConnection()
         
         PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
         
@@ -203,6 +203,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         login()
         
+        self.initWatchConnection()
+        
     }
     
     // MARK: WCSessionDelegate
@@ -317,8 +319,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     }
     
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
-        if let _ = message[kWPRequestImageData] as? String {
-            sessionReachabilityDidChange(session)
+        if let _ = message[kWPRequestImageData] {
+             self.initWatchConnection()
         }
         else if let localIDs = message[kWPRequestImagesForLocalIdentifiers] as? [String] {
             for localID in localIDs {
@@ -328,25 +330,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     }
     
     func sessionReachabilityDidChange(session: WCSession) {
-        print("sessionReachabilityDidChange")
+        self.initWatchConnection()
+    }
+    
+    func initWatchConnection() {
         if session.reachable {
+            
+            // Create a 3 minute connection background task
+            let application = UIApplication.sharedApplication()
+            var identifier = UIBackgroundTaskInvalid
+            let endBlock = {
+                if identifier != UIBackgroundTaskInvalid {
+                    application.endBackgroundTask(identifier)
+                }
+                identifier = UIBackgroundTaskInvalid
+            }
+            identifier = application.beginBackgroundTaskWithExpirationHandler(endBlock)
             
             let watchSize = WKInterfaceDevice.currentDevice().screenBounds.size
             let watchScale = WKInterfaceDevice.currentDevice().screenScale
             self.watchImageSize = CGSize(width: watchScale * watchSize.width, height: watchScale * watchSize.height)
-            
             self.sendAssetList(session)
-            
-//            self.fetchResult.enumerateObjectsUsingBlock {
-//                if let asset = $0.0 as? PHAsset {
-//                    self.sendImage(asset, session: session)
-//                }
-//            }
-            
-        }
-        else {
-            // TODO: Watch App has disconnected
-            self.cancelAllImageFileTransfers()
         }
     }
     
@@ -407,7 +411,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
             
             let options = PHImageRequestOptions()
             options.deliveryMode = PHImageRequestOptionsDeliveryMode.Opportunistic
-            options.resizeMode = PHImageRequestOptionsResizeMode.Exact
+            options.resizeMode = PHImageRequestOptionsResizeMode.Fast
+            options.version = PHImageRequestOptionsVersion.Current
             
             self.watchImageManager.requestImageForAsset(asset, targetSize: watchImageSize, contentMode: .AspectFill, options: options) {
                 (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
@@ -419,7 +424,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
                         var metadata:[String:AnyObject] = [:] // info as? [String:AnyObject] ?? [:]
                         metadata[kLocalIdentifier] = asset.localIdentifier
                         metadata[kDeleteWhenTransfered] = true
-                        metadata[kAssedModificationDate] = asset.modificationDate
+                        metadata[kAssetModificationDate] = asset.modificationDate
                         metadata["PHImageResultIsDegradedKey"] = info?[PHImageResultIsDegradedKey]?.boolValue ?? true
                         
                         self.activeFileTransfers.insert(session.transferFile(tempFile, metadata: metadata))
@@ -483,6 +488,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         options.synchronous = true
         options.deliveryMode = .HighQualityFormat
         options.resizeMode = .None
+        options.version = PHImageRequestOptionsVersion.Current
         
         let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
         

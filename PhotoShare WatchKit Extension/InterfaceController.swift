@@ -89,6 +89,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 // request images not in cache
                 if requiredIDs.count > 0 {
                     requiredIDs = [String](Set<String>(requiredIDs))    // remove duplicates
+                    requiredIDs.sortInPlace { self.assetList.indexOf($0) ?? 98 < self.assetList.indexOf($1) ?? 99 }
+                    
                     if self.session.reachable {
                         self.session.sendMessage([kWPRequestImagesForLocalIdentifiers : requiredIDs], replyHandler: nil, errorHandler: nil)
                     }
@@ -171,13 +173,14 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
             print("Received File for: \(file.metadata)")
 
-            if !(try! self.assetCache.insertItem(receivedFile: file)) {
+            if !self.assetCache.insertItem(receivedFile: file) {
                 print("Image already cached - using cahced version instead")
             }
             
             if let index = self.assetList.indexOf(localID),
                 let tableRow = self.imageTable.rowControllerAtIndex(index) as? ImageTableRowController,
                 let imageData = self.assetCache[localID] {
+                    print("\tUpdating Row: \(index)")
                     tableRow.photoGroup.setBackgroundImageData(imageData)
                     tableRow.loadingLabel.setHidden(true)
             }
@@ -238,7 +241,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
     }
     
-    
+    func sessionReachabilityDidChange(session: WCSession) {
+        if session.reachable {
+            session.sendMessage([kWPRequestImageData:true], replyHandler: nil, errorHandler: nil)
+        }
+    }
+
     // MARK: Utility Functions
     
      func ShowDemo() {
