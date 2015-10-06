@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		545CC3901BC4735A00C9AB78 /* MessagePopoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545CC38F1BC4735A00C9AB78 /* MessagePopoverController.swift */; settings = {ASSET_TAGS = (); }; };
 		54FDFC451B834F2D0001BB5F /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC441B834F2D0001BB5F /* PhotoManager.swift */; };
 		54FDFC481B84A0EA0001BB5F /* ImageTableRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC471B84A0E60001BB5F /* ImageTableRowController.swift */; };
 		B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93EC68E1B6FC10E007A2596 /* Sharing.swift */; };
@@ -88,6 +89,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		545CC38F1BC4735A00C9AB78 /* MessagePopoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagePopoverController.swift; sourceTree = "<group>"; };
 		54FDFC441B834F2D0001BB5F /* PhotoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		54FDFC471B84A0E60001BB5F /* ImageTableRowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTableRowController.swift; sourceTree = "<group>"; };
 		B93EC68E1B6FC10E007A2596 /* Sharing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sharing.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				B9506D0A1B5FB08800B31FEF /* LaunchScreen.xib */,
 				B9506CFF1B5FB08700B31FEF /* Supporting Files */,
 				B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */,
+				545CC38F1BC4735A00C9AB78 /* MessagePopoverController.swift */,
 				B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */,
 				B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */,
 				DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */,
@@ -464,6 +467,7 @@
 				DA7BEB5F1BB28D2500AB78C9 /* SharedMessageKeys.swift in Sources */,
 				B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */,
 				B998927E1BB009C400CB84B1 /* ImageCollectionCell.swift in Sources */,
+				545CC3901BC4735A00C9AB78 /* MessagePopoverController.swift in Sources */,
 				B942A3BA1BB1632200562AFC /* PhotoShareLayout.swift in Sources */,
 				B9506D021B5FB08700B31FEF /* AppDelegate.swift in Sources */,
 			);
