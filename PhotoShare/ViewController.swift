@@ -12,8 +12,10 @@ import Accounts
 import Social
 import Photos
 
+
+
 @available(iOS 9.0, *)
-class ViewController: UIViewController, UINavigationControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PHPhotoLibraryChangeObserver {
+class ViewController: UIViewController, UINavigationControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PHPhotoLibraryChangeObserver, UIPopoverPresentationControllerDelegate {
     
     @IBOutlet weak var galleryButton: UIButton!
     
@@ -43,6 +45,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         
         self.twitterButton.enabled = false
         self.facebookButton.enabled = false
+        self.ClearAllButton.enabled = false
         
     }
     
@@ -108,111 +111,57 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     
     @IBAction func ShareWithFB(sender: UIButton) {
-
-        self.retrieveImageArray {
-            (selectedImages:[UIImage]) -> Void in
             
-            if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) {
-                
-                let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
-                
-                sheet.setInitialText("")
-                
-                for image in selectedImages {
-                    
-                    sheet.addImage(image)
-                }
-                
-                sheet.completionHandler = { (response : SLComposeViewControllerResult) in
-
-                    switch response {
-                    case SLComposeViewControllerResult.Cancelled:
-                        
-                        print("Post cancelled")
-                        self.ShareMessage("Error", message: "Post cancelled")
-                        break
-                    case SLComposeViewControllerResult.Done:
-                        print("Post sent")
-                        self.ClearAllSelections()
-                        self.ShareMessage("Complete", message: "Message sent!")
-                        break
-                    }
-                }
-                self.presentViewController(sheet, animated: true, completion: nil)
-                
-            }
-            else {
-                
-                if selectedImages.count > 0 {
-                    Classes.shareClass.SendToFB(selectedImages, message: nil) { (result, detail) -> () in
-                        if result == true {
-                            
-                            print("INFO: Photo shared - Facebook")
-                            self.ShareMessage("Complete", message: detail as! String)
-                            
-                        } else if detail as? String == "Account"{
-                            
-                            self.showLoginAlert("Facebook")
-                            
-                        } else if result == false {
-                            
-                            self.ShareMessage("Error", message: detail as! String)
-                        }
-                    }
-                }
-                else {
-                    self.ShareMessage("Error", message: "You haven't selected any images")
-                }
-            }
-        }
+            self.performSegueWithIdentifier("message", sender: self)
     }
     
     @IBAction func ShareWithTwitter(sender: UIButton) {
         
-        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
-            
-            if let indexPaths = self.ImageCollection.indexPathsForSelectedItems() where indexPaths.count == 1,
-                let asset = self.assets?.firstObject as? PHAsset {
-                    
-                    
-                    let options = PHImageRequestOptions()
-                    //options.synchronous = true
-                    options.deliveryMode = .HighQualityFormat
-                    //options.resizeMode = .None
-                    
-                    let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
-                    
-                    PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: options) {
-                        (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
-                        if let image = img {
-                            dispatch_async(dispatch_get_main_queue()) {
-                                
-                                let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
-                                
-                                sheet.setInitialText("")
-                                
-                                sheet.addImage(image)
-                                
-                                sheet.completionHandler = { (result : SLComposeViewControllerResult) in
-                                    
-                                    switch result {
-                                    case SLComposeViewControllerResult.Cancelled:
-                                        print("Post cancelled")
-                                        break
-                                    case SLComposeViewControllerResult.Done:
-                                        print("Post sent")
-                                        self.ClearAllSelections()
-                                        self.ShareMessage("Complete", message: "")
-                                    }
-                                    
-                                    
-                                }
-                                self.presentViewController(sheet, animated: true, completion: nil)
-                            }
-                        }
-                    }
-            }
-        }
+        self.performSegueWithIdentifier("messageTwitter", sender: self)
+//        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
+//            
+//            if let indexPaths = self.ImageCollection.indexPathsForSelectedItems() where indexPaths.count == 1,
+//                let asset = self.assets?.firstObject as? PHAsset {
+//                    
+//                    
+//                    let options = PHImageRequestOptions()
+//                    //options.synchronous = true
+//                    options.deliveryMode = .HighQualityFormat
+//                    //options.resizeMode = .None
+//                    
+//                    let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+//                    
+//                    PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: options) {
+//                        (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
+//                        if let image = img {
+//                            dispatch_async(dispatch_get_main_queue()) {
+//                                
+//                                let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+//                                
+//                                sheet.setInitialText("")
+//                                
+//                                sheet.addImage(image)
+//                                
+//                                sheet.completionHandler = { (result : SLComposeViewControllerResult) in
+//                                    
+//                                    switch result {
+//                                    case SLComposeViewControllerResult.Cancelled:
+//                                        print("Post cancelled")
+//                                        break
+//                                    case SLComposeViewControllerResult.Done:
+//                                        print("Post sent")
+//                                        self.ClearAllSelections()
+//                                        self.ShareMessage("Complete", message: "")
+//                                    }
+//                                    
+//                                    
+//                                }
+//                                self.presentViewController(sheet, animated: true, completion: nil)
+//                            }
+//                        }
+//                    }
+//            }
+//        }
     }
     
     func ClearAllSelections() {
@@ -224,6 +173,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         setCollectionViewHeader()
         twitterButton.enabled = false
         facebookButton.enabled = false
+        ClearAllButton.enabled = false
     }
     
     @IBAction func OnClearAll(sender: UIButton) {
@@ -277,7 +227,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         self.setCollectionViewHeader()
     }
     
-    //collection view flow layout
+    //MARK: collection view layout
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let pictureDimension = view.frame.size.width / 4.0
@@ -320,6 +270,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         }
         self.twitterButton.enabled = (selectionCount == 1) && SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter)
         self.facebookButton.enabled = selectionCount > 0
+        self.ClearAllButton.enabled = selectionCount > 0
     }
     
     var selectedItems:[String] {
@@ -344,6 +295,45 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
                 }
             }
         }
+    }
+    
+    //MARK: popup delegate
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.None
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "message" {
+            let vc = segue.destinationViewController as! MessagePopoverController
+            vc.modalPresentationStyle = UIModalPresentationStyle.Popover
+            vc.popoverPresentationController!.delegate = self
+            
+            retrieveImageArray({ (images: [UIImage]) -> Void in
+                vc.Image.image = images[0]
+                vc.imagesToShare = images
+                vc.Media.text = "Facebook"
+                
+                if images.count > 1 {
+                    vc.Image3.image = images[1]
+                }
+            })
+        } else if segue.identifier == "messageTwitter" {
+            let vc = segue.destinationViewController as! MessagePopoverController
+            vc.modalPresentationStyle = UIModalPresentationStyle.Popover
+            vc.popoverPresentationController!.delegate = self
+            
+            retrieveImageArray({ (images: [UIImage]) -> Void in
+                vc.Image.image = images[0]
+                vc.imagesToShare = images
+                vc.Media.text = "Twitter"
+                
+                if images.count > 0 {
+                    vc.Image.image = images[0]
+                }
+            })
+        }
+        
     }
 
     // MARK: PHPhotoLibraryChangeObserver

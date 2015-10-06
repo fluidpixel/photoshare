@@ -90,7 +90,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 if requiredIDs.count > 0 {
                     requiredIDs = [String](Set<String>(requiredIDs))    // remove duplicates
                     requiredIDs.sortInPlace { self.assetList.indexOf($0) ?? 98 < self.assetList.indexOf($1) ?? 99 }
-                    
                     if self.session.reachable {
                         self.session.sendMessage([kWPRequestImagesForLocalIdentifiers : requiredIDs], replyHandler: nil, errorHandler: nil)
                     }
@@ -109,6 +108,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     // MARK: WKInterfaceController overrides
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
+        
+        
         
         if WCSession.isSupported() {
             
@@ -151,7 +152,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
             if selectedImage.count > 0 {
                 self.setTitle("Share \(selectedImage.count) images")
+                
             } else {
+                //Clear menu
+                clearAllMenuItems()
                 self.setTitle("PhotoShare")
             }
             
@@ -159,6 +163,15 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         } else {
             
             row.selectedTick.setHidden(false)
+            
+            //create menu - START
+            addMenuItemWithImageNamed("Facebook", title: "Facebook", action: "ShareOnFB")
+            addMenuItemWithImageNamed("Twitter", title: "Twitter", action: "SendTweet")
+            addMenuItemWithItemIcon(WKMenuItemIcon.Add, title: "Message", action: "SendText")
+            addMenuItemWithItemIcon(WKMenuItemIcon.Share, title: "Email", action: "SendEmail")
+            
+            
+            //create menu - END
             selectedImage.append(rowIndex)
             self.setTitle("Share \(selectedImage.count) images")
         }
@@ -246,7 +259,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session.sendMessage([kWPRequestImageData:true], replyHandler: nil, errorHandler: nil)
         }
     }
-
+    
+    
     // MARK: Utility Functions
     
      func ShowDemo() {
@@ -367,6 +381,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     func InfoGatherComplete() {
+        popToRootController()
         SendData(mediumToSendWith)
     }
     
@@ -491,13 +506,21 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session.sendMessage(metaData, replyHandler: { (response: [String : AnyObject]) -> Void in
                 
                 self.responseAlert(identifier, message: response["detail"] as? String, complete: response["Result"] as? String)
-                self.clearSentPictures()
+                
                 
                 }, errorHandler: { (error: NSError) -> Void in
                     
                     
             })
+            //intermediary message
+            let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+                print("Action hit")
+            }
+            
+            presentAlertControllerWithTitle("Message is on its way", message: "", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
+            
         }
+        self.clearSentPictures()
         
     }
     
@@ -505,6 +528,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
             print("Action hit")
+            self.popToRootController()
         }
         
         presentAlertControllerWithTitle("Share Messages \(complete!) - \(identifier)", message: (message != nil) ? "\(message)" : "", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])

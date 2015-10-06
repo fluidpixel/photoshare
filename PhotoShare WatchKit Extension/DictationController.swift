@@ -52,6 +52,5 @@ class DictationController: WKInterfaceController {
     @IBAction func SendMessage() {
         
         NSNotificationCenter.defaultCenter().postNotificationName(ContactDetails.readyToSend, object: self)
-        popToRootController()
     }
 }
