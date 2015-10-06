@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MessagePopoverController: UIViewController {
+class MessagePopoverController: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var Message: UITextView!
     @IBOutlet weak var PostButton: UIButton!
@@ -25,13 +25,30 @@ class MessagePopoverController: UIViewController {
         super.viewDidLoad()
         
         Message.text = "Message text goes here"
+        CharactersLeftTwitter.text = "0"
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
         if Media.text == "Facebook" {
             CharactersLeftTwitter.hidden = true
         } else {
             CharactersLeftTwitter.hidden = false
         }
+        
     }
-    
+
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        if Media.text == "Twitter" {
+            CharactersLeftTwitter.text = "\(textView.text.characters.count)"
+            if textView.text.characters.count >= 140 {
+                CharactersLeftTwitter.textColor = UIColor.redColor()
+            } else {
+                CharactersLeftTwitter.textColor = UIColor.lightGrayColor()
+            }
+        }
+        return true
+    }
 
     @IBAction func Post(sender: UIButton) {
         if Media.text == "Facebook" {
