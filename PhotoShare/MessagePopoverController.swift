@@ -25,28 +25,26 @@ class MessagePopoverController: UIViewController, UITextViewDelegate {
         super.viewDidLoad()
         
         Message.text = "Message text goes here"
-        CharactersLeftTwitter.text = "0"
+        CharactersLeftTwitter.text = "\(Message.text.characters.count)"
+        Message.delegate = self
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        if Media.text == "Facebook" {
-            CharactersLeftTwitter.hidden = true
-        } else {
-            CharactersLeftTwitter.hidden = false
-        }
         
     }
 
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-        if Media.text == "Twitter" {
-            CharactersLeftTwitter.text = "\(textView.text.characters.count)"
-            if textView.text.characters.count >= 140 {
-                CharactersLeftTwitter.textColor = UIColor.redColor()
-            } else {
-                CharactersLeftTwitter.textColor = UIColor.lightGrayColor()
-            }
+        
+        CharactersLeftTwitter.text = "\(textView.text.characters.count)"
+        if textView.text.characters.count > 140 && Media.text == "Twitter"{
+            CharactersLeftTwitter.textColor = UIColor.redColor()
+            PostButton.enabled = false
+        } else if Media.text == "Twitter"{
+            CharactersLeftTwitter.textColor = UIColor.lightGrayColor()
+            PostButton.enabled = true
         }
+    
         return true
     }
 
@@ -56,42 +54,60 @@ class MessagePopoverController: UIViewController, UITextViewDelegate {
                 Classes.shareClass.SendToFB(imagesToShare, message: [Message.text]) { (result, detail) -> () in
                     if result == true {
 
-                        print("INFO: Photo shared - Facebook")
-                        //self.ShareMessage("Complete", message: detail as! String)
+                       print("INFO: Photo shared - Facebook")
+                       Observer.Message[0] = "Complete"
+                       Observer.Message[1] = detail as? String
+                       NSNotificationCenter.defaultCenter().postNotificationName(Observer.MessageReceived, object: nil)
+
 
                     } else if detail as? String == "Account"{
 
-                       // self.showLoginAlert("Facebook")
+                       Observer.Message[0] = "Login"
+                       Observer.Message[1] = "Facebook"
+                        NSNotificationCenter.defaultCenter().postNotificationName(Observer.MessageReceived, object: nil)
 
                     } else if result == false {
 
-                       // self.ShareMessage("Error", message: detail as! String)
+
+                       Observer.Message[0] = "Error"
+                       Observer.Message[1] = detail as? String
+                        NSNotificationCenter.defaultCenter().postNotificationName(Observer.MessageReceived, object: nil)
                     }
                 }
             }
         } else if Media.text == "Twitter" {
             if imagesToShare.count == 1 {
+                
                 Classes.shareClass.SendTweet(imagesToShare[0], message: [Message.text]) { (result, detail) -> () in
                     if result == true {
 
                         print("INFO: Photo shared - Twitter")
-                        //self.ShareMessage("Complete", message: detail as! String)
+                        
+                        Observer.Message[0] = "Complete"
+                        Observer.Message[1] = detail as? String
+                        NSNotificationCenter.defaultCenter().postNotificationName(Observer.MessageReceived, object: nil)
+
 
                     } else if detail as? String == "Account"{
 
-                        //self.showLoginAlert("Facebook")
+                        Observer.Message[0] = "Login"
+                        Observer.Message[1] = "Twitter"
+                        NSNotificationCenter.defaultCenter().postNotificationName(Observer.MessageReceived, object: nil)
 
                     } else if result == false {
+                        
+                        Observer.Message[0] = "Error"
+                        Observer.Message[1] = detail as? String
+                        NSNotificationCenter.defaultCenter().postNotificationName(Observer.MessageReceived, object: nil)
 
-                       // self.ShareMessage("Error", message: detail as! String)
                     }
                 }
             }
             else {
-                //self.ShareMessage("Error", message: "You haven't selected any images")
             }
 
         }
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     

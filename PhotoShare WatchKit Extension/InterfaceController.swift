@@ -167,8 +167,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             //create menu - START
             addMenuItemWithImageNamed("Facebook", title: "Facebook", action: "ShareOnFB")
             addMenuItemWithImageNamed("Twitter", title: "Twitter", action: "SendTweet")
-            addMenuItemWithItemIcon(WKMenuItemIcon.Add, title: "Message", action: "SendText")
-            addMenuItemWithItemIcon(WKMenuItemIcon.Share, title: "Email", action: "SendEmail")
+            //addMenuItemWithItemIcon(WKMenuItemIcon.Add, title: "Message", action: "SendText")
+            //addMenuItemWithItemIcon(WKMenuItemIcon.Share, title: "Email", action: "SendEmail")
             
             
             //create menu - END

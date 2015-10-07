@@ -12,6 +12,11 @@ import Accounts
 import Social
 import Photos
 
+struct Observer {
+    static var MessageReceived = ""
+    static var Message : [String?] = [nil, nil]
+}
+
 
 
 @available(iOS 9.0, *)
@@ -64,6 +69,14 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         ImageCollection.registerNib(nib, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "PhotoShareReuseView")
         
         ImageCollection.reloadData()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "MessageReceived", name: Observer.MessageReceived, object: nil)
+    }
+    
+    func MessageReceived() {
+        
+        ShareMessage(Observer.Message[0]!, message: Observer.Message[1])
+        
     }
     
     func showLoginAlert(identifier : String){
@@ -92,7 +105,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         }
     }
     
-    func ShareMessage(type : String, message : String) {
+    func ShareMessage(type : String, message : String?) {
 
         let alert = UIAlertController(title: "Share \(type)", message: message, preferredStyle: UIAlertControllerStyle.Alert)
         
@@ -118,50 +131,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     @IBAction func ShareWithTwitter(sender: UIButton) {
         
         self.performSegueWithIdentifier("messageTwitter", sender: self)
-//        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
-//            
-//            if let indexPaths = self.ImageCollection.indexPathsForSelectedItems() where indexPaths.count == 1,
-//                let asset = self.assets?.firstObject as? PHAsset {
-//                    
-//                    
-//                    let options = PHImageRequestOptions()
-//                    //options.synchronous = true
-//                    options.deliveryMode = .HighQualityFormat
-//                    //options.resizeMode = .None
-//                    
-//                    let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
-//                    
-//                    PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: options) {
-//                        (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
-//                        if let image = img {
-//                            dispatch_async(dispatch_get_main_queue()) {
-//                                
-//                                let sheet: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
-//                                
-//                                sheet.setInitialText("")
-//                                
-//                                sheet.addImage(image)
-//                                
-//                                sheet.completionHandler = { (result : SLComposeViewControllerResult) in
-//                                    
-//                                    switch result {
-//                                    case SLComposeViewControllerResult.Cancelled:
-//                                        print("Post cancelled")
-//                                        break
-//                                    case SLComposeViewControllerResult.Done:
-//                                        print("Post sent")
-//                                        self.ClearAllSelections()
-//                                        self.ShareMessage("Complete", message: "")
-//                                    }
-//                                    
-//                                    
-//                                }
-//                                self.presentViewController(sheet, animated: true, completion: nil)
-//                            }
-//                        }
-//                    }
-//            }
-//        }
+
     }
     
     func ClearAllSelections() {
@@ -323,15 +293,29 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
             vc.modalPresentationStyle = UIModalPresentationStyle.Popover
             vc.popoverPresentationController!.delegate = self
             
-            retrieveImageArray({ (images: [UIImage]) -> Void in
-                vc.Image.image = images[0]
-                vc.imagesToShare = images
-                vc.Media.text = "Twitter"
-                
-                if images.count > 0 {
-                    vc.Image.image = images[0]
-                }
-            })
+            if let indexPaths = self.ImageCollection.indexPathsForSelectedItems() where indexPaths.count == 1,
+                let asset = self.assets?.objectAtIndex(indexPaths[0].row) as? PHAsset {
+
+
+                    let options = PHImageRequestOptions()
+                    //options.synchronous = true
+                    options.deliveryMode = .HighQualityFormat
+                    //options.resizeMode = .None
+
+                    let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+
+                    PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: options) {
+                        (img:UIImage?, info:[NSObject : AnyObject]?) -> Void in
+                        if let image = img {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                
+                                vc.Image.image = image
+                                vc.imagesToShare = [image]
+                                vc.Media.text = "Twitter"
+                            }
+                        }
+                    }
+            }
         }
         
     }
