@@ -163,17 +163,19 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         } else {
             
             row.selectedTick.setHidden(false)
-            
-            //create menu - START
-            addMenuItemWithImageNamed("Facebook", title: "Facebook", action: "ShareOnFB")
-            addMenuItemWithImageNamed("Twitter", title: "Twitter", action: "SendTweet")
-            //addMenuItemWithItemIcon(WKMenuItemIcon.Add, title: "Message", action: "SendText")
-            //addMenuItemWithItemIcon(WKMenuItemIcon.Share, title: "Email", action: "SendEmail")
-            
-            
             //create menu - END
             selectedImage.append(rowIndex)
             self.setTitle("Share \(selectedImage.count) images")
+            
+            //create menu - START
+            if selectedImage.count == 1 {
+                addMenuItemWithImageNamed("Facebook", title: "Facebook", action: "ShareOnFB")
+                addMenuItemWithImageNamed("Twitter", title: "Twitter", action: "SendTweet")
+                //addMenuItemWithItemIcon(WKMenuItemIcon.Add, title: "Message", action: "SendText")
+                //addMenuItemWithItemIcon(WKMenuItemIcon.Share, title: "Email", action: "SendEmail")
+            }
+            
+
         }
         
     }
@@ -340,7 +342,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBAction func SendTweet() {
         if selectedImage.count == 1 {
             mediumToSendWith = "Twitter"
-            pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "data" : ""])
+            var image : UIImage?
+            
+            if let imageData = self.assetCache[selectedLocalIdentifiers[0]]{
+                image = UIImage(data: imageData)
+            }
+            pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "images" : (image as! AnyObject), "count" : 1])
             
         }else {
             showAlert("Twitter", numberOfImages: 1)
@@ -352,7 +359,15 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         //facebook doesn't have a limit
          mediumToSendWith = "Facebook"
-        pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "data" : ""])
+        var image : UIImage?
+        
+        let imageCount = selectedLocalIdentifiers.count
+        
+        if let imageData = self.assetCache[selectedLocalIdentifiers[0]]{
+            image = UIImage(data: imageData)
+        }
+        
+        pushControllerWithName("DictationController", context: ["segue" : "hierarchical", "images" : (image as! AnyObject), "count" : imageCount])
         
     }
     

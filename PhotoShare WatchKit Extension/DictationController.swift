@@ -17,15 +17,34 @@ class DictationController: WKInterfaceController {
     @IBOutlet var addMessageButton: WKInterfaceButton!
     @IBOutlet var sendButton: WKInterfaceButton!
     
+    @IBOutlet var FirstImage: WKInterfaceImage!
+    @IBOutlet var ImageNumber: WKInterfaceLabel!
+    
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
+        _ = (context as! NSDictionary)["segue"] as? String
+        
+        if let images = (context as! NSDictionary)["images"] as? UIImage{
+            FirstImage.setImage(images)
+            FirstImage.setHidden(false)
+        }
+        if let count = (context as! NSDictionary)["count"] as? Int{
+            if count > 1 {
+               ImageNumber.setHidden(false)
+               ImageNumber.setText("+ \(count - 1) images")
+            } else {
+                ImageNumber.setHidden(true)
+            }
+            
+        }
         // Configure interface objects here.
     }
 
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
+        
     }
 
     override func didDeactivate() {

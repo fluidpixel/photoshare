@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="8092"/>
@@ -213,7 +213,21 @@
             <objects>
                 <controller identifier="DictationController" hidesWhenLoading="NO" id="p7b-6W-mYp" customClass="DictationController" customModule="PhotoShare_WatchKit_Extension">
                     <items>
-                        <label width="1" alignment="left" id="j75-e4-SUx"/>
+                        <group width="1" height="65" alignment="left" id="gb3-xM-OFh">
+                            <items>
+                                <label width="60" height="1" alignment="left" verticalAlignment="center" id="j75-e4-SUx"/>
+                                <group width="0.55000000000000004" height="1" alignment="left" layout="vertical" id="Uhp-N9-u1c">
+                                    <items>
+                                        <label alignment="left" verticalAlignment="bottom" text="Label" id="d2s-Ye-nrF">
+                                            <fontDescription key="font" type="system" pointSize="10"/>
+                                        </label>
+                                        <imageView height="0.69999999999999996" alignment="right" verticalAlignment="center" image="Selected" contentMode="scaleAspectFill" id="knV-Wp-LDJ">
+                                            <color key="tintColor" red="0.30291172529999999" green="1" blue="0.22721084050000001" alpha="0.0" colorSpace="calibratedRGB"/>
+                                        </imageView>
+                                    </items>
+                                </group>
+                            </items>
+                        </group>
                         <group width="1" alignment="left" verticalAlignment="bottom" layout="vertical" id="uqg-fT-vou">
                             <items>
                                 <button width="1" alignment="center" verticalAlignment="bottom" title="Add Message" id="MGB-q8-12I">
@@ -232,13 +246,15 @@
                         </group>
                     </items>
                     <connections>
+                        <outlet property="FirstImage" destination="knV-Wp-LDJ" id="2Nq-Qn-pGL"/>
+                        <outlet property="ImageNumber" destination="d2s-Ye-nrF" id="Iml-fP-UzF"/>
                         <outlet property="MessageText" destination="j75-e4-SUx" id="k19-Is-Hah"/>
                         <outlet property="addMessageButton" destination="MGB-q8-12I" id="bmb-me-Vhb"/>
                         <outlet property="sendButton" destination="wFp-E1-b3L" id="FNz-8D-FOa"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="-48" y="473"/>
+            <point key="canvasLocation" x="37" y="467"/>
         </scene>
     </scenes>
 </document>
