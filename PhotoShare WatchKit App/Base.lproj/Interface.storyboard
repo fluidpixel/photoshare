@@ -216,7 +216,7 @@
                         <group width="1" height="65" alignment="left" id="gb3-xM-OFh">
                             <items>
                                 <label width="60" height="1" alignment="left" verticalAlignment="center" id="j75-e4-SUx"/>
-                                <group width="0.55000000000000004" height="1" alignment="left" layout="vertical" id="Uhp-N9-u1c">
+                                <group width="0.40000000000000002" height="1" alignment="right" layout="vertical" id="Uhp-N9-u1c">
                                     <items>
                                         <label alignment="left" verticalAlignment="bottom" text="Label" id="d2s-Ye-nrF">
                                             <fontDescription key="font" type="system" pointSize="10"/>
