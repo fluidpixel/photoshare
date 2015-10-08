@@ -30,7 +30,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     
     var assetCache = ImageCache()
-    
     var session : WCSession!
     
     var selectedImage : [Int] = []
@@ -47,9 +46,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
     }
     
-    var dictationResult = ""
-    var contactsFromPhone = [String : String]()
-    var contactsFromEmail = [String : String]()
     var mediumToSendWith = ""
     
     // Synced data from phone
@@ -173,12 +169,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             self.setTitle("Share \(selectedImage.count) images")
             
             //create menu - START
-            if selectedImage.count == 1 {
+                clearAllMenuItems()
                 addMenuItemWithImageNamed("Facebook", title: "Facebook", action: "ShareOnFB")
                 addMenuItemWithImageNamed("Twitter", title: "Twitter", action: "SendTweet")
                 //addMenuItemWithItemIcon(WKMenuItemIcon.Add, title: "Message", action: "SendText")
                 //addMenuItemWithItemIcon(WKMenuItemIcon.Share, title: "Email", action: "SendEmail")
-            }
+            
             
 
         }
@@ -252,13 +248,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         } else {
             errormsg = userInfo["detail"] as? String
         }
-        
         let title = (userInfo["Result"] as! String == "Success") ? "Message Sent!" : "Message Failed to Send!"
         
-        
-        
         presentAlertControllerWithTitle(title, message: errormsg, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
-        
     }
     
     func sessionReachabilityDidChange(session: WCSession) {
@@ -267,6 +259,33 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
     }
     
+    func SessionErrorHandle(errorCode : Int) {
+        
+        let alert = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+            
+        }
+        
+        var message = ""
+        
+        switch errorCode {
+        case WCErrorCode.GenericError.rawValue:
+            print("Generic error")
+        case WCErrorCode.SessionNotActivated.rawValue:
+            message = "companion app is not running"
+            break
+        case WCErrorCode.DeviceNotPaired.rawValue:
+            message = "Devices are not paired"
+            break
+        case WCErrorCode.NotReachable.rawValue:
+            message = "companion app is not running"
+            print("App is not running")
+            break
+        default:
+            print(errorCode)
+            
+        }
+        presentAlertControllerWithTitle("Error", message: message, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
+    }
     
     // MARK: Utility Functions
     
@@ -293,9 +312,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
         }
     }
-    
-
-    
 
     
     func clearSentPictures(){
@@ -310,40 +326,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
 
     @IBAction func WkButtonPressed() {
-        
-//        if NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey) > 0 {
-//        
-////            if images.count > 0 {
-////                pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
-////                
-////                WkButton.setHidden(true)
-////                loadTableData()
-////            }
-//        } else {
-//            
-//            var dateLastModified : NSDate? = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(lastUpdateKey) as? NSDate
-//            
-//            if dateLastModified == nil {
-//                dateLastModified = NSDate.distantPast()
-//            }
-//            
-//            let requestData = NSDateFormatter().stringFromDate(dateLastModified!).dataUsingEncoding(NSUTF8StringEncoding)
-//            session.sendMessageData(requestData!, replyHandler: { (response: NSData) -> Void in
-//                
-//                print("response GOT")
-//                
-//                },
-//                errorHandler: { (error: NSError) -> Void in
-//                    
-//                    print("ERROR : \(error)")
-//                    
-//            })
+
             ShowDemo()
-            WkButton.setTitle("Loading...")
-            
-//        } don't think this is used anymore
-        
-        
+
     }
 
     @IBAction func SendTweet() {
@@ -420,7 +405,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     func GrabContacts() {
         
         let store = CNContactStore()
-        
+        var contactsFromPhone = [String : String]()
         do {
             try store.enumerateContactsWithFetchRequest(CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey]), usingBlock: { (contact, status) -> Void in
                 
@@ -432,7 +417,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                         
                         print(no!.stringValue)
 
-                        self.contactsFromPhone[no!.stringValue] = "\(contact.givenName) \(contact.familyName)"
+                        contactsFromPhone[no!.stringValue] = "\(contact.givenName) \(contact.familyName)"
                     }
                 }
                 
@@ -461,7 +446,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     func GrabEmails() {
         
         let store = CNContactStore()
-        
+        var contactsFromEmail = [String : String]()
         do {
             try store.enumerateContactsWithFetchRequest(CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactEmailAddressesKey]), usingBlock: { (contact, status) -> Void in
                 
@@ -472,7 +457,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                         let no  = mail.value as? String
                         
                         print(no)
-                        self.contactsFromEmail[no!] = "\(contact.givenName) \(contact.familyName)"
+                        contactsFromEmail[no!] = "\(contact.givenName) \(contact.familyName)"
                     }
                 }
                 
@@ -523,7 +508,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             "Contact" : contact]
         
        // session.transferUserInfo(metaData)
-        
+        clearSentPictures()
         if session.reachable {
             session.sendMessage(metaData, replyHandler: { (response: [String : AnyObject]) -> Void in
                 
@@ -532,6 +517,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 
                 }, errorHandler: { (error: NSError) -> Void in
                     
+                    self.SessionErrorHandle(error.code)
                     
             })
             //intermediary message
@@ -541,8 +527,14 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             
             presentAlertControllerWithTitle("Message is on its way", message: "", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
             
+        }else {
+            let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+                print("Action hit")
+            }
+            
+            presentAlertControllerWithTitle("", message: "App is not reachable, open the app and try again", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
         }
-        self.clearSentPictures()
+        
         
     }
     
