@@ -102,7 +102,7 @@ class TourInterfacePage3 : WKInterfaceController {
     func fillContent() {
         //TODO : Add Image
         
-        Page3Label.setText("If you share by email or text, select the person you want to share to, and add an optional message.")
+        Page3Label.setText("add an optional message by speaking into the watch.")
         
         
     }

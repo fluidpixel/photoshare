@@ -109,8 +109,6 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
-        
-        
         if WCSession.isSupported() {
             
             session = WCSession.defaultSession()
@@ -129,6 +127,13 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 else {
                     self.assetList = []
                 }
+                
+                //notify user that phone cannot be contacted
+                let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
+                    print("Action hit")
+                }
+                
+                presentAlertControllerWithTitle("Error", message: "PhotoShare cannot contact the iPhone, please make sure the app is running and try again", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
             }
         }
         
@@ -272,7 +277,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         if defaults?.boolForKey("hasPerformedFirstLaunch") == false {
             
             //set to true
-            defaults?.setBool(false, forKey: "hasPerformedFirstLaunch")
+            defaults?.setBool(true, forKey: "hasPerformedFirstLaunch")
             
             let tourAction : WKAlertAction = WKAlertAction(title: "Sure!", style: WKAlertActionStyle.Default) { () -> Void in
                 print("Tour wanted")
@@ -306,35 +311,37 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
     @IBAction func WkButtonPressed() {
         
-        if NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey) > 0 {
-        
-//            if images.count > 0 {
-//                pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
-//                
-//                WkButton.setHidden(true)
-//                loadTableData()
+//        if NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.integerForKey(pictureCountKey) > 0 {
+//        
+////            if images.count > 0 {
+////                pageNumber = (pageNumber + 1) % NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")!.integerForKey(pictureCountKey) //fix crash here
+////                
+////                WkButton.setHidden(true)
+////                loadTableData()
+////            }
+//        } else {
+//            
+//            var dateLastModified : NSDate? = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(lastUpdateKey) as? NSDate
+//            
+//            if dateLastModified == nil {
+//                dateLastModified = NSDate.distantPast()
 //            }
-        } else {
-            
-            var dateLastModified : NSDate? = NSUserDefaults(suiteName: "group.com.fpstudios.WatchKitPhotoShare")?.objectForKey(lastUpdateKey) as? NSDate
-            
-            if dateLastModified == nil {
-                dateLastModified = NSDate.distantPast()
-            }
-            
-            let requestData = NSDateFormatter().stringFromDate(dateLastModified!).dataUsingEncoding(NSUTF8StringEncoding)
-            session.sendMessageData(requestData!, replyHandler: { (response: NSData) -> Void in
-                
-                print("response GOT")
-                
-                },
-                errorHandler: { (error: NSError) -> Void in
-                    
-                    print("ERROR : \(error)")
-                    
-            })
+//            
+//            let requestData = NSDateFormatter().stringFromDate(dateLastModified!).dataUsingEncoding(NSUTF8StringEncoding)
+//            session.sendMessageData(requestData!, replyHandler: { (response: NSData) -> Void in
+//                
+//                print("response GOT")
+//                
+//                },
+//                errorHandler: { (error: NSError) -> Void in
+//                    
+//                    print("ERROR : \(error)")
+//                    
+//            })
             ShowDemo()
-        }
+            WkButton.setTitle("Loading...")
+            
+//        } don't think this is used anymore
         
         
     }

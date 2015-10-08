@@ -33,7 +33,12 @@
                                 </tableRow>
                             </items>
                         </table>
-                        <button width="1" height="1" alignment="center" verticalAlignment="center" id="U1o-aD-1zD">
+                        <button alignment="center" verticalAlignment="center" id="U1o-aD-1zD">
+                            <group key="contentGroup" width="1" height="1" alignment="left" id="H7K-c2-etV">
+                                <items>
+                                    <label alignment="center" verticalAlignment="center" text="Syncing images with iPhone, please wait..." textAlignment="center" numberOfLines="5" id="0Rj-TO-7BE"/>
+                                </items>
+                            </group>
                             <accessibilityTraits key="accessibilityTraits" button="YES" image="YES"/>
                             <connections>
                                 <action selector="WkButtonPressed" destination="AgC-eL-Hgc" id="EhS-Zc-plp"/>
@@ -76,7 +81,7 @@
                         <label width="1" alignment="center" text="page 2" numberOfLines="5" minimumScaleFactor="0.5" id="7aE-lF-7SP">
                             <fontDescription key="font" type="system" pointSize="10"/>
                         </label>
-                        <imageView alignment="left" verticalAlignment="bottom" image="Tour2" id="Usa-eP-iGJ"/>
+                        <imageView alignment="left" verticalAlignment="bottom" image="Tour5" id="Usa-eP-iGJ"/>
                     </items>
                     <connections>
                         <outlet property="Page2Image" destination="Usa-eP-iGJ" id="gWM-P6-l2u"/>
@@ -97,8 +102,8 @@
                         </label>
                         <group width="1" alignment="left" id="lwD-lr-uHJ">
                             <items>
-                                <imageView width="65" height="100" alignment="left" image="Tour3" contentMode="scaleAspectFit" id="vkm-yu-AlF"/>
-                                <imageView width="65" height="100" alignment="right" image="Tour4" contentMode="scaleAspectFit" id="ebu-Qg-LRt"/>
+                                <imageView width="65" height="100" alignment="left" hidden="YES" image="Tour3" contentMode="scaleAspectFit" id="vkm-yu-AlF"/>
+                                <imageView width="1" height="100" alignment="right" image="Tour4" contentMode="scaleAspectFit" id="ebu-Qg-LRt"/>
                             </items>
                         </group>
                     </items>
