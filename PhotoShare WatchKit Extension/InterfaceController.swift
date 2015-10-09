@@ -70,6 +70,13 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 
                 self.imageTable.setNumberOfRows(self.assetList.count, withRowType: "image row")
                 
+                //set labels for images
+                for var i = 0; i < self.assetList.count; i++ {
+                    if let tableRow  = self.imageTable.rowControllerAtIndex(i) as? ImageTableRowController {
+                        tableRow.loadingLabel.setText("Loading image \((i + 1))...")
+                    }
+                }
+                
                 for index in 0..<self.assetList.count {
                     let localID = self.assetList[index]
                     if let imageData = self.assetCache[localID],
@@ -111,6 +118,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session.delegate = self
             session.activateSession()
             
+           
+            
             if session.reachable {
                 // This will wake up the phone and request the latest phot library data
                 session.sendMessage([kWPRequestImageData:true], replyHandler: nil, errorHandler: nil)
@@ -129,7 +138,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     print("Action hit")
                 }
                 
-                presentAlertControllerWithTitle("Error", message: "PhotoShare cannot contact the iPhone, please make sure the app is running and try again", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
+                presentAlertControllerWithTitle("Error", message: "PhotoShare cannot contact the iPhone, please make sure the app is running", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
             }
         }
         
@@ -180,8 +189,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
         
     }
-    
-    
+
     
     // MARK: WCSessionDelegate
     func session(session: WCSession, didReceiveFile file: WCSessionFile) {
@@ -216,6 +224,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         if let newAssetList = message[kLocalIdentifierList] as? [String] {
             self.assetList = newAssetList
+            
             received = true
         }
         
