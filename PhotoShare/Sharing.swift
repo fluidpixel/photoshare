@@ -133,41 +133,49 @@ class Sharing {
     }
     
     func refreshAccountTokenStatus() {
-        let account = ACAccountStore()
         //FACEBOOK
-        account.renewCredentialsForAccount(accountFB!) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
-            if (error != nil) {
-                switch result {
-                case ACAccountCredentialRenewResult.Renewed:
-                    print("FACEBOOK: Credentials renewed")
-                    break
-                case ACAccountCredentialRenewResult.Rejected:
-                    print("FACEBOOK: User declined permission to renew")
-                    break
-                case ACAccountCredentialRenewResult.Failed:
-                    print("FACEBOOK: renew failed, you can try again")
-                    break
+        
+        accountFB = ACAccountStore().accountsWithAccountType(ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierFacebook)).first as? ACAccount
+        
+        if accountFB != nil {
+            ACAccountStore().renewCredentialsForAccount(accountFB!) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
+                if (error != nil) {
+                    switch result {
+                    case ACAccountCredentialRenewResult.Renewed:
+                        print("FACEBOOK: Credentials renewed")
+                        break
+                    case ACAccountCredentialRenewResult.Rejected:
+                        print("FACEBOOK: User declined permission to renew")
+                        break
+                    case ACAccountCredentialRenewResult.Failed:
+                        print("FACEBOOK: renew failed, you can try again")
+                        break
+                    }
+                } else {
+                    print("\(error.localizedDescription)")
                 }
-            } else {
-                print("\(error.localizedDescription)")
             }
         }
         //TWITTER
-        account.renewCredentialsForAccount(accountTwitter) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
-            if (error != nil) {
-                switch result {
-                case ACAccountCredentialRenewResult.Renewed:
-                    print("TWITTER: Credentials renewed")
-                    break
-                case ACAccountCredentialRenewResult.Rejected:
-                    print("TWITTER: User declined permission to renew")
-                    break
-                case ACAccountCredentialRenewResult.Failed:
-                    print("TWITTER: renew failed, you can try again")
-                    break
+        
+        accountTwitter = ACAccountStore().accountsWithAccountType(ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)).first as? ACAccount
+         if accountFB != nil {
+            ACAccountStore().renewCredentialsForAccount(accountTwitter) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
+                if (error != nil) {
+                    switch result {
+                    case ACAccountCredentialRenewResult.Renewed:
+                        print("TWITTER: Credentials renewed")
+                        break
+                    case ACAccountCredentialRenewResult.Rejected:
+                        print("TWITTER: User declined permission to renew")
+                        break
+                    case ACAccountCredentialRenewResult.Failed:
+                        print("TWITTER: renew failed, you can try again")
+                        break
+                    }
+                } else {
+                    print("\(error.localizedDescription)")
                 }
-            } else {
-                print("\(error.localizedDescription)")
             }
         }
     }
