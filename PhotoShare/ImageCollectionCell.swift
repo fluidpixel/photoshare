@@ -13,6 +13,7 @@ class ImageCollectionCell: UICollectionViewCell {
     @IBOutlet weak var CellImage: UIImageView!
     
     @IBOutlet var favourite: UILabel!
+    @IBOutlet weak var selectedTick: UIImageView!
     
     var localIdentifier:String = ""
 
@@ -26,10 +27,12 @@ class ImageCollectionCell: UICollectionViewCell {
     override var selected:Bool {
         didSet {
             if self.selected {
-                self.layer.borderWidth = 2.0
-                self.layer.borderColor = UIColor.greenColor().CGColor
+                self.selectedTick.hidden = false
+//                self.layer.borderWidth = 2.0
+//                self.layer.borderColor = UIColor.greenColor().CGColor
             }
             else {
+                self.selectedTick.hidden = true
                 self.layer.borderColor = UIColor.clearColor().CGColor
             }
         }

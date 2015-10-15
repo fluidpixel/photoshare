@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		545CC3901BC4735A00C9AB78 /* MessagePopoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545CC38F1BC4735A00C9AB78 /* MessagePopoverController.swift */; settings = {ASSET_TAGS = (); }; };
+		54D2D3101BCEAB2300002B8D /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54D2D30F1BCEAB2300002B8D /* FBSDKCoreKit.framework */; settings = {ASSET_TAGS = (); }; };
 		54FDFC451B834F2D0001BB5F /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC441B834F2D0001BB5F /* PhotoManager.swift */; };
 		54FDFC481B84A0EA0001BB5F /* ImageTableRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC471B84A0E60001BB5F /* ImageTableRowController.swift */; };
 		B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93EC68E1B6FC10E007A2596 /* Sharing.swift */; };
@@ -90,6 +91,7 @@
 
 /* Begin PBXFileReference section */
 		545CC38F1BC4735A00C9AB78 /* MessagePopoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagePopoverController.swift; sourceTree = "<group>"; };
+		54D2D30F1BCEAB2300002B8D /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		54FDFC441B834F2D0001BB5F /* PhotoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		54FDFC471B84A0E60001BB5F /* ImageTableRowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTableRowController.swift; sourceTree = "<group>"; };
 		B93EC68E1B6FC10E007A2596 /* Sharing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sharing.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */,
+				54D2D3101BCEAB2300002B8D /* FBSDKCoreKit.framework in Frameworks */,
 				B94F67C31B6284F5002B7ABA /* Social.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -159,6 +162,7 @@
 		545F7B3C1B833208006F5321 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				54D2D30F1BCEAB2300002B8D /* FBSDKCoreKit.framework */,
 				B98BDCC11B8CA182001DFF9C /* Contacts.framework */,
 				B94F67C21B6284F5002B7ABA /* Social.framework */,
 			);

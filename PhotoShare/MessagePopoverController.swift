@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Social
 
 class MessagePopoverController: UIViewController, UITextViewDelegate {
 
@@ -19,13 +20,25 @@ class MessagePopoverController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var Media: UILabel!
     @IBOutlet weak var CharactersLeftTwitter: UILabel!
     
+    
     var imagesToShare = [UIImage]()
+    var shareType: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Message.text = "Message text goes here"
-        CharactersLeftTwitter.text = "\(Message.text.characters.count)"
+        Message.text = PlaceholderText
+        Message.textColor = UIColor.lightGrayColor()
+        
+        if shareType == SLServiceTypeTwitter {
+            CharactersLeftTwitter.hidden == false
+            Media.text = "Twitter"
+        } else {
+            CharactersLeftTwitter.hidden = true
+            Media.text = "Facebook"
+        }
+        
+        CharactersLeftTwitter.text = "0"
         Message.delegate = self
     }
     
@@ -34,8 +47,13 @@ class MessagePopoverController: UIViewController, UITextViewDelegate {
         
     }
 
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-        
+    func textViewDidBeginEditing(textView: UITextView) {
+        if textView.text == PlaceholderText {
+            textView.text = ""
+            textView.textColor = UIColor.blackColor()
+        }
+    }
+    func textViewDidChange(textView: UITextView) {
         CharactersLeftTwitter.text = "\(textView.text.characters.count)"
         if textView.text.characters.count > 140 && Media.text == "Twitter"{
             CharactersLeftTwitter.textColor = UIColor.redColor()
@@ -44,8 +62,6 @@ class MessagePopoverController: UIViewController, UITextViewDelegate {
             CharactersLeftTwitter.textColor = UIColor.lightGrayColor()
             PostButton.enabled = true
         }
-    
-        return true
     }
 
     @IBAction func Post(sender: UIButton) {
@@ -99,7 +115,6 @@ class MessagePopoverController: UIViewController, UITextViewDelegate {
                         Observer.Message[0] = "Error"
                         Observer.Message[1] = detail as? String
                         NSNotificationCenter.defaultCenter().postNotificationName(Observer.MessageReceived, object: nil)
-
                     }
                 }
             }
@@ -112,6 +127,7 @@ class MessagePopoverController: UIViewController, UITextViewDelegate {
     
     
     @IBAction func Cancel(sender: UIButton) {
+        NSNotificationCenter.defaultCenter().postNotificationName(Observer.PopoverDismissed, object: nil)
         self.dismissViewControllerAnimated(true, completion: nil)
     }
 }

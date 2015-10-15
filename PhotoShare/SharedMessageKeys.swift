@@ -30,7 +30,7 @@ let kDeleteWhenTransfered = "kDeleteWhenTransfered"
 
 let kAssetModificationDate = "kAssetModificationDate"
 
-
+let PlaceholderText = "Insert Optional Message"
 
 let kSelectedImagesLocalIdentifiers = "kSelectedImagesLocalIdentifiers"
 
