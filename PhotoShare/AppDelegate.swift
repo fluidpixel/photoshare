@@ -14,6 +14,8 @@ import Photos
 
 import WatchKit
 
+import FBSDKCoreKit
+
 struct Classes {
     static let shareClass = Sharing()
 }
@@ -40,16 +42,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         // Override point for customization after application launch.
         print("LAUNCH")
         
-        #if DEBUG
-            // Send any uncaught exceptions as a message to the watch
-            NSSetUncaughtExceptionHandler {
-                (exception:NSException) -> Void in
-                print("CRASH: \(exception.description)")
-                print("Stack Trace: \(exception.callStackSymbols)")
-                let session = WCSession.defaultSession()
-                session.sendMessage(["CRASH":"\(exception.description)", "Stack Trace:": "(exception.callStackSymbols)"], replyHandler: nil, errorHandler: nil)
-            }
-        #endif
+//        #if DEBUG
+//            // Send any uncaught exceptions as a message to the watch
+//            NSSetUncaughtExceptionHandler {
+//                (exception:NSException) -> Void in
+//                print("CRASH: \(exception.description)")
+//                print("Stack Trace: \(exception.callStackSymbols)")
+//                let session = WCSession.defaultSession()
+//                session.sendMessage(["CRASH":"\(exception.description)", "Stack Trace:": "(exception.callStackSymbols)"], replyHandler: nil, errorHandler: nil)
+//            }
+//        #endif
         
         session.delegate = self
         session.activateSession()
@@ -65,9 +67,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
         
+//        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        
         return true
     }
     
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        return FBSDKApplicationDelegate.sharedInstance() .application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+    }
     
     func applicationWillTerminate(application: UIApplication) {
         PHPhotoLibrary.sharedPhotoLibrary().unregisterChangeObserver(self)
@@ -76,133 +83,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     }
     
     func login() {
-        let account = ACAccountStore()
-        
-        //link account to Facebook
-        
-        let accountType = account.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierFacebook)
-        
-        //be sure to move fb id to defaults
-        
-        let postingOptions = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["email"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
-        
-        account.requestAccessToAccountsWithType(accountType, options: postingOptions as [NSObject : AnyObject]) { (success : Bool, error : NSError!) -> Void in
-            
-            if success {
-                let options = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["publish_actions"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
-                account.requestAccessToAccountsWithType(accountType, options: options as [NSObject : AnyObject], completion: { (success: Bool, error: NSError!) -> Void in
-                    
-                    if success {
-                        let arrayOfAccounts = account.accountsWithAccountType(accountType)
-                        
-                        if arrayOfAccounts.count > 0 {
-                            self.FBAccount = arrayOfAccounts.last as! ACAccount
-                            
-                            Classes.shareClass.setUpAccounts(self.FBAccount, accountTwit: self.TwitterAccount)
-                            print(self.FBAccount.credential)
-                            
-                            //grab user's email address
-                            let request = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.GET, URL: NSURL(string: "https://graph.facebook.com/me"), parameters: ["fields" : "email"])
-                            
-                            request.account = self.FBAccount
-                            
-                            NSNotificationCenter.defaultCenter().addObserver(self.FBAccount, selector: "accountChanged:", name: ACAccountStoreDidChangeNotification, object: nil)
-                            
-                            request.performRequestWithHandler({ (data: NSData!, response: NSHTTPURLResponse!, error: NSError!) -> Void in
-                                
-                                if error == nil && (response as NSHTTPURLResponse).statusCode == 200 {
-                                    do {
-                                        let userData : NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-                                        
-                                        if userData["email"] != nil {
-                                            let email = userData["email"]
-                                            print(email)
-                                            NSUserDefaults.standardUserDefaults().setValue(email, forKey: "UserEmail")
-                                        }
-                                        
-                                    }catch {
-                                        print(error)
-                                    }
-                                }
-                            })
-                        }
-                    } else {
-                        print("Access denied - \(error.localizedDescription)")
-                    }
-                })
-            } else {
-                print("Access denied - \(error.localizedDescription)")
-            }
+        Classes.shareClass.loginToFB { (success, error) -> Void in
+            //
         }
         
-        let anotherAcccountType = account.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)
-        
-        account.requestAccessToAccountsWithType(anotherAcccountType, options: nil) { (success : Bool, error : NSError!) -> Void in
-            
-            if success {
-                let arrayOfAccountsTwitter = account.accountsWithAccountType(anotherAcccountType)
-                
-                if arrayOfAccountsTwitter.count > 0 {
-                    
-                    self.TwitterAccount = arrayOfAccountsTwitter.last as! ACAccount
-                    Classes.shareClass.setUpAccounts(self.FBAccount, accountTwit: self.TwitterAccount)
-                    NSNotificationCenter.defaultCenter().addObserver(self.TwitterAccount, selector: "accountChanged:", name: ACAccountStoreDidChangeNotification, object: nil)
-                }
-            }
-            
+        Classes.shareClass.loginToTwitter{ (success, error) -> Void in
+            //
         }
 
     }
     
-    @objc func accountChanged(notif : NSNotification) {
-        refreshAccountTokenStatus()
-    }
-    
-    func refreshAccountTokenStatus() {
-        let account = ACAccountStore()
-        //FACEBOOK
-        account.renewCredentialsForAccount(FBAccount) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
-            if (error != nil) {
-                switch result {
-                case ACAccountCredentialRenewResult.Renewed:
-                    print("FACEBOOK: Credentials renewed")
-                    break
-                case ACAccountCredentialRenewResult.Rejected:
-                    print("FACEBOOK: User declined permission to renew")
-                    break
-                case ACAccountCredentialRenewResult.Failed:
-                    print("FACEBOOK: renew failed, you can try again")
-                    break
-                }
-            } else {
-                print("\(error.localizedDescription)")
-            }
-        }
-        //TWITTER
-        account.renewCredentialsForAccount(TwitterAccount) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
-            if (error != nil) {
-                switch result {
-                case ACAccountCredentialRenewResult.Renewed:
-                    print("TWITTER: Credentials renewed")
-                    break
-                case ACAccountCredentialRenewResult.Rejected:
-                    print("TWITTER: User declined permission to renew")
-                    break
-                case ACAccountCredentialRenewResult.Failed:
-                    print("TWITTER: renew failed, you can try again")
-                    break
-                }
-            } else {
-                print("\(error.localizedDescription)")
-            }
-        }
-    }
     
     
-    func applicationDidBecomeActive(application: UIApplication) { //is this ever called from the watch?
+    
+    func applicationDidBecomeActive(application: UIApplication) {
         
-        login()
-        
+//        login()
+        FBSDKAppEvents.activateApp()
         self.initWatchConnection()
         
     }
