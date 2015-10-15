@@ -26,9 +26,159 @@ class Sharing {
     
     var urls: [NSURL]?
 
+    func loginToFB (completion: (success:Bool, error: NSError?) -> Void) {
+        let accountType = ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierFacebook)
+        
+        //be sure to move fb id to defaults
+        
+        let postingOptions = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["email"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
+        
+        ACAccountStore().requestAccessToAccountsWithType(accountType, options: postingOptions as [NSObject : AnyObject]) { (success : Bool, error : NSError!) -> Void in
+            
+            if success {
+                let options = [ACFacebookAppIdKey: "783869441734363", ACFacebookPermissionsKey: ["publish_actions"], ACFacebookAudienceKey: ACFacebookAudienceFriends]
+                ACAccountStore().requestAccessToAccountsWithType(accountType, options: options as [NSObject : AnyObject], completion: { (success: Bool, error: NSError!) -> Void in
+                    
+                    if success {
+                        let arrayOfAccounts = ACAccountStore().accountsWithAccountType(accountType)
+                        
+                        if arrayOfAccounts.count > 0 {
+                            self.accountFB = arrayOfAccounts.last as? ACAccount
+                            
+//                            Classes.shareClass.setUpAccounts(self.accountFB, accountTwit: self.TwitterAccount)
+                            print(self.accountFB!.credential)
+                            
+                            //grab user's email address
+                            let request = SLRequest(forServiceType: SLServiceTypeFacebook, requestMethod: SLRequestMethod.GET, URL: NSURL(string: "https://graph.facebook.com/me"), parameters: ["fields" : "email"])
+                            
+                            request.account = self.accountFB
+                            
+                            NSNotificationCenter.defaultCenter().addObserver(self, selector: "accountChanged:", name: ACAccountStoreDidChangeNotification, object: nil)
+                            
+                            request.performRequestWithHandler({ (data: NSData!, response: NSHTTPURLResponse!, error: NSError!) -> Void in
+                                
+                                if error == nil && (response as NSHTTPURLResponse).statusCode == 200 {
+                                    do {
+                                        let userData : NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+                                        
+                                        if userData["email"] != nil {
+                                            let email = userData["email"]
+                                            print(email)
+                                            NSUserDefaults.standardUserDefaults().setValue(email, forKey: "UserEmail")
+                                            completion(success:true, error:error)
+                                        }
+                                        
+                                    }catch {
+                                        print(error)
+                                    }
+                                } else {
+                                    do {
+                                        let userData : NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as! NSDictionary
+                                        
+                                        let err = NSError(domain: "facebook", code: 6, userInfo: nil)
+//                                        if userData["email"] != nil {
+//                                            let email = userData["email"]
+//                                            print(email)
+//                                            NSUserDefaults.standardUserDefaults().setValue(email, forKey: "UserEmail")
+                                            completion(success:false, error:err)
+//                                        }
+                                        
+                                    }catch {
+                                        print(error)
+                                    }
+                                }
+                            })
+                        }
+                    } else {
+                        completion(success:false, error:error)
+                        
+                        print("Access denied - \(error?.localizedDescription)")
+                    }
+                })
+            } else {
+                completion(success:false, error:error)
+                print("Access denied - \(error?.localizedDescription)")
+            }
+        }
+    }
+    
+    func loginToTwitter(completion: (success:Bool, error: NSError?) -> Void) {
+        let anotherAcccountType = ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)
+        
+        ACAccountStore().requestAccessToAccountsWithType(anotherAcccountType, options: nil) { (success : Bool, error : NSError!) -> Void in
+            
+            if success {
+                let arrayOfAccountsTwitter = ACAccountStore().accountsWithAccountType(anotherAcccountType)
+                
+                if arrayOfAccountsTwitter.count > 0 {
+                    
+                    self.accountTwitter = arrayOfAccountsTwitter.last as? ACAccount
+//                    Classes.shareClass.setUpAccounts(self.FBAccount, accountTwit: self.TwitterAccount)
+                    NSNotificationCenter.defaultCenter().addObserver(self, selector: "accountChanged:", name: ACAccountStoreDidChangeNotification, object: nil)
+                    completion(success: true, error: error)
+                } else {
+                    completion(success: false, error: NSError(domain: "Accounts", code: 6, userInfo: nil))
+                }
+            } else {
+                completion(success: false, error: NSError(domain: "Accounts", code: 0, userInfo: nil))
+            }
+            
+            
+        }
+    }
+    
+    
+    @objc func accountChanged(notif : NSNotification) {
+        refreshAccountTokenStatus()
+    }
+    
+    func refreshAccountTokenStatus() {
+        let account = ACAccountStore()
+        //FACEBOOK
+        account.renewCredentialsForAccount(accountFB!) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
+            if (error != nil) {
+                switch result {
+                case ACAccountCredentialRenewResult.Renewed:
+                    print("FACEBOOK: Credentials renewed")
+                    break
+                case ACAccountCredentialRenewResult.Rejected:
+                    print("FACEBOOK: User declined permission to renew")
+                    break
+                case ACAccountCredentialRenewResult.Failed:
+                    print("FACEBOOK: renew failed, you can try again")
+                    break
+                }
+            } else {
+                print("\(error.localizedDescription)")
+            }
+        }
+        //TWITTER
+        account.renewCredentialsForAccount(accountTwitter) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
+            if (error != nil) {
+                switch result {
+                case ACAccountCredentialRenewResult.Renewed:
+                    print("TWITTER: Credentials renewed")
+                    break
+                case ACAccountCredentialRenewResult.Rejected:
+                    print("TWITTER: User declined permission to renew")
+                    break
+                case ACAccountCredentialRenewResult.Failed:
+                    print("TWITTER: renew failed, you can try again")
+                    break
+                }
+            } else {
+                print("\(error.localizedDescription)")
+            }
+        }
+    }
+    
   //class for adding share and send functionality
     
     func SendToFB(image : [UIImage], message: [String]?, completionHandler: (result: Bool, detail: AnyObject?) -> ()) {
+        
+        if accountFB == nil {
+            accountFB = ACAccountStore().accountsWithAccountType(ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierFacebook)).first as? ACAccount
+        }
         
         //todo change for multiple images/retrieve errors
         var photoIds = [String]()
@@ -43,7 +193,9 @@ class Sharing {
                 
                 if message != nil {
                     for all in message! {
-                        finalMessage += all
+                        if all != PlaceholderText {
+                            finalMessage += all
+                        }
                     }
                 }
 
@@ -68,6 +220,7 @@ class Sharing {
                         } else if response.statusCode >= 500 {
                             completionHandler(result: false, detail: "Server error, Facebook is having problems")
                         }
+                        
                         counter++
                         
                         do {
@@ -75,18 +228,18 @@ class Sharing {
                             if userData == nil {
                                 
                             }else {
-                                photoIds.append(userData!.valueForKey("id") as! String)
+                                if let value = userData?.valueForKey("id") as? String {
+                                    photoIds.append(value)
+                                }
                                 print(userData!)
                             }
                         } catch {
                             print(error)
                         }
                         
-                        //let m2 = ["Testing multiple images and text"]
                         
-                         
                         if (counter == image.count) {
-                            completionHandler(result: true, detail: "All messages sent")
+                            completionHandler(result: true, detail: "All photos shared")
                            // self.sendFBMessage(["testing"], photoIds: photoIds) { (result, detail) -> () in
                                 
                            //     if result == true {

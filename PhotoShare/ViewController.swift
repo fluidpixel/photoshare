@@ -12,8 +12,12 @@ import Accounts
 import Social
 import Photos
 
+//import FBSDKCoreKit
+//import FBSDKLoginKit
+
 struct Observer {
-    static var MessageReceived = ""
+    static var MessageReceived = "MessageReceived"
+    static var PopoverDismissed = "Popover Dismissed"
     static var Message : [String?] = [nil, nil]
 }
 
@@ -29,6 +33,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     @IBOutlet weak var ClearAllButton: UIButton!
     @IBOutlet var twitterButton: UIButton!
     @IBOutlet var facebookButton: UIButton!
+    @IBOutlet weak var sharingLabel: UILabel!
     
     var collectionHeader:PhotoShareReusableView?
 
@@ -47,9 +52,10 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         self.assets = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
         
         PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
-        
+    
         self.twitterButton.enabled = false
         self.facebookButton.enabled = false
+        
         self.ClearAllButton.enabled = false
         
     }
@@ -71,21 +77,29 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         ImageCollection.reloadData()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "MessageReceived", name: Observer.MessageReceived, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "popoverDismissed", name: Observer.PopoverDismissed, object: nil)
     }
     
+    
+    
+    //MARK: Button/Alert Actions
+    
     func MessageReceived() {
-        
+        sharingLabel.hidden = true
         ShareMessage(Observer.Message[0]!, message: Observer.Message[1])
-        
+    }
+    
+    func popoverDismissed() {
+        sharingLabel.hidden = true
     }
     
     func showLoginAlert(identifier : String){
         
         print("User is trying to share via \(identifier) when they are not logged in")
         
-        let alert = UIAlertController(title: "Login Error", message: "You are trying to share with \(identifier) without logging in. Would you like to login?", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Login Error", message: "You are trying to share with \(identifier) without logging in.\nPlease login to \(identifier) through the iOS Settings Page", preferredStyle: UIAlertControllerStyle.Alert)
         
-        alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler: { ( _ : UIAlertAction) -> Void in
+        alert.addAction(UIAlertAction(title: "Login", style: UIAlertActionStyle.Default, handler: { ( _ : UIAlertAction) -> Void in
             
             UIApplication.sharedApplication().openURL(NSURL(string: UIApplicationOpenSettingsURLString)!)
             
@@ -94,7 +108,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
             })
         }))
         
-        alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: { (UIAlertAction) -> Void in
+        alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Cancel, handler: { (UIAlertAction) -> Void in
             alert.dismissViewControllerAnimated(true, completion: { () -> Void in
                 print("User chose not to login")
             })
@@ -109,7 +123,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
 
         let alert = UIAlertController(title: "Share \(type)", message: message, preferredStyle: UIAlertControllerStyle.Alert)
         
-        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.Default, handler: { (UIAlertAction) -> Void in
+        alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default, handler: { (UIAlertAction) -> Void in
             alert.dismissViewControllerAnimated(true, completion: { () -> Void in
                 print("User chose not to login")
             })
@@ -118,20 +132,51 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             self.presentViewController(alert, animated: true, completion: nil)
         }
-        
-            
     }
     
     
     @IBAction func ShareWithFB(sender: UIButton) {
-            
-            self.performSegueWithIdentifier("message", sender: self)
+        
+        Classes.shareClass.loginToFB({ (success, error) -> Void in
+            if !success {
+                if  error?.code == 6 {
+                    dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                        self.showLoginAlert("Facebook")
+                    }
+                } else {
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.ShareMessage("Facebook", message: "PhotoShare doesn't have access to post to Facebook. Please check Settings->Facebook and toggle the PhotoShare access to your account")
+                        })
+                }
+            } else {
+                if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) {
+                    let selectionCount = self.ImageCollection.indexPathsForSelectedItems()?.count ?? 0
+                    if selectionCount > 0 {
+                        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                            self.sharingLabel.hidden = false
+                            self.performSegueWithIdentifier("message", sender: self)
+                        }
+                    }
+                }
+            }
+        })
     }
     
     @IBAction func ShareWithTwitter(sender: UIButton) {
         
-        self.performSegueWithIdentifier("messageTwitter", sender: self)
-
+        Classes.shareClass.loginToTwitter({ (success, error) -> Void in
+            if !success && error?.code == 6 {
+                self.showLoginAlert("Twitter")
+            } else {
+                if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
+                    dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                        self.performSegueWithIdentifier("messageTwitter", sender: self)
+                        self.sharingLabel.hidden = false
+                    }
+                }
+            }
+        })
+                
     }
     
     func ClearAllSelections() {
@@ -151,7 +196,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     }
     
     
-    //collection view methods
+    //MARK: collection view methods
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
 
@@ -232,13 +277,17 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     func setCollectionViewHeader() {
         let selectionCount = self.ImageCollection.indexPathsForSelectedItems()?.count ?? 0
-        if selectionCount > 0 {
-            self.collectionHeader?.commentLabel.text = "PhotoShare sharing \(selectionCount) images"
-        }
-        else {
+        
+        switch selectionCount {
+        case 0:
             self.collectionHeader?.commentLabel.text = "PhotoShare"
+        case 1:
+            self.collectionHeader?.commentLabel.text = "PhotoShare: sharing \(selectionCount) image"
+        default:
+            self.collectionHeader?.commentLabel.text = "PhotoShare: sharing \(selectionCount) images"
         }
-        self.twitterButton.enabled = (selectionCount == 1) && SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter)
+        
+        self.twitterButton.enabled = (selectionCount == 1)
         self.facebookButton.enabled = selectionCount > 0
         self.ClearAllButton.enabled = selectionCount > 0
     }
@@ -274,16 +323,18 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
+        
         if segue.identifier == "message" {
             let vc = segue.destinationViewController as! MessagePopoverController
             vc.modalPresentationStyle = UIModalPresentationStyle.Popover
-            vc.popoverPresentationController!.delegate = self
+//            vc.popoverPresentationController!.delegate = self
+            vc.presentationController?.delegate = self
+            
             
             retrieveImageArray({ (images: [UIImage]) -> Void in
                 vc.Image.image = images[0]
                 vc.imagesToShare = images
-                vc.Media.text = "Facebook"
-                
+                vc.shareType = SLServiceTypeFacebook
                 if images.count > 1 {
                     vc.Image3.image = images[1]
                 }
@@ -292,8 +343,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
             let vc = segue.destinationViewController as! MessagePopoverController
             vc.modalPresentationStyle = UIModalPresentationStyle.Popover
             vc.popoverPresentationController!.delegate = self
+            vc.shareType = SLServiceTypeTwitter
             
-            if let indexPaths = self.ImageCollection.indexPathsForSelectedItems() where indexPaths.count == 1,
+            if let indexPaths = self.ImageCollection.indexPathsForSelectedItems(),
                 let asset = self.assets?.objectAtIndex(indexPaths[0].row) as? PHAsset {
 
 
@@ -311,7 +363,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
                                 
                                 vc.Image.image = image
                                 vc.imagesToShare = [image]
-                                vc.Media.text = "Twitter"
                             }
                         }
                     }
@@ -319,7 +370,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UICollec
         }
         
     }
-
+    
     // MARK: PHPhotoLibraryChangeObserver
     func photoLibraryDidChange(changeInstance: PHChange) {
         // TODO:
