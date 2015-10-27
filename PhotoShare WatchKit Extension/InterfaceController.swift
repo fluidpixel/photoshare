@@ -253,7 +253,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         var errormsg : String? = nil
         
         if userInfo["Result"] as! String == "Success" {
-            clearSentPictures()
+                clearSentPictures()
         } else {
             errormsg = userInfo["detail"] as? String
         }
@@ -324,14 +324,15 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
     
     func clearSentPictures(){
-        
-        for var i = 0; i < imageTable.numberOfRows; i++ {
-            let row = imageTable.rowControllerAtIndex(i) as! ImageTableRowController
-            
-            row.selectedTick.setHidden(true)
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            for var i = 0; i < self.imageTable.numberOfRows; i++ {
+                let row = self.imageTable.rowControllerAtIndex(i) as! ImageTableRowController
+
+                row.selectedTick.setHidden(true)
+            }
+            self.selectedImage.removeAll()
+            self.setTitle("PhotoShare")
         }
-        selectedImage.removeAll()
-        self.setTitle("PhotoShare")
     }
 
     @IBAction func WkButtonPressed() {
@@ -518,6 +519,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
        // session.transferUserInfo(metaData)
         clearSentPictures()
+        
         if session.reachable {
             session.sendMessage(metaData, replyHandler: { (response: [String : AnyObject]) -> Void in
                 
