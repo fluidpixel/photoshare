@@ -159,7 +159,7 @@ class Sharing {
         //TWITTER
         
         accountTwitter = ACAccountStore().accountsWithAccountType(ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)).first as? ACAccount
-         if accountFB != nil {
+         if accountTwitter != nil {
             ACAccountStore().renewCredentialsForAccount(accountTwitter) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
                 if (error != nil) {
                     switch result {
