@@ -50,6 +50,8 @@ class DictationController: WKInterfaceController {
     override func didDeactivate() {
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
+        
+        NSNotificationCenter.defaultCenter().postNotificationName(ContactDetails.readyToSend, object: self)
     }
 
     @IBAction func AddMessage() {
@@ -69,7 +71,9 @@ class DictationController: WKInterfaceController {
         }
     }
     @IBAction func SendMessage() {
-        
-        NSNotificationCenter.defaultCenter().postNotificationName(ContactDetails.readyToSend, object: self)
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.popController()
+        }
+       
     }
 }

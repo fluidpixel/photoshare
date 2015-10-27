@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         PHPhotoLibrary.sharedPhotoLibrary().registerChangeObserver(self)
         
-//        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+//       FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         return true
     }
@@ -83,12 +83,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     }
     
     func login() {
-        Classes.shareClass.loginToFB { (success, error) -> Void in
-            //
-        }
         
         Classes.shareClass.loginToTwitter{ (success, error) -> Void in
             //
+            print(success)
+            print(error)
         }
 
     }
@@ -98,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     
     func applicationDidBecomeActive(application: UIApplication) {
         
-//        login()
+        login()
         FBSDKAppEvents.activateApp()
         self.initWatchConnection()
         
@@ -397,5 +396,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
         
         return rv
     }
+    
+
 }
 

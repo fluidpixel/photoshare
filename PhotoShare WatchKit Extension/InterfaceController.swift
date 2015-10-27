@@ -247,19 +247,19 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         print("Recevied reply from phone - result : \(userInfo.values.first)")
         
         let alert = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
-            
+            self.clearSentPictures()
         }
         
         var errormsg : String? = nil
         
         if userInfo["Result"] as! String == "Success" {
-                clearSentPictures()
+            
         } else {
             errormsg = userInfo["detail"] as? String
         }
         let title = (userInfo["Result"] as! String == "Success") ? "Message Sent!" : "Message Failed to Send!"
         
-        presentAlertControllerWithTitle(title, message: errormsg, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
+        presentAlertControllerWithTitle(title, message: (errormsg == nil) ? "" : errormsg!, preferredStyle: WKAlertControllerStyle.Alert, actions: [alert])
     }
     
     func sessionReachabilityDidChange(session: WCSession) {
@@ -334,6 +334,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             self.setTitle("PhotoShare")
         }
     }
+    
 
     @IBAction func WkButtonPressed() {
 
@@ -398,7 +399,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     func InfoGatherComplete() {
-        popToRootController()
+        //popController()
         SendData(mediumToSendWith)
     }
     
@@ -492,6 +493,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
         //dictionary - imagenumbers
         //to do - allow the sharing of multiples and messages
+        clearSentPictures()
         
         var contact : [String: String] = ["" : ""]
         
@@ -518,7 +520,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             "Contact" : contact]
         
        // session.transferUserInfo(metaData)
-        clearSentPictures()
+       
         
         if session.reachable {
             session.sendMessage(metaData, replyHandler: { (response: [String : AnyObject]) -> Void in
@@ -534,6 +536,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             //intermediary message
             let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
                 print("Action hit")
+               
             }
             
             presentAlertControllerWithTitle("Message is on its way", message: "", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])
@@ -541,6 +544,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }else {
             let action : WKAlertAction = WKAlertAction(title: "Okay", style: WKAlertActionStyle.Default) { () -> Void in
                 print("Action hit")
+                
             }
             
             presentAlertControllerWithTitle("", message: "App is not reachable, open the app and try again", preferredStyle: WKAlertControllerStyle.Alert, actions: [action])

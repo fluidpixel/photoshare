@@ -139,7 +139,7 @@ class Sharing {
         
         if accountFB != nil {
             ACAccountStore().renewCredentialsForAccount(accountFB!) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
-                if (error != nil) {
+                if (error == nil) {
                     switch result {
                     case ACAccountCredentialRenewResult.Renewed:
                         print("FACEBOOK: Credentials renewed")
@@ -161,7 +161,7 @@ class Sharing {
         accountTwitter = ACAccountStore().accountsWithAccountType(ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)).first as? ACAccount
          if accountTwitter != nil {
             ACAccountStore().renewCredentialsForAccount(accountTwitter) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
-                if (error != nil) {
+                if (error == nil) {
                     switch result {
                     case ACAccountCredentialRenewResult.Renewed:
                         print("TWITTER: Credentials renewed")
@@ -359,9 +359,9 @@ class Sharing {
                 
                 postrequest.account = accountTwitter
                 
-                let data = UIImagePNGRepresentation(image!)
+                let data = UIImageJPEGRepresentation(image!, 0.8)
 
-                postrequest.addMultipartData(data, withName: "media", type: "multipart/form-data", filename: "photo.png")
+                postrequest.addMultipartData(data, withName: "media", type: "multipart/form-data", filename: "photo.jpeg")
                 
                 
                 
@@ -397,7 +397,7 @@ class Sharing {
             else {
                 print("ERROR: Twitter not setup")
                 
-                completionHandler(result: false, details: "Account")
+                completionHandler(result: false, details: "Not logged in")
             }
         } else {
             print("ERROR: image does not exist")
@@ -427,8 +427,8 @@ class Sharing {
             print("ERROR : Could not find valid email for sender")
         }
         // testing data
-        let sendTo = "laurenevabrown28@gmail.com"
-        let sendName = "Lauren Brown"
+        let sendTo = ""//"laurenevabrown28@gmail.com"
+        let sendName = ""//"Lauren Brown"
         let message = "This is a test"
         
         // set sendingData
