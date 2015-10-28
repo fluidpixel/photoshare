@@ -97,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate, PHPhot
     
     func applicationDidBecomeActive(application: UIApplication) {
         
-        login()
+        //login()
         FBSDKAppEvents.activateApp()
         self.initWatchConnection()
         
