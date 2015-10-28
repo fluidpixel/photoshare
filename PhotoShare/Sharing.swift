@@ -135,8 +135,6 @@ class Sharing {
     func refreshAccountTokenStatus() {
         //FACEBOOK
         
-        accountFB = ACAccountStore().accountsWithAccountType(ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierFacebook)).first as? ACAccount
-        
         if accountFB != nil {
             ACAccountStore().renewCredentialsForAccount(accountFB!) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
                 if (error == nil) {
@@ -158,7 +156,6 @@ class Sharing {
         }
         //TWITTER
         
-        accountTwitter = ACAccountStore().accountsWithAccountType(ACAccountStore().accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)).first as? ACAccount
          if accountTwitter != nil {
             ACAccountStore().renewCredentialsForAccount(accountTwitter) { (result: ACAccountCredentialRenewResult, error: NSError!) -> Void in
                 if (error == nil) {
