@@ -144,6 +144,7 @@ class Sharing {
                         break
                     case ACAccountCredentialRenewResult.Rejected:
                         print("FACEBOOK: User declined permission to renew")
+                        self.accountFB = nil
                         break
                     case ACAccountCredentialRenewResult.Failed:
                         print("FACEBOOK: renew failed, you can try again")
@@ -165,6 +166,7 @@ class Sharing {
                         break
                     case ACAccountCredentialRenewResult.Rejected:
                         print("TWITTER: User declined permission to renew")
+                        self.accountTwitter = nil
                         break
                     case ACAccountCredentialRenewResult.Failed:
                         print("TWITTER: renew failed, you can try again")
