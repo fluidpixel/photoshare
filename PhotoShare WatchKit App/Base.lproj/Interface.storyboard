@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="8092"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="9019"/>
     </dependencies>
     <scenes>
         <!--Interface Controller-->
@@ -36,7 +36,10 @@
                         <button alignment="center" verticalAlignment="center" id="U1o-aD-1zD">
                             <group key="contentGroup" width="1" height="1" alignment="left" id="H7K-c2-etV">
                                 <items>
-                                    <label alignment="center" verticalAlignment="center" text="Syncing images with iPhone, please wait..." textAlignment="center" numberOfLines="5" id="0Rj-TO-7BE"/>
+                                    <label alignment="center" verticalAlignment="center" textAlignment="center" numberOfLines="5" id="0Rj-TO-7BE">
+                                        <string key="text">Syncing images with iPhone, please wait...
+Launch iPhone App if you continue to wait...</string>
+                                    </label>
                                 </items>
                             </group>
                             <accessibilityTraits key="accessibilityTraits" button="YES" image="YES"/>
@@ -223,7 +226,7 @@
                                 <label width="60" height="1" alignment="left" verticalAlignment="center" id="j75-e4-SUx"/>
                                 <group width="0.40000000000000002" height="1" alignment="right" layout="vertical" id="Uhp-N9-u1c">
                                     <items>
-                                        <label alignment="left" verticalAlignment="bottom" text="Label" id="d2s-Ye-nrF">
+                                        <label alignment="left" verticalAlignment="bottom" id="d2s-Ye-nrF">
                                             <fontDescription key="font" type="system" pointSize="10"/>
                                         </label>
                                         <imageView height="0.69999999999999996" alignment="right" verticalAlignment="center" image="Selected" contentMode="scaleAspectFill" id="knV-Wp-LDJ">
