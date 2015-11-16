@@ -7,47 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		545CC3901BC4735A00C9AB78 /* MessagePopoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545CC38F1BC4735A00C9AB78 /* MessagePopoverController.swift */; settings = {ASSET_TAGS = (); }; };
-		54D2D3101BCEAB2300002B8D /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54D2D30F1BCEAB2300002B8D /* FBSDKCoreKit.framework */; settings = {ASSET_TAGS = (); }; };
+		545CC3901BC4735A00C9AB78 /* MessagePopoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545CC38F1BC4735A00C9AB78 /* MessagePopoverController.swift */; };
+		54D2D3101BCEAB2300002B8D /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54D2D30F1BCEAB2300002B8D /* FBSDKCoreKit.framework */; };
 		54FDFC451B834F2D0001BB5F /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC441B834F2D0001BB5F /* PhotoManager.swift */; };
 		54FDFC481B84A0EA0001BB5F /* ImageTableRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FDFC471B84A0E60001BB5F /* ImageTableRowController.swift */; };
 		B93EC68F1B6FC10E007A2596 /* Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93EC68E1B6FC10E007A2596 /* Sharing.swift */; };
-		B942A3BA1BB1632200562AFC /* PhotoShareLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */; settings = {ASSET_TAGS = (); }; };
+		B942A3BA1BB1632200562AFC /* PhotoShareLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B942A3B91BB1632200562AFC /* PhotoShareLayout.swift */; };
 		B94F67C31B6284F5002B7ABA /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B94F67C21B6284F5002B7ABA /* Social.framework */; };
 		B9506D021B5FB08700B31FEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9506D011B5FB08700B31FEF /* AppDelegate.swift */; };
 		B9506D041B5FB08700B31FEF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9506D031B5FB08700B31FEF /* ViewController.swift */; };
 		B9506D071B5FB08800B31FEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9506D051B5FB08800B31FEF /* Main.storyboard */; };
 		B9506D091B5FB08800B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D081B5FB08800B31FEF /* Images.xcassets */; };
 		B9506D0C1B5FB08800B31FEF /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9506D0A1B5FB08800B31FEF /* LaunchScreen.xib */; };
-		B9506D181B5FB08800B31FEF /* PhotoShareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9506D171B5FB08800B31FEF /* PhotoShareTests.swift */; };
 		B9506D2A1B5FF3FF00B31FEF /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9506D291B5FF3FF00B31FEF /* InterfaceController.swift */; };
 		B9506D2C1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D2B1B5FF3FF00B31FEF /* Images.xcassets */; };
 		B9506D381B5FF3FF00B31FEF /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9506D361B5FF3FF00B31FEF /* Interface.storyboard */; };
 		B9506D3A1B5FF3FF00B31FEF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9506D391B5FF3FF00B31FEF /* Images.xcassets */; };
 		B950F6451B9EFBCB007EB2CE /* TourInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B950F6441B9EFBCB007EB2CE /* TourInterfaceController.swift */; };
-		B95FD3A41BB1AF7000792CA6 /* PhotoShareReuseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */; settings = {ASSET_TAGS = (); }; };
+		B95FD3A41BB1AF7000792CA6 /* PhotoShareReuseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B95FD3A31BB1AF7000792CA6 /* PhotoShareReuseView.xib */; };
 		B97FF0C91B8E2105008F461E /* ContactsTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97FF0C81B8E2105008F461E /* ContactsTableController.swift */; };
 		B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B98BDCC11B8CA182001DFF9C /* Contacts.framework */; };
 		B995F2AB1B8F6D1F003FBEB3 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B995F2AA1B8F6D1E003FBEB3 /* DictationController.swift */; };
-		B998927E1BB009C400CB84B1 /* ImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */; settings = {ASSET_TAGS = (); }; };
+		B998927E1BB009C400CB84B1 /* ImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B998927D1BB009C400CB84B1 /* ImageCollectionCell.swift */; };
 		B99C81BF1B90C05A0001B457 /* EmailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99C81BE1B90C05A0001B457 /* EmailController.swift */; };
 		B9C11CD11B72627E00F239AD /* PhotoShare WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B9506D251B5FF3FE00B31FEF /* PhotoShare WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B9C11CD41B72627E00F239AD /* PhotoShare WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B9506D2F1B5FF3FF00B31FEF /* PhotoShare WatchKit App.app */; };
 		B9C11D3B1B726CBD00F239AD /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C11D3A1B726CBD00F239AD /* ExtensionDelegate.swift */; };
 		B9C11D3D1B726F2900F239AD /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C11D3C1B726F2900F239AD /* NotificationController.swift */; };
-		DA7BEB5F1BB28D2500AB78C9 /* SharedMessageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */; settings = {ASSET_TAGS = (); }; };
-		DA7BEB601BB28D2500AB78C9 /* SharedMessageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */; settings = {ASSET_TAGS = (); }; };
-		DAD6993E1BBA87EF00E118B5 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD6993D1BBA87EF00E118B5 /* ImageCache.swift */; settings = {ASSET_TAGS = (); }; };
+		DA7BEB5F1BB28D2500AB78C9 /* SharedMessageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */; };
+		DA7BEB601BB28D2500AB78C9 /* SharedMessageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7BEB5E1BB28D2500AB78C9 /* SharedMessageKeys.swift */; };
+		DAD6993E1BBA87EF00E118B5 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD6993D1BBA87EF00E118B5 /* ImageCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B9506D121B5FB08800B31FEF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B9506CF41B5FB08700B31FEF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B9506CFB1B5FB08700B31FEF;
-			remoteInfo = PhotoShare;
-		};
 		B9C11CCF1B72627E00F239AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B9506CF41B5FB08700B31FEF /* Project object */;
@@ -104,7 +96,6 @@
 		B9506D061B5FB08800B31FEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B9506D081B5FB08800B31FEF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		B9506D0B1B5FB08800B31FEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		B9506D111B5FB08800B31FEF /* PhotoShareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoShareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9506D161B5FB08800B31FEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B9506D171B5FB08800B31FEF /* PhotoShareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoShareTests.swift; sourceTree = "<group>"; };
 		B9506D251B5FF3FE00B31FEF /* PhotoShare WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "PhotoShare WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,13 +130,6 @@
 				B98BDCC21B8CA183001DFF9C /* Contacts.framework in Frameworks */,
 				54D2D3101BCEAB2300002B8D /* FBSDKCoreKit.framework in Frameworks */,
 				B94F67C31B6284F5002B7ABA /* Social.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B9506D0E1B5FB08800B31FEF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,7 +169,6 @@
 			isa = PBXGroup;
 			children = (
 				B9506CFC1B5FB08700B31FEF /* PhotoShare.app */,
-				B9506D111B5FB08800B31FEF /* PhotoShareTests.xctest */,
 				B9506D251B5FF3FE00B31FEF /* PhotoShare WatchKit Extension.appex */,
 				B9506D2F1B5FF3FF00B31FEF /* PhotoShare WatchKit App.app */,
 			);
@@ -306,24 +289,6 @@
 			productReference = B9506CFC1B5FB08700B31FEF /* PhotoShare.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B9506D101B5FB08800B31FEF /* PhotoShareTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B9506D1E1B5FB08800B31FEF /* Build configuration list for PBXNativeTarget "PhotoShareTests" */;
-			buildPhases = (
-				B9506D0D1B5FB08800B31FEF /* Sources */,
-				B9506D0E1B5FB08800B31FEF /* Frameworks */,
-				B9506D0F1B5FB08800B31FEF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B9506D131B5FB08800B31FEF /* PBXTargetDependency */,
-			);
-			name = PhotoShareTests;
-			productName = PhotoShareTests;
-			productReference = B9506D111B5FB08800B31FEF /* PhotoShareTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		B9506D241B5FF3FE00B31FEF /* PhotoShare WatchKit Extension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B9506D411B5FF3FF00B31FEF /* Build configuration list for PBXNativeTarget "PhotoShare WatchKit Extension" */;
@@ -378,10 +343,6 @@
 							};
 						};
 					};
-					B9506D101B5FB08800B31FEF = {
-						CreatedOnToolsVersion = 6.4;
-						TestTargetID = B9506CFB1B5FB08700B31FEF;
-					};
 					B9506D241B5FF3FE00B31FEF = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = LCP5AMLC52;
@@ -416,7 +377,6 @@
 			projectRoot = "";
 			targets = (
 				B9506CFB1B5FB08700B31FEF /* PhotoShare */,
-				B9506D101B5FB08800B31FEF /* PhotoShareTests */,
 				B9506D241B5FF3FE00B31FEF /* PhotoShare WatchKit Extension */,
 				B9506D2E1B5FF3FF00B31FEF /* PhotoShare WatchKit App */,
 			);
@@ -432,13 +392,6 @@
 				B9506D0C1B5FB08800B31FEF /* LaunchScreen.xib in Resources */,
 				B9506D091B5FB08800B31FEF /* Images.xcassets in Resources */,
 				B95FD3A41BB1AF7000792CA6 /* PhotoShareReuseView.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B9506D0F1B5FB08800B31FEF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,14 +430,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B9506D0D1B5FB08800B31FEF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B9506D181B5FB08800B31FEF /* PhotoShareTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B9506D211B5FF3FE00B31FEF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -505,11 +450,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B9506D131B5FB08800B31FEF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B9506CFB1B5FB08700B31FEF /* PhotoShare */;
-			targetProxy = B9506D121B5FB08800B31FEF /* PBXContainerItemProxy */;
-		};
 		B9C11CD01B72627E00F239AD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B9506D241B5FF3FE00B31FEF /* PhotoShare WatchKit Extension */;
@@ -643,17 +583,18 @@
 				CODE_SIGN_ENTITLEMENTS = PhotoShare/PhotoShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = PhotoShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fpstudios.PhotoShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "72e0af1c-84a4-4c67-990a-b2f601168756";
 			};
 			name = Debug;
 		};
@@ -662,54 +603,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PhotoShare/PhotoShare.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = PhotoShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fpstudios.PhotoShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-			};
-			name = Release;
-		};
-		B9506D1F1B5FB08800B31FEF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = PhotoShareTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "FluidPixel.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoShare.app/PhotoShare";
-			};
-			name = Debug;
-		};
-		B9506D201B5FB08800B31FEF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = PhotoShareTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "FluidPixel.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoShare.app/PhotoShare";
+				PROVISIONING_PROFILE = "72e0af1c-84a4-4c67-990a-b2f601168756";
 			};
 			name = Release;
 		};
@@ -731,9 +637,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fpstudios.PhotoShare.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b3278610-4c46-4ba3-bce6-7d5ea4ba20b3";
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
@@ -746,17 +652,18 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "PhotoShare WatchKit App/PhotoShare WatchKit App.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				IBSC_MODULE = PhotoShare_WatchKit_Extension;
 				INFOPLIST_FILE = "PhotoShare WatchKit App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fpstudios.PhotoShare.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b3278610-4c46-4ba3-bce6-7d5ea4ba20b3";
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -769,7 +676,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -778,9 +685,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fpstudios.PhotoShare.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "346dbea6-9454-4f6d-8e27-7be4c8c1427b";
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -790,17 +697,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "PhotoShare WatchKit Extension/PhotoShare WatchKit Extension.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution: Fluid Pixel Limited (LCP5AMLC52)";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				INFOPLIST_FILE = "PhotoShare WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fpstudios.PhotoShare.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "346dbea6-9454-4f6d-8e27-7be4c8c1427b";
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -823,15 +730,6 @@
 			buildConfigurations = (
 				B9506D1C1B5FB08800B31FEF /* Debug */,
 				B9506D1D1B5FB08800B31FEF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B9506D1E1B5FB08800B31FEF /* Build configuration list for PBXNativeTarget "PhotoShareTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B9506D1F1B5FB08800B31FEF /* Debug */,
-				B9506D201B5FB08800B31FEF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
